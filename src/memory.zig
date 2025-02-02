@@ -1,3 +1,5 @@
+const std = @import("std");
+
 const common: type = @import("common.zig");
 
 pub fn GROW_CAPACITY(capacity: u8) u8 {
@@ -9,12 +11,7 @@ pub fn FREE_ARRAY(comptime T: type, allocator: common.mem.Allocator, pointer: ?[
 }
 
 /// Type-safe array growth function
-pub fn growArray(
-    comptime T: type,
-    allocator: common.mem.Allocator,
-    pointer: ?[]T,
-    new_count: usize,
-) common.MemoryError![]T {
+pub fn growArray(comptime T: type, allocator: common.mem.Allocator, pointer: ?[]T, new_count: usize) common.MemoryError![]T {
     const old_count = if (pointer) |p| p.len else 0;
     const old_size = old_count * @sizeOf(T);
     const new_size = new_count * @sizeOf(T);
@@ -34,44 +31,15 @@ pub fn growArray(
     return @as([*]T, @ptrCast(result.?))[0..new_count];
 }
 
-/// General purpose reallocation function
-pub fn reallocate(
-    allocator: common.mem.Allocator,
-    pointer: ?[*]u8,
-    old_size: usize,
-    new_size: usize,
-) common.MemoryError!?[*]u8 {
-    // If new size is 0, free the memory
-    if (new_size == 0) {
+pub fn reallocate(allocator: *std.mem.Allocator, pointer: ?*u8, oldSize: usize, newSize: usize) !?*u8 {
+    // If the new size is zero, free the memory and return null.
+    if (newSize == 0) {
         if (pointer) |ptr| {
-            allocator.free(ptr[0..old_size]);
+            allocator.free(ptr);
         }
         return null;
     }
-
-    // Reallocate memory
-    if (pointer) |ptr| {
-        const new_memory = allocator.realloc(ptr[0..old_size], new_size) catch |err| {
-            switch (err) {
-                error.OutOfMemory => {
-                    // Similar to the C version's exit(1), but we can handle it more gracefully
-                    common.debug.print("Fatal: Out of memory\n", .{});
-                    common.process.exit(1);
-                },
-                else => return err,
-            }
-        };
-        return @ptrCast(new_memory);
-    } else {
-        const new_memory = allocator.alloc(u8, new_size) catch |err| {
-            switch (err) {
-                error.OutOfMemory => {
-                    common.debug.print("Fatal: Out of memory\n", .{});
-                    common.process.exit(1);
-                },
-                else => return err,
-            }
-        };
-        return @ptrCast(new_memory);
-    }
+    // Otherwise, use the allocator's realloc function.
+    // This call will automatically compute the correct byte sizes.
+    return allocator.realloc(u8, pointer, oldSize, newSize);
 }
