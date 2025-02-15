@@ -1,7 +1,7 @@
 const std = @import("std");
 const Chunk = @import("chunk.zig");
 
-pub fn disassembleChunk(chunk: *Chunk.Chunk, name: []i8) void {
+pub fn disassembleChunk(chunk: *Chunk.Chunk, name: []const u8) void {
     std.debug.print("== {} ==\n", .{name});
 
     for (chunk.count) |offset| {
