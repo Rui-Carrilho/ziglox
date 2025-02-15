@@ -18,7 +18,7 @@ pub const Chunk = struct {
 };
 
 pub fn initChunk(chunk: *Chunk) void {
-    chunk.code = null;
+    chunk.code = undefined;
     chunk.count = 0;
     chunk.capacity = 0;
 }
