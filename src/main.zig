@@ -1,18 +1,20 @@
 const std = @import("std");
-const common = @import("common.zig");
 const memory = @import("memory.zig");
+const chunk = @import("chunk.zig");
+const debug = @import("debug.zig");
 
 
 pub fn main() void {
     // Allocate memory
-    const allocator = common.mem.Allocator.init(.heap.page_allocator);
-    const pointer = allocator.alloc(u8, 8);
+    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    const allocator = gpa.allocator();
 
-    // Grow the array
-    const newPointer = memory.growArray(u8, allocator, pointer, 16);
+    var newChunk: chunk.Chunk = undefined;
+    chunk.initChunk(&newChunk);
+    chunk.writeChunk(&newChunk, @intFromEnum(chunk.OpCode.OP_RETURN), allocator);
+    debug.disassembleChunk(&newChunk, "test chunk");
+    chunk.freeChunk(&newChunk, allocator);
 
-    // Free the memory
-    memory.freeArray(u8, allocator, newPointer, 16);
 }
 
 
