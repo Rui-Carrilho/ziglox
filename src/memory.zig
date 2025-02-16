@@ -1,6 +1,6 @@
 const std = @import("std");
 
-pub fn GROW_CAPACITY(capacity: i8) i8 {
+pub fn GROW_CAPACITY(capacity: usize) usize {
     return if (capacity < 8) 8 else capacity * 2;
 }
 

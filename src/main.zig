@@ -14,9 +14,6 @@ pub fn main() void {
     chunk.writeChunk(&newChunk, @intFromEnum(chunk.OpCode.OP_RETURN), allocator);
     debug.disassembleChunk(&newChunk, "test chunk");
     chunk.freeChunk(&newChunk, allocator);
-
 }
-
-
 
 test "simple test" {}

@@ -12,9 +12,9 @@ pub const OpCode = enum(u8) {
 };
 
 pub const Chunk = struct {
-    code: *u8,
-    count: i8,
-    capacity: i8
+    code: []u8,
+    count: usize,
+    capacity: usize
 };
 
 pub fn initChunk(chunk: *Chunk) void {
