@@ -4,16 +4,21 @@ const chunk = @import("chunk.zig");
 const debug = @import("debug.zig");
 
 
-pub fn main() void {
+pub fn main() !void {
     // Allocate memory
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
-    const allocator = gpa.allocator();
+    var allocator = gpa.allocator();
 
     var newChunk: chunk.Chunk = undefined;
     chunk.initChunk(&newChunk);
-    chunk.writeChunk(&newChunk, @intFromEnum(chunk.OpCode.OP_RETURN), allocator);
+    const constant = try chunk.addConstant(&newChunk, 1.2 , &allocator);
+    try chunk.writeChunk(&newChunk, @intFromEnum(chunk.OpCode.OP_CONSTANT), 123, &allocator);
+    try chunk.writeChunk(&newChunk, @intCast(constant), 123, &allocator);
+    try chunk.writeChunk(&newChunk, @intFromEnum(chunk.OpCode.OP_RETURN), 123, &allocator);
     debug.disassembleChunk(&newChunk, "test chunk");
-    chunk.freeChunk(&newChunk, allocator);
+    chunk.freeChunk(&newChunk, &allocator);
 }
 
-test "simple test" {}
+test "simple test" {
+
+}
