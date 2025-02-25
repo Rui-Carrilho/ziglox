@@ -1,5 +1,6 @@
 const std = @import("std");
 const Chunk = @import("chunk.zig");
+const Value = @import("value.zig");
 
 pub const VM = struct { 
     chunk: *Chunk.Chunk,
@@ -22,6 +23,12 @@ pub fn run() InterpretResult {
     while(true) {
         const instruction = readByte();
         switch (instruction) {
+            @intFromEnum(Chunk.OpCode.OP_CONSTANT) => {
+                const constant: Value.Value = readConstant();
+                Value.printValue(constant);
+                std.debug.print("\n", .{});
+                break;
+            }
             @intFromEnum(Chunk.OpCode.OP_RETURN) => {
                 return InterpretResult.INTERPRET_OK;
             },
@@ -29,6 +36,10 @@ pub fn run() InterpretResult {
         }
     }
 
+}
+
+fn readConstant() Value.Value {
+    return vm.chunk.constants.values[readByte()];
 }
 
 fn readByte() u8 {
