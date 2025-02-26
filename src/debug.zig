@@ -2,6 +2,8 @@ const std = @import("std");
 const Chunk = @import("chunk.zig");
 const Value = @import("value.zig");
 
+const debug_trace_execution = @import("build_options").debug_trace_execution;
+
 pub fn disassembleChunk(chunk: *Chunk.Chunk, name: []const u8) void {
     std.debug.print("== {s} ==\n", .{name});
 
@@ -14,7 +16,7 @@ pub fn disassembleChunk(chunk: *Chunk.Chunk, name: []const u8) void {
 pub fn disassembleInstruction(chunk: *Chunk.Chunk, offset: usize) usize {
     std.debug.print("{d:0>4} ", .{offset});
 
-    if(offset > 0 and chunk.lines[offset] == chunk.lines[offset - 1]){
+    if (offset > 0 and chunk.lines[offset] == chunk.lines[offset - 1]) {
         std.debug.print("    | ", .{});
     } else {
         std.debug.print("{d:4} ", .{chunk.lines[offset]});
