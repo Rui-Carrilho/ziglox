@@ -8,7 +8,7 @@ pub fn main() !void {
     // Allocate memory
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     var allocator = gpa.allocator();
-    defer gpa.deinit();
+    //defer _ = gpa.deinit();
 
     VM.initVM();
 

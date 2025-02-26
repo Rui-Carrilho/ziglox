@@ -28,7 +28,7 @@ pub fn run() InterpretResult {
                 Value.printValue(constant);
                 std.debug.print("\n", .{});
                 break;
-            }
+            },
             @intFromEnum(Chunk.OpCode.OP_RETURN) => {
                 return InterpretResult.INTERPRET_OK;
             },
