@@ -1,26 +1,23 @@
 const std = @import("std");
 const Chunk = @import("chunk.zig");
 const Value = @import("value.zig");
+const Debug = @import("debug.zig");
 
-pub const VM = struct { 
-    chunk: *Chunk.Chunk,
-    ip: [] u8
-};
+pub const VM = struct { chunk: *Chunk.Chunk, ip: []u8 };
 
 var vm: VM = undefined;
 
-pub const InterpretResult = enum { 
-    INTERPRET_OK, 
-    INTERPRET_COMPILE_ERROR, 
-    INTERPRET_RUNTIME_ERROR 
-};
+pub const InterpretResult = enum { INTERPRET_OK, INTERPRET_COMPILE_ERROR, INTERPRET_RUNTIME_ERROR };
 
 pub fn initVM() void {}
 
 pub fn freeVM() void {}
 
 pub fn run() InterpretResult {
-    while(true) {
+    while (true) {
+        if (Debug.debug_trace_execution) {
+            Debug.disassembleInstruction(vm.chunk, @intCast(@in(vm.ip) - @ptrToInt(&vm.chunk.code[0])));
+        }
         const instruction = readByte();
         switch (instruction) {
             @intFromEnum(Chunk.OpCode.OP_CONSTANT) => {
@@ -35,7 +32,6 @@ pub fn run() InterpretResult {
             else => unreachable,
         }
     }
-
 }
 
 fn readConstant() Value.Value {
