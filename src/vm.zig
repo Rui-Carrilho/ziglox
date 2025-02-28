@@ -12,7 +12,11 @@ pub const VM = struct {
 
 var vm: VM = undefined;
 
-pub const InterpretResult = enum { INTERPRET_OK, INTERPRET_COMPILE_ERROR, INTERPRET_RUNTIME_ERROR };
+pub const InterpretResult = enum { 
+    INTERPRET_OK, 
+    INTERPRET_COMPILE_ERROR, 
+    INTERPRET_RUNTIME_ERROR 
+};
 
 pub fn initVM() void {}
 
