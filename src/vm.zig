@@ -3,7 +3,12 @@ const Chunk = @import("chunk.zig");
 const Value = @import("value.zig");
 const Debug = @import("debug.zig");
 
-pub const VM = struct { chunk: *Chunk.Chunk, ip: []u8 };
+pub const VM = struct { 
+    chunk: *Chunk.Chunk, 
+    ip: [] u8,
+    stack[STACK_MAX]: Value.Value,
+    stackTop: [] Value 
+};
 
 var vm: VM = undefined;
 
