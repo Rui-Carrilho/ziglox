@@ -3,14 +3,20 @@ const Chunk = @import("chunk.zig");
 const Value = @import("value.zig");
 const Debug = @import("debug.zig");
 
+const STACK_MAX = 256;
+
 pub const VM = struct { 
     chunk: *Chunk.Chunk, 
-    ip: [] u8,
-    stack[STACK_MAX]: Value.Value,
-    stackTop: [] Value 
+    ip: []u8,
+    stack: [STACK_MAX]Value.Value,
+    stackTop: *Value.Value
 };
 
 var vm: VM = undefined;
+
+pub fn resetStack() void {
+    vm.stackTop = &vm.stack[0];
+}
 
 pub const InterpretResult = enum { 
     INTERPRET_OK, 
@@ -18,14 +24,34 @@ pub const InterpretResult = enum {
     INTERPRET_RUNTIME_ERROR 
 };
 
-pub fn initVM() void {}
+pub fn initVM() void {
+    resetStack();
+}
 
 pub fn freeVM() void {}
+
+pub fn push(value: Value) void {
+    vm.stackTop.* = value;
+    vm.stackTop += 1;
+}
+
+pub fn pop() Value.Value {
+    vm.stackTop -= 1;
+    return vm.stackTop.*;
+}
 
 pub fn run() InterpretResult {
     while (true) {
         if (Debug.debug_trace_execution) {
-            Debug.disassembleInstruction(vm.chunk, @intCast(@in(vm.ip) - @ptrToInt(&vm.chunk.code[0])));
+            std.debug.print("        ", .{});
+            var slot: *Value.Value = &vm.stack[0];
+            while (slot < vm.stackTop) : (slot += 1) {
+                std.debug.print("[ ", .{});
+                Value.printValue(slot.*);
+                std.debug.print(" ]", .{});
+            }
+            std.debug.print("\n", .{});
+            Debug.disassembleInstruction(vm.chunk, @intCast(@as(i8, vm.ip) - @as(i8, &vm.chunk.code[0])));
         }
         const instruction = readByte();
         switch (instruction) {
