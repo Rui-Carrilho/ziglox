@@ -70,7 +70,7 @@ pub fn run() InterpretResult {
             @intFromEnum(Chunk.OpCode.OP_NEGATE) => {
                 push(-pop());
                 break;
-            }
+            },
             else => unreachable,
         }
     }
