@@ -17,6 +17,7 @@ pub fn main() !void {
     const constant = try chunk.addConstant(&newChunk, 1.2 , &allocator);
     try chunk.writeChunk(&newChunk, @intFromEnum(chunk.OpCode.OP_CONSTANT), 123, &allocator);
     try chunk.writeChunk(&newChunk, @intCast(constant), 123, &allocator);
+    try chunk.writeChunk(&newChunk, @intFromEnum(chunk.OpCode.OP_NEGATE), 123, &allocator);
     try chunk.writeChunk(&newChunk, @intFromEnum(chunk.OpCode.OP_RETURN), 123, &allocator);
     
     debug.disassembleChunk(&newChunk, "test chunk");

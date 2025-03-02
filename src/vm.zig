@@ -57,13 +57,20 @@ pub fn run() InterpretResult {
         switch (instruction) {
             @intFromEnum(Chunk.OpCode.OP_CONSTANT) => {
                 const constant: Value.Value = readConstant();
+                push(constant);
                 Value.printValue(constant);
                 std.debug.print("\n", .{});
                 break;
             },
             @intFromEnum(Chunk.OpCode.OP_RETURN) => {
+                Value.printValue(pop());
+                std.debug.print("\n", .{});
                 return InterpretResult.INTERPRET_OK;
             },
+            @intFromEnum(Chunk.OpCode.OP_NEGATE) => {
+                push(-pop());
+                break;
+            }
             else => unreachable,
         }
     }

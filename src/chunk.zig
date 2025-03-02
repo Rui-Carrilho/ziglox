@@ -4,21 +4,16 @@ const values = @import("value.zig");
 
 // OpCode enum to represent different bytecode instructions
 pub const OpCode = enum(u8) {
-    OP_RETURN,
-    OP_CONSTANT,
     OP_ADD,
-    OP_SUBTRACT,
-    OP_MULTIPLY,
+    OP_CONSTANT,
     OP_DIVIDE,
+    OP_MULTIPLY,
+    OP_NEGATE,
+    OP_RETURN,
+    OP_SUBTRACT,
 };
 
-pub const Chunk = struct { 
-    code: []u8, 
-    count: usize, 
-    capacity: usize,
-    constants: values.ValueArray,
-    lines: []i32
-};
+pub const Chunk = struct { code: []u8, count: usize, capacity: usize, constants: values.ValueArray, lines: []i32 };
 
 pub fn initChunk(chunk: *Chunk) void {
     chunk.code = memory.initArray(u8);
