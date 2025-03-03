@@ -44,12 +44,9 @@ pub fn run() InterpretResult {
     while (true) {
         if (Debug.debug_trace_execution) {
             std.debug.print("        ", .{});
-            // Option 2: Advance through memory using pointer arithmetic
-            var slot: *Value.Value = &vm.stack[0];
-            const stackTop = vm.stackTop;
-            while (@intFromPtr(slot) < @intFromPtr(stackTop)) : (slot = @ptrFromInt(@intFromPtr(slot) + @sizeOf(Value.Value))) {
+            for (vm.stack) |slot| {
                 std.debug.print("[ ", .{});
-                Value.printValue(slot.*);
+                Value.printValue(slot);
                 std.debug.print(" ]", .{});
             }
             std.debug.print("\n", .{});
