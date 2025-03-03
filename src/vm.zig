@@ -55,6 +55,9 @@ pub fn run() InterpretResult {
         }
         const instruction = readByte();
         switch (instruction) {
+            @intFromEnum(Chunk.OpCode.OP_ADD) => {
+                
+            }
             @intFromEnum(Chunk.OpCode.OP_CONSTANT) => {
                 const constant: Value.Value = readConstant();
                 push(constant);
