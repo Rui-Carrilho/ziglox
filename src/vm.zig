@@ -7,9 +7,9 @@ const STACK_MAX = 256;
 
 pub const VM = struct { 
     chunk: *Chunk.Chunk, 
-    ip: []u8,
-    stack: [STACK_MAX]Value.Value,
-    stackTop: *Value.Value
+    ip: []u8, 
+    stack: [STACK_MAX]Value.Value, 
+    stackTop: *Value.Value 
 };
 
 var vm: VM = undefined;
@@ -44,8 +44,10 @@ pub fn run() InterpretResult {
     while (true) {
         if (Debug.debug_trace_execution) {
             std.debug.print("        ", .{});
+            // Option 2: Advance through memory using pointer arithmetic
             var slot: *Value.Value = &vm.stack[0];
-            while (slot < vm.stackTop) : (slot += 1) {
+            const stackTop = vm.stackTop;
+            while (@intFromPtr(slot) < @intFromPtr(stackTop)) : (slot = @ptrFromInt(@intFromPtr(slot) + @sizeOf(Value.Value))) {
                 std.debug.print("[ ", .{});
                 Value.printValue(slot.*);
                 std.debug.print(" ]", .{});
@@ -55,9 +57,7 @@ pub fn run() InterpretResult {
         }
         const instruction = readByte();
         switch (instruction) {
-            @intFromEnum(Chunk.OpCode.OP_ADD) => {
-
-            },
+            @intFromEnum(Chunk.OpCode.OP_ADD) => {},
             @intFromEnum(Chunk.OpCode.OP_CONSTANT) => {
                 const constant: Value.Value = readConstant();
                 push(constant);

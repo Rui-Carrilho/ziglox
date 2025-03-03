@@ -2,7 +2,7 @@ const std = @import("std");
 const Chunk = @import("chunk.zig");
 const Value = @import("value.zig");
 
-pub const debug_trace_execution = @import("build_options").debug_trace_execution;
+pub const debug_trace_execution = true;
 
 pub fn disassembleChunk(chunk: *Chunk.Chunk, name: []const u8) void {
     std.debug.print("== {s} ==\n", .{name});

@@ -21,7 +21,7 @@ pub fn main() !void {
     try chunk.writeChunk(&newChunk, @intFromEnum(chunk.OpCode.OP_RETURN), 123, &allocator);
     
     debug.disassembleChunk(&newChunk, "test chunk");
-    VM.interpret(&newChunk);
+    _ = VM.interpret(&newChunk);
     
     VM.freeVM();
     chunk.freeChunk(&newChunk, &allocator);
