@@ -31,12 +31,12 @@ pub fn initVM() void {
 pub fn freeVM() void {}
 
 pub fn push(value: Value.Value) void {
-    vm.stackTop[0] = value;
-    vm.stackTop += 1;
+    vm.stackTop.* = value;
+    vm.stackTop = @ptrFromInt(@intFromPtr(vm.stackTop) + @sizeOf(Value.Value));
 }
 
 pub fn pop() Value.Value {
-    vm.stackTop -= 1;
+    vm.stackTop = @ptrFromInt(@intFromPtr(vm.stackTop) - @sizeOf(Value.Value));
     return vm.stackTop.*;
 }
 
