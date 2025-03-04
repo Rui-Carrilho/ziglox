@@ -31,8 +31,8 @@ pub fn initVM() void {
 pub fn freeVM() void {}
 
 pub fn push(value: Value.Value) void {
-    vm.stackTop.* = value;
-    vm.stackTop += 1.0;
+    vm.stackTop[0] = value;
+    vm.stackTop += 1;
 }
 
 pub fn pop() Value.Value {
