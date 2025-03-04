@@ -7,7 +7,7 @@ const STACK_MAX = 256;
 
 pub const VM = struct { 
     chunk: *Chunk.Chunk, 
-    ip: []u8, 
+    ip: *u8, 
     stack: [STACK_MAX]Value.Value, 
     stackTop: *Value.Value 
 };
@@ -50,7 +50,7 @@ pub fn run() InterpretResult {
                 std.debug.print(" ]", .{});
             }
             std.debug.print("\n", .{});
-            Debug.disassembleInstruction(vm.chunk, @intCast(@as(i8, vm.ip) - @as(i8, &vm.chunk.code[0])));
+            Debug.disassembleInstruction(vm.chunk, @as(u8, @intFromPtr(vm.ip)) - @intFromPtr(&vm.chunk.code[0]));
         }
         const instruction = readByte();
         switch (instruction) {
@@ -88,6 +88,6 @@ fn readByte() u8 {
 
 pub fn interpret(chunk: *Chunk.Chunk) InterpretResult {
     vm.chunk = chunk;
-    vm.ip = chunk.code;
+    vm.ip = &chunk.code[0];
     return run();
 }
