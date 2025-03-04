@@ -32,7 +32,7 @@ pub fn freeVM() void {}
 
 pub fn push(value: Value.Value) void {
     vm.stackTop.* = value;
-    vm.stackTop += 1;
+    vm.stackTop += 1.0;
 }
 
 pub fn pop() Value.Value {
@@ -73,7 +73,7 @@ pub fn run() InterpretResult {
             },
             else => unreachable,
         }
-    }
+    } unreachable;
 }
 
 fn readConstant() Value.Value {
@@ -81,8 +81,8 @@ fn readConstant() Value.Value {
 }
 
 fn readByte() u8 {
-    const byte = vm.ip[0];
-    vm.ip += 1;
+    const byte = vm.ip.*;
+    vm.ip.* += 1;
     return byte;
 }
 
