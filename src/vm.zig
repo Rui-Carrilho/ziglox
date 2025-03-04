@@ -30,7 +30,7 @@ pub fn initVM() void {
 
 pub fn freeVM() void {}
 
-pub fn push(value: Value) void {
+pub fn push(value: Value.Value) void {
     vm.stackTop.* = value;
     vm.stackTop += 1;
 }
@@ -50,7 +50,7 @@ pub fn run() InterpretResult {
                 std.debug.print(" ]", .{});
             }
             std.debug.print("\n", .{});
-            Debug.disassembleInstruction(vm.chunk, @as(u8, @intFromPtr(vm.ip)) - @intFromPtr(&vm.chunk.code[0]));
+            _ =  Debug.disassembleInstruction(vm.chunk, @intFromPtr(vm.ip) - @intFromPtr(&vm.chunk.code[0]));
         }
         const instruction = readByte();
         switch (instruction) {
