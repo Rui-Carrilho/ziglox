@@ -1,6 +1,6 @@
 const std = @import("std");
 const memory = @import("memory.zig");
-const values = @import("value.zig");
+const Value = @import("value.zig");
 
 // OpCode enum to represent different bytecode instructions
 pub const OpCode = enum(u8) {
@@ -17,7 +17,7 @@ pub const Chunk = struct {
     code: []u8, 
     count: usize, 
     capacity: usize, 
-    constants: values.ValueArray, 
+    constants: Value.ValueArray, 
     lines: []i32 
 };
 
@@ -26,7 +26,7 @@ pub fn initChunk(chunk: *Chunk) void {
     chunk.lines = memory.initArray(i32);
     chunk.count = 0;
     chunk.capacity = 0;
-    values.initValueArray(&chunk.constants);
+    Value.initValueArray(&chunk.constants);
 }
 
 pub fn writeChunk(chunk: *Chunk, byte: u8, line: i32, allocator: *std.mem.Allocator) !void {
@@ -42,13 +42,13 @@ pub fn writeChunk(chunk: *Chunk, byte: u8, line: i32, allocator: *std.mem.Alloca
     chunk.count += 1;
 }
 
-pub fn addConstant(chunk: *Chunk, value: values.Value, allocator: *std.mem.Allocator) !usize {
-    try values.writeValueArray(&chunk.constants, value, allocator);
+pub fn addConstant(chunk: *Chunk, value: Value.Value, allocator: *std.mem.Allocator) !usize {
+    try Value.writeValueArray(&chunk.constants, value, allocator);
     return chunk.constants.count - 1;
 }
 
 pub fn freeChunk(chunk: *Chunk, allocator: *std.mem.Allocator) void {
     memory.FREE_ARRAY(u8, allocator, chunk.code, chunk.capacity) catch unreachable;
-    values.freeValueArray(&chunk.constants, allocator);
+    Value.freeValueArray(&chunk.constants, allocator);
     initChunk(chunk);
 }

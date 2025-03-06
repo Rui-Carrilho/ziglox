@@ -6,7 +6,7 @@ pub const Value = f64;
 pub const ValueArray = struct {
     capacity: usize,
     count: usize,
-    values: [] Value
+    values: []Value
 };
 
 pub fn initValueArray(array: *ValueArray) void {
