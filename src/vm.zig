@@ -56,10 +56,10 @@ pub fn run() InterpretResult {
             },
             @intFromEnum(Chunk.OpCode.OP_DIVIDE) => {
                 binaryOp(divide);
-            }
+            },
             @intFromEnum(Chunk.OpCode.OP_MULTIPLY) => {
                 binaryOp(multiply);
-            }
+            },
             @intFromEnum(Chunk.OpCode.OP_RETURN) => {
                 Value.printValue(pop());
                 std.debug.print("\n", .{});
@@ -67,7 +67,7 @@ pub fn run() InterpretResult {
             },
             @intFromEnum(Chunk.OpCode.OP_SUBTRACT) => {
                 binaryOp(subtract);
-            }
+            },
             @intFromEnum(Chunk.OpCode.OP_NEGATE) => {
                 push(-pop());
             },
@@ -110,7 +110,7 @@ pub fn subtract(a:f64, b: f64) f64 {
     return a - b;
 }
 
-pub fn multiply(a: f64, b: 64) f64 {
+pub fn multiply(a: f64, b: f64) f64 {
     return a * b;
 }
 
