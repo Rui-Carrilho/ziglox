@@ -5,7 +5,12 @@ const Debug = @import("debug.zig");
 
 const STACK_MAX = 256;
 
-pub const VM = struct { chunk: *Chunk.Chunk, ip: *u8, stack: [STACK_MAX]Value.Value, stackTop: *Value.Value };
+pub const VM = struct { 
+    chunk: *Chunk.Chunk, 
+    ip: *u8, 
+    stack: [STACK_MAX]Value.Value, 
+    stackTop: *Value.Value 
+};
 
 var vm: VM = undefined;
 
