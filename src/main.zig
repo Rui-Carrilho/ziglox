@@ -22,13 +22,13 @@ pub fn main() !void {
     try chunk.writeChunk(&newChunk, @intFromEnum(chunk.OpCode.OP_CONSTANT), 123, &allocator);
     try chunk.writeChunk(&newChunk, @intCast(constant), 123, &allocator);
 
-    try chunk.writeChunk(&newChunk, @intFromEnum(chunk.OpCode.OP_MULTIPLY), 123, &allocator);
+    try chunk.writeChunk(&newChunk, @intFromEnum(chunk.OpCode.OP_SUBTRACT), 123, &allocator);
 
     constant = try chunk.addConstant(&newChunk, 1, &allocator);
     try chunk.writeChunk(&newChunk, @intFromEnum(chunk.OpCode.OP_CONSTANT), 123, &allocator);
     try chunk.writeChunk(&newChunk, @intCast(constant), 123, &allocator);
 
-    try chunk.writeChunk(&newChunk, @intFromEnum(chunk.OpCode.OP_ADD), 123, &allocator);
+    try chunk.writeChunk(&newChunk, @intFromEnum(chunk.OpCode.OP_SUBTRACT), 123, &allocator);
 
     //try chunk.writeChunk(&newChunk, @intFromEnum(chunk.OpCode.OP_NEGATE), 123, &allocator);
     try chunk.writeChunk(&newChunk, @intFromEnum(chunk.OpCode.OP_RETURN), 123, &allocator);
