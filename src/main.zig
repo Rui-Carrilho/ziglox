@@ -14,23 +14,23 @@ pub fn main() !void {
 
     var newChunk: chunk.Chunk = undefined;
     chunk.initChunk(&newChunk);
-    var constant: usize = try chunk.addConstant(&newChunk, 1.2 , &allocator);
+    var constant: usize = try chunk.addConstant(&newChunk, 1 , &allocator);
     try chunk.writeChunk(&newChunk, @intFromEnum(chunk.OpCode.OP_CONSTANT), 123, &allocator);
     try chunk.writeChunk(&newChunk, @intCast(constant), 123, &allocator);
 
-    constant = try chunk.addConstant(&newChunk, 3.4, &allocator);
+    constant = try chunk.addConstant(&newChunk, 2, &allocator);
+    try chunk.writeChunk(&newChunk, @intFromEnum(chunk.OpCode.OP_CONSTANT), 123, &allocator);
+    try chunk.writeChunk(&newChunk, @intCast(constant), 123, &allocator);
+
+    try chunk.writeChunk(&newChunk, @intFromEnum(chunk.OpCode.OP_MULTIPLY), 123, &allocator);
+
+    constant = try chunk.addConstant(&newChunk, 3, &allocator);
     try chunk.writeChunk(&newChunk, @intFromEnum(chunk.OpCode.OP_CONSTANT), 123, &allocator);
     try chunk.writeChunk(&newChunk, @intCast(constant), 123, &allocator);
 
     try chunk.writeChunk(&newChunk, @intFromEnum(chunk.OpCode.OP_ADD), 123, &allocator);
 
-    constant = try chunk.addConstant(&newChunk, 5.6, &allocator);
-    try chunk.writeChunk(&newChunk, @intFromEnum(chunk.OpCode.OP_CONSTANT), 123, &allocator);
-    try chunk.writeChunk(&newChunk, @intCast(constant), 123, &allocator);
-
-    try chunk.writeChunk(&newChunk, @intFromEnum(chunk.OpCode.OP_DIVIDE), 123, &allocator);
-    
-    try chunk.writeChunk(&newChunk, @intFromEnum(chunk.OpCode.OP_NEGATE), 123, &allocator);
+    //try chunk.writeChunk(&newChunk, @intFromEnum(chunk.OpCode.OP_NEGATE), 123, &allocator);
     try chunk.writeChunk(&newChunk, @intFromEnum(chunk.OpCode.OP_RETURN), 123, &allocator);
     
     debug.disassembleChunk(&newChunk, "test chunk");
