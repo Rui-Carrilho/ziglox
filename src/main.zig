@@ -89,7 +89,7 @@ pub fn readFile(path: []const u8, allocator: *std.mem.Allocator) ![]u8 {
     };
     defer file.close();
 
-    const fileSize = try file.getEndPos() catch {
+    const fileSize = file.getEndPos() catch {
         std.debug.print("Not enough memory to read \"{s}\".\n", .{path});
         std.process.exit(74);
     };
