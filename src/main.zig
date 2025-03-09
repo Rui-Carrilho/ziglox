@@ -54,14 +54,11 @@ pub fn main() !void {
 
 pub fn repl() !void {
     var line: [1024]u8 = undefined;
-    
+
     while (true) {
         std.debug.print("> ", .{});
 
-        const input = std.io.getStdIn().reader().readUntilDelimiterOrEof(
-            &line,
-            '\n'
-        ) catch |err| {
+        const input = std.io.getStdIn().reader().readUntilDelimiterOrEof(&line, '\n') catch |err| {
             std.debug.print("\n", .{});
             return err;
         };
@@ -80,23 +77,38 @@ pub fn runFile(path: *u8, allocator: *std.mem.Allocator) void {
     defer allocator.free(source);
 
     const result: VM.InterpretResult = interpret(source);
-    
+
     if (result == VM.InterpretResult.INTERPRET_COMPILE_ERROR) std.process.exit(65);
     if (result == VM.InterpretResult.INTERPRET_RUNTIME_ERROR) std.process.exit(70);
 }
 
 pub fn readFile(path: []const u8, allocator: *std.mem.Allocator) ![]u8 {
-    const file = try std.fs.cwd().openFile(path, .{});
+    const file = std.fs.cwd().openFile(path, .{}) catch {
+        std.debug.print("Could not open file \"{s}\".\n", .{path});
+        std.process.exit(74);
+    };
     defer file.close();
 
-    const fileSize = try file.getEndPos();
+    const fileSize = try file.getEndPos() catch {
+        std.debug.print("Not enough memory to read \"{s}\".\n", .{path});
+        std.process.exit(74);
+    };
 
-    const buffer = try allocator.alloc(u8, fileSize);
+    const buffer = allocator.alloc(u8, fileSize) catch {
+        std.debug.print("Not enough memory to read \"{s}\".\n", .{path});
+        std.process.exit(74);
+    };
 
-    const bytesRead = try file.readAll(buffer);
+    const bytesRead = file.readAll(buffer) catch {
+        std.debug.print("Could not read file \"{s}\".\n", .{path});
+        allocator.free(buffer);
+        std.process.exit(74);
+    };
 
     if (bytesRead < fileSize) {
-        return allocator.resize(buffer, bytesRead);
+        std.debug.print("Could not read file \"{s}\".\n", .{path});
+        allocator.free(buffer);
+        std.process.exit(74);
     }
 
     return buffer;
