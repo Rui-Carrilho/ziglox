@@ -75,4 +75,31 @@ pub fn repl() !void {
     }
 }
 
+pub fn runFile(path: *u8, allocator: *std.mem.Allocator) void {
+    const source = readFile(path);
+    defer allocator.free(source);
+
+    const result: VM.InterpretResult = interpret(source);
+    
+    if (result == VM.InterpretResult.INTERPRET_COMPILE_ERROR) std.process.exit(65);
+    if (result == VM.InterpretResult.INTERPRET_RUNTIME_ERROR) std.process.exit(70);
+}
+
+pub fn readFile(path: []const u8, allocator: *std.mem.Allocator) ![]u8 {
+    const file = try std.fs.cwd().openFile(path, .{});
+    defer file.close();
+
+    const fileSize = try file.getEndPos();
+
+    const buffer = try allocator.alloc(u8, fileSize);
+
+    const bytesRead = try file.readAll(buffer);
+
+    if (bytesRead < fileSize) {
+        return allocator.resize(buffer, bytesRead);
+    }
+
+    return buffer;
+}
+
 test "simple test" {}
