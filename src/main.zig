@@ -3,6 +3,7 @@ const memory = @import("memory.zig");
 const chunk = @import("chunk.zig");
 const debug = @import("debug.zig");
 const VM = @import("vm.zig");
+const Compiler = @import("compiler.zig");
 
 pub fn main() !void {
     // Allocate memory

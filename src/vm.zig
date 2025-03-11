@@ -2,6 +2,7 @@ const std = @import("std");
 const Chunk = @import("chunk.zig");
 const Value = @import("value.zig");
 const Debug = @import("debug.zig");
+const Compiler = @import("compiler.zig");
 
 const STACK_MAX = 256;
 
@@ -95,10 +96,9 @@ fn readByte() u8 {
     return byte;
 }
 
-pub fn interpret(chunk: *Chunk.Chunk) InterpretResult {
-    vm.chunk = chunk;
-    vm.ip = &chunk.code[0];
-    return run();
+pub fn interpret(source: []u8) InterpretResult {
+    Compiler.compile(source);
+    return InterpretResult.INTERPRET_OK;
 }
 
 pub fn binaryOp(comptime op: fn (f64, f64) f64) void {
