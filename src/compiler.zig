@@ -14,6 +14,6 @@ pub fn compile(source: []const u8) void {
         }
         std.debug.print("{d:2} '{s}'\n", .{@intFromEnum(token.type), token.start[0..token.length]});
 
-        if (token.type == .TOKEN_EOF) break;
+        if (token.type == Scanner.TokenType.TOKEN_EOF) break;
     }
 }
