@@ -47,5 +47,16 @@ pub fn initScanner(source: []const u8) void {
 }
 
 pub fn scanToken() Token {
+    scanner.start = scanner.current;
+    if(isAtEnd()) return makeToken(TokenType.TOKEN_EOF);
+    
+    return errorToken("Unexpected character");
+}
+
+pub fn isAtEnd() bool {
+    return scanner.current.len == 0;
+}
+
+pub fn makeToken() Token {
     
 }
