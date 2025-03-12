@@ -57,6 +57,20 @@ pub fn isAtEnd() bool {
     return scanner.current.len == 0;
 }
 
-pub fn makeToken() Token {
-    
+pub fn makeToken(tokenType: TokenType) Token {
+    var token: Token = undefined;
+    token.type = tokenType;
+    token.start = scanner.start;
+    token.length = @as(i32, scanner.current - scanner.start);
+    token.line = scanner.line;
+    return token;
+}
+
+pub fn errorToken(message: []const u8) Token {
+    var token: Token = undefined;
+    token.type = TokenType.TOKEN_EOF;
+    token.start = message;
+    token.length = @as(i32, message.len);
+    token.line = scanner.line;
+    return token;
 }
