@@ -105,6 +105,11 @@ pub fn peek() u8 {
     return scanner.current;
 }
 
+pub fn peekNext() u8 {
+    if (isAtEnd()) return '\0';
+    return scanner.current[1];
+}
+
 pub fn match(expected: u8) bool {
     if(isAtEnd()) return false;
     if(scanner.current != expected) return false;
