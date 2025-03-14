@@ -81,6 +81,11 @@ pub fn scanToken() Token {
         '+' => return makeToken(TokenType.TOKEN_PLUS),
         '/' => return makeToken(TokenType.TOKEN_SLASH),
         '*' => return makeToken(TokenType.TOKEN_STAR),
+        '!' => return makeToken(if (match('=')) TokenType.TOKEN_BANG_EQUAL else TokenType.TOKEN_BANG),
+        '=' => return makeToken(if (match('=')) TokenType.TOKEN_EQUAL_EQUAL else TokenType.TOKEN_EQUAL),
+        '<' => return makeToken(if (match('=')) TokenType.TOKEN_LESS_EQUAL else TokenType.TOKEN_LESS),
+        '>' => return makeToken(if (match('=')) TokenType.TOKEN_GREATER_EQUAL else TokenType.TOKEN_GREATER),
+        // other cases would go here
     }
 
     return errorToken("Unexpected character");
@@ -93,6 +98,13 @@ pub fn isAtEnd() bool {
 pub fn advance() u8 {
     scanner.current += 1;
     return scanner.current[-1];
+}
+
+pub fn match(expected: u8) bool {
+    if(isAtEnd()) return false;
+    if(scanner.current != expected) return false;
+    scanner.current += 1;
+    return true;
 }
 
 pub fn makeToken(tokenType: TokenType) Token {
