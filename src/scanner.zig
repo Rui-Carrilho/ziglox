@@ -64,6 +64,7 @@ pub fn initScanner(source: []const u8) void {
 }
 
 pub fn scanToken() Token {
+    skipWhitespace();
     scanner.start = scanner.current;
     if (isAtEnd()) return makeToken(TokenType.TOKEN_EOF);
 
@@ -100,6 +101,10 @@ pub fn advance() u8 {
     return scanner.current[-1];
 }
 
+pub fn peek() u8 {
+    return scanner.current;
+}
+
 pub fn match(expected: u8) bool {
     if(isAtEnd()) return false;
     if(scanner.current != expected) return false;
@@ -123,4 +128,20 @@ pub fn errorToken(message: []const u8) Token {
     token.length = @as(i32, message.len);
     token.line = scanner.line;
     return token;
+}
+
+pub fn skipWhitespace() bool {
+    while (true) {
+        var c: u8 = peek();
+        switch (c) {
+            ' ' => ,
+            '\r' => ,
+            '\t' => advance(),
+            '\n' => {
+                scanner.line += 1;
+                advance()
+            }
+            else => return,
+        }
+    }
 }
