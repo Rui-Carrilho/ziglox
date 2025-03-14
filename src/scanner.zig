@@ -140,7 +140,14 @@ pub fn skipWhitespace() bool {
             '\n' => {
                 scanner.line += 1;
                 advance()
-            }
+            },
+            '/' => {
+                if (peekNext() == '/') {
+                    while (peek() != '\n' and !isAtEnd()) advance();
+                } else {
+                    return,
+                }
+            },
             else => return,
         }
     }
