@@ -63,12 +63,17 @@ pub fn initScanner(source: []const u8) void {
     scanner.line = 1;
 }
 
+pub fn isDigit() bool {
+    return c >= '0' and c <= '9';
+}
+
 pub fn scanToken() Token {
     skipWhitespace();
     scanner.start = scanner.current;
     if (isAtEnd()) return makeToken(TokenType.TOKEN_EOF);
 
     var c: u8 = advance();
+    if (isDigit(c)) return number();
 
     switch (c) {
         '(' => return makeToken(TokenType.TOKEN_LEFT_PAREN),
@@ -86,10 +91,23 @@ pub fn scanToken() Token {
         '=' => return makeToken(if (match('=')) TokenType.TOKEN_EQUAL_EQUAL else TokenType.TOKEN_EQUAL),
         '<' => return makeToken(if (match('=')) TokenType.TOKEN_LESS_EQUAL else TokenType.TOKEN_LESS),
         '>' => return makeToken(if (match('=')) TokenType.TOKEN_GREATER_EQUAL else TokenType.TOKEN_GREATER),
+        '"' => return string();
         // other cases would go here
     }
 
     return errorToken("Unexpected character");
+}
+
+pub fn string() Token {
+    while (peek() != '"' and !isAtEnd()) {
+        if (peek() == '\n') scanner.line += 1;
+        advance();
+    }
+
+    if(isAtEnd()) return errorToken("Unterminated string.");
+
+    advance();
+    return makeToken(TokenType.TOKEN_STRING);
 }
 
 pub fn isAtEnd() bool {
@@ -156,4 +174,16 @@ pub fn skipWhitespace() bool {
             else => return,
         }
     }
+}
+
+pub fn number() Token {
+    while (isDigit(peek())) advance();
+
+    if (peek() == '.' and isDigit(peekNext())) {
+        advance();
+
+        while (isDigit(peek())) advance();
+    }
+
+    return makeToken(TokenType.TOKEN_NUMBER);
 }
