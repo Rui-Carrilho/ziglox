@@ -180,6 +180,15 @@ pub fn skipWhitespace() bool {
     }
 }
 
+pub fn identifierType() {
+    return TokenType.TOKEN_IDENTIFIER;
+}
+
+pub fn identifier() Token {
+    while (isAlpha(peek()) or isDigit(peek())) advance();
+    return makeToken(identifierType());
+}
+
 pub fn number() Token {
     while (isDigit(peek())) advance();
 
