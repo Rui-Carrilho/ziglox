@@ -63,6 +63,10 @@ pub fn initScanner(source: []const u8) void {
     scanner.line = 1;
 }
 
+pub fn isAlpha(c: u8) void {
+    return(c >= 'a' and c <= 'z') or (c >= 'A' and c <= 'Z') or c == '_';
+}
+
 pub fn isDigit() bool {
     return c >= '0' and c <= '9';
 }
