@@ -11,46 +11,26 @@ pub fn main() !void {
     var allocator = gpa.allocator();
     //defer _ = gpa.deinit();
 
-    const args = std.os.argv;
-    const argc = args.len;
-
     VM.initVM();
 
-    if (argc == 1) {
+    var args = try std.process.argsWithAllocator(allocator);
+
+    // Skip the program name
+    _ = args.next();
+
+    // Count remaining arguments
+    const arg = args.next();
+
+    if (arg == null) {
         try repl();
-    } else if (argc == 2) {
-        try runFile(args[1]);
+    } else if (args.next() == null) {
+        runFile(arg.?, &allocator);
     } else {
         std.debug.print("Usage: clox [path]\n", .{});
         std.process.exit(64);
     }
 
-    var newChunk: chunk.Chunk = undefined;
-    chunk.initChunk(&newChunk);
-    var constant: usize = try chunk.addConstant(&newChunk, 3, &allocator);
-    try chunk.writeChunk(&newChunk, @intFromEnum(chunk.OpCode.OP_CONSTANT), 123, &allocator);
-    try chunk.writeChunk(&newChunk, @intCast(constant), 123, &allocator);
-
-    constant = try chunk.addConstant(&newChunk, 2, &allocator);
-    try chunk.writeChunk(&newChunk, @intFromEnum(chunk.OpCode.OP_CONSTANT), 123, &allocator);
-    try chunk.writeChunk(&newChunk, @intCast(constant), 123, &allocator);
-
-    try chunk.writeChunk(&newChunk, @intFromEnum(chunk.OpCode.OP_SUBTRACT), 123, &allocator);
-
-    constant = try chunk.addConstant(&newChunk, 1, &allocator);
-    try chunk.writeChunk(&newChunk, @intFromEnum(chunk.OpCode.OP_CONSTANT), 123, &allocator);
-    try chunk.writeChunk(&newChunk, @intCast(constant), 123, &allocator);
-
-    try chunk.writeChunk(&newChunk, @intFromEnum(chunk.OpCode.OP_SUBTRACT), 123, &allocator);
-
-    //try chunk.writeChunk(&newChunk, @intFromEnum(chunk.OpCode.OP_NEGATE), 123, &allocator);
-    try chunk.writeChunk(&newChunk, @intFromEnum(chunk.OpCode.OP_RETURN), 123, &allocator);
-
-    debug.disassembleChunk(&newChunk, "test chunk");
-    _ = VM.interpret(&newChunk);
-
     VM.freeVM();
-    chunk.freeChunk(&newChunk, &allocator);
 }
 
 pub fn repl() !void {
@@ -69,21 +49,21 @@ pub fn repl() !void {
             break;
         }
 
-        try interpret(input.?);
+        _ = VM.interpret(input.?);
     }
 }
 
-pub fn runFile(path: *u8, allocator: *std.mem.Allocator) void {
-    const source = readFile(path);
+pub fn runFile(path: []const u8, allocator: *std.mem.Allocator) void {
+    const source = readFile(path, allocator);
     defer allocator.free(source);
 
-    const result: VM.InterpretResult = interpret(source);
+    const result: VM.InterpretResult = VM.interpret(source);
 
     if (result == VM.InterpretResult.INTERPRET_COMPILE_ERROR) std.process.exit(65);
     if (result == VM.InterpretResult.INTERPRET_RUNTIME_ERROR) std.process.exit(70);
 }
 
-pub fn readFile(path: []const u8, allocator: *std.mem.Allocator) ![]u8 {
+pub fn readFile(path: []const u8, allocator: *std.mem.Allocator) []u8 {
     const file = std.fs.cwd().openFile(path, .{}) catch {
         std.debug.print("Could not open file \"{s}\".\n", .{path});
         std.process.exit(74);

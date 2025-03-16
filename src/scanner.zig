@@ -1,6 +1,10 @@
 const std = @import("std");
 
-pub const Scanner = struct { start: []const u8, current: []const u8, line: i8 };
+pub const Scanner = struct { 
+    start: []const u8, 
+    current: []const u8, 
+    line: i8 
+};
 
 pub const TokenType = enum {
     // Single-character tokens.
@@ -53,7 +57,12 @@ pub const TokenType = enum {
     TOKEN_EOF,
 };
 
-pub const Token = struct { type: TokenType, start: []const u8, length: i32, line: i32 };
+pub const Token = struct { 
+    type: TokenType, 
+    start: []const u8, 
+    length: i32, 
+    line: i32 
+};
 
 var scanner: Scanner = undefined;
 
@@ -63,20 +72,21 @@ pub fn initScanner(source: []const u8) void {
     scanner.line = 1;
 }
 
-pub fn isAlpha(c: u8) void {
+pub fn isAlpha(c: u8) bool {
     return(c >= 'a' and c <= 'z') or (c >= 'A' and c <= 'Z') or c == '_';
 }
 
-pub fn isDigit() bool {
+pub fn isDigit(c: u8) bool {
     return c >= '0' and c <= '9';
 }
 
 pub fn scanToken() Token {
-    skipWhitespace();
+    _ = skipWhitespace();
     scanner.start = scanner.current;
     if (isAtEnd()) return makeToken(TokenType.TOKEN_EOF);
 
-    var c: u8 = advance();
+    const c = advance();
+    if (isAlpha(c)) return identifier();
     if (isDigit(c)) return number();
 
     switch (c) {
@@ -95,7 +105,8 @@ pub fn scanToken() Token {
         '=' => return makeToken(if (match('=')) TokenType.TOKEN_EQUAL_EQUAL else TokenType.TOKEN_EQUAL),
         '<' => return makeToken(if (match('=')) TokenType.TOKEN_LESS_EQUAL else TokenType.TOKEN_LESS),
         '>' => return makeToken(if (match('=')) TokenType.TOKEN_GREATER_EQUAL else TokenType.TOKEN_GREATER),
-        '"' => return string()
+        '"' => return string(),
+        else => {}
         // other cases would go here
     }
 
@@ -128,7 +139,7 @@ pub fn peek() u8 {
 }
 
 pub fn peekNext() u8 {
-    if (isAtEnd()) return '\0';
+    if (isAtEnd()) return 0;
     return scanner.current[1];
 }
 
@@ -143,7 +154,7 @@ pub fn makeToken(tokenType: TokenType) Token {
     var token: Token = undefined;
     token.type = tokenType;
     token.start = scanner.start;
-    token.length = @as(i32, scanner.current - scanner.start);
+    token.length = @intCast(@intFromPtr(scanner.current.ptr) - @intFromPtr(scanner.start.ptr));
     token.line = scanner.line;
     return token;
 }
@@ -157,22 +168,20 @@ pub fn errorToken(message: []const u8) Token {
     return token;
 }
 
-pub fn skipWhitespace() bool {
+pub fn skipWhitespace() void {
     while (true) {
-        var c: u8 = peek();
+        const c = peek();
         switch (c) {
-            ' ' => ,
-            '\r' => ,
-            '\t' => advance(),
+            ' ', '\r', '\t' => _ = advance(),
             '\n' => {
                 scanner.line += 1;
-                advance()
+                _ = advance();
             },
             '/' => {
                 if (peekNext() == '/') {
-                    while (peek() != '\n' and !isAtEnd()) advance();
+                    while (peek() != '\n' and !isAtEnd()) _ = advance();
                 } else {
-                    return,
+                    return;
                 }
             },
             else => return,
@@ -180,7 +189,7 @@ pub fn skipWhitespace() bool {
     }
 }
 
-pub fn identifierType() {
+pub fn identifierType() TokenType {
     return TokenType.TOKEN_IDENTIFIER;
 }
 
