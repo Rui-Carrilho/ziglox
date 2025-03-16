@@ -95,7 +95,7 @@ pub fn scanToken() Token {
         '=' => return makeToken(if (match('=')) TokenType.TOKEN_EQUAL_EQUAL else TokenType.TOKEN_EQUAL),
         '<' => return makeToken(if (match('=')) TokenType.TOKEN_LESS_EQUAL else TokenType.TOKEN_LESS),
         '>' => return makeToken(if (match('=')) TokenType.TOKEN_GREATER_EQUAL else TokenType.TOKEN_GREATER),
-        '"' => return string();
+        '"' => return string()
         // other cases would go here
     }
 
