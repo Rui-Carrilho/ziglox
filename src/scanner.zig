@@ -1,8 +1,8 @@
 const std = @import("std");
 
 pub const Scanner = struct { 
-    start: []const u8, 
-    current: []const u8, 
+    start: [*]const u8, 
+    current: [*]const u8, 
     line: i8 
 };
 
@@ -59,21 +59,21 @@ pub const TokenType = enum {
 
 pub const Token = struct { 
     type: TokenType, 
-    start: []const u8, 
+    start: [*]const u8, 
     length: i32, 
     line: i32 
 };
 
 var scanner: Scanner = undefined;
 
-pub fn initScanner(source: []const u8) void {
-    scanner.start = source;
-    scanner.current = source;
+pub fn initScanner(source: []u8) void {
+    scanner.start = @ptrCast(source.ptr);
+    scanner.current = @ptrCast(source.ptr);
     scanner.line = 1;
 }
 
 pub fn isAlpha(c: u8) bool {
-    return(c >= 'a' and c <= 'z') or (c >= 'A' and c <= 'Z') or c == '_';
+    return (c >= 'a' and c <= 'z') or (c >= 'A' and c <= 'Z') or c == '_';
 }
 
 pub fn isDigit(c: u8) bool {
@@ -106,7 +106,7 @@ pub fn scanToken() Token {
         '<' => return makeToken(if (match('=')) TokenType.TOKEN_LESS_EQUAL else TokenType.TOKEN_LESS),
         '>' => return makeToken(if (match('=')) TokenType.TOKEN_GREATER_EQUAL else TokenType.TOKEN_GREATER),
         '"' => return string(),
-        else => {}
+        else => {std.debug.print("we got a fuckup here - {d} {c}", .{c, c});},
         // other cases would go here
     }
 
@@ -116,26 +116,27 @@ pub fn scanToken() Token {
 pub fn string() Token {
     while (peek() != '"' and !isAtEnd()) {
         if (peek() == '\n') scanner.line += 1;
-        advance();
+        _ = advance();
     }
 
-    if(isAtEnd()) return errorToken("Unterminated string.");
+    if (isAtEnd()) return errorToken("Unterminated string.");
 
-    advance();
+    _ = advance();
     return makeToken(TokenType.TOKEN_STRING);
 }
 
 pub fn isAtEnd() bool {
-    return scanner.current.len == 0;
+    return scanner.current[0] == 0;
 }
 
 pub fn advance() u8 {
-    scanner.current += 1;
-    return scanner.current[-1];
+    const value = scanner.current[0];
+    scanner.current = @ptrFromInt(@intFromPtr(scanner.current) + @sizeOf(u8));
+    return value;
 }
 
 pub fn peek() u8 {
-    return scanner.current;
+    return scanner.current[0];
 }
 
 pub fn peekNext() u8 {
@@ -144,9 +145,9 @@ pub fn peekNext() u8 {
 }
 
 pub fn match(expected: u8) bool {
-    if(isAtEnd()) return false;
-    if(scanner.current != expected) return false;
-    scanner.current += 1;
+    if (isAtEnd()) return false;
+    if (scanner.current[0] != expected) return false;
+    scanner.current = @ptrFromInt(@intFromPtr(scanner.current) + @sizeOf(u8));
     return true;
 }
 
@@ -154,7 +155,7 @@ pub fn makeToken(tokenType: TokenType) Token {
     var token: Token = undefined;
     token.type = tokenType;
     token.start = scanner.start;
-    token.length = @intCast(@intFromPtr(scanner.current.ptr) - @intFromPtr(scanner.start.ptr));
+    token.length = @intCast(@intFromPtr(scanner.current) - @intFromPtr(scanner.start));
     token.line = scanner.line;
     return token;
 }
@@ -162,8 +163,8 @@ pub fn makeToken(tokenType: TokenType) Token {
 pub fn errorToken(message: []const u8) Token {
     var token: Token = undefined;
     token.type = TokenType.TOKEN_EOF;
-    token.start = message;
-    token.length = @as(i32, message.len);
+    token.start = @ptrCast(message.ptr);
+    token.length = @intCast(message.len);
     token.line = scanner.line;
     return token;
 }
@@ -194,17 +195,17 @@ pub fn identifierType() TokenType {
 }
 
 pub fn identifier() Token {
-    while (isAlpha(peek()) or isDigit(peek())) advance();
+    while (isAlpha(peek()) or isDigit(peek())) _ = advance();
     return makeToken(identifierType());
 }
 
 pub fn number() Token {
-    while (isDigit(peek())) advance();
+    while (isDigit(peek())) _ = advance();
 
     if (peek() == '.' and isDigit(peekNext())) {
-        advance();
+        _ = advance();
 
-        while (isDigit(peek())) advance();
+        while (isDigit(peek())) _ = advance();
     }
 
     return makeToken(TokenType.TOKEN_NUMBER);

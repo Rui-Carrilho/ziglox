@@ -1,7 +1,7 @@
 const std = @import("std");
 const Scanner = @import("scanner.zig");
 
-pub fn compile(source: []const u8) void {
+pub fn compile(source: []u8) void {
     Scanner.initScanner(source);
     var line: i32 = -1;
     while (true) {
@@ -12,7 +12,10 @@ pub fn compile(source: []const u8) void {
         } else {
             std.debug.print("   | ", .{});
         }
-        std.debug.print("{d:2} '{s}'\n", .{@intFromEnum(token.type), token.start[0..@intCast(token.length)]});
+        var slice: []const u8 = undefined;
+        slice.ptr = @ptrCast(token.start);
+        slice.len = @intCast(token.length);
+        std.debug.print("{d:2} '{s}'\n", .{@intFromEnum(token.type), slice});
 
         if (token.type == Scanner.TokenType.TOKEN_EOF) break;
     }
