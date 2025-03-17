@@ -1,6 +1,10 @@
 const std = @import("std");
 
-pub const Scanner = struct { start: [*]const u8, current: [*]const u8, line: i8 };
+pub const Scanner = struct { 
+    start: [*]const u8, 
+    current: [*]const u8, 
+    line: i8 
+};
 
 pub const TokenType = enum {
     // Single-character tokens.
@@ -53,7 +57,11 @@ pub const TokenType = enum {
     TOKEN_EOF,
 };
 
-pub const Token = struct { type: TokenType, start: [*]const u8, length: i32, line: i32 };
+pub const Token = struct { 
+    type: TokenType,
+    name: []const u8, 
+    line: i32 
+};
 
 var scanner: Scanner = undefined;
 
@@ -149,8 +157,7 @@ pub fn match(expected: u8) bool {
 pub fn makeToken(tokenType: TokenType) Token {
     var token: Token = undefined;
     token.type = tokenType;
-    token.start = scanner.start;
-    token.length = @intCast(@intFromPtr(scanner.current) - @intFromPtr(scanner.start));
+    token.name = scanner.start[0..scanner.current-scanner.start];
     token.line = scanner.line;
     //std.debug.print("the scanner line is {d}, so the token line is {d}", .{scanner.line, token.line});
 
@@ -160,8 +167,7 @@ pub fn makeToken(tokenType: TokenType) Token {
 pub fn errorToken(message: []const u8) Token {
     var token: Token = undefined;
     token.type = TokenType.TOKEN_EOF;
-    token.start = @ptrCast(message.ptr);
-    token.length = @intCast(message.len);
+    token.name = message;
     token.line = scanner.line;
     return token;
 }
@@ -206,9 +212,9 @@ pub fn identifierType() TokenType {
             const token_length = @intFromPtr(scanner.current) - @intFromPtr(scanner.start);
             if (token_length > 1) {
                 switch (scanner.start[1]) {
-                    'a' => return checkKeyword(2, 3, "lse", .FALSE),
-                    'o' => return checkKeyword(2, 1, "r", .FOR),
-                    'u' => return checkKeyword(2, 1, "n", .FUN),
+                    'a' => return checkKeyword(2, 3, "lse", TokenType.TOKEN_FALSE),
+                    'o' => return checkKeyword(2, 1, "r", TokenType.TOKEN_FOR),
+                    'u' => return checkKeyword(2, 1, "n", TokenType.TOKEN_FUN),
                     else => {},
                 }
             }
@@ -219,6 +225,16 @@ pub fn identifierType() TokenType {
         'p' => return checkKeyword(1, 4, "rint", TokenType.TOKEN_PRINT),
         'r' => return checkKeyword(1, 5, "eturn", TokenType.TOKEN_RETURN),
         's' => return checkKeyword(1, 4, "uper", TokenType.TOKEN_SUPER),
+        't' => {
+            const token_length = @intFromPtr(scanner.current) - @intFromPtr(scanner.start);
+            if (token_length > 1) {
+                switch (scanner.start[1]) {
+                    'h' => return checkKeyword(2, 2, "is", TokenType.TOKEN_THIS),
+                    'r' => return checkKeyword(2, 2, "ue", TokenType.TOKEN_TRUE),
+                    else => {},
+                }
+            }
+        },
         'v' => return checkKeyword(1, 2, "ar", TokenType.TOKEN_VAR),
         'w' => return checkKeyword(1, 4, "hile", TokenType.TOKEN_WHILE),
         else => {
