@@ -96,7 +96,7 @@ fn readByte() u8 {
     return byte;
 }
 
-pub fn interpret(source: []u8) InterpretResult {
+pub fn interpret(source: []const u8) InterpretResult {
     Compiler.compile(source);
     return InterpretResult.INTERPRET_OK;
 }

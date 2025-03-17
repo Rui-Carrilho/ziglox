@@ -1,8 +1,9 @@
 const std = @import("std");
 const Scanner = @import("scanner.zig");
 
-pub fn compile(source: []u8) void {
+pub fn compile(source: []const u8) void {
     Scanner.initScanner(source);
+    std.debug.print("in compile - source: {d} (d) {s} (s)", .{source, source});
     var line: i32 = -1;
     while (true) {
         const token = Scanner.scanToken();

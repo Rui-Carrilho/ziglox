@@ -40,16 +40,22 @@ pub fn repl() !void {
         std.debug.print("> ", .{});
 
         const input = std.io.getStdIn().reader().readUntilDelimiterOrEof(&line, '\n') catch |err| {
-            std.debug.print("\n", .{});
+            std.debug.print("we got an error getting the input\n", .{});
             return err;
         };
 
         if (input == null) {
-            std.debug.print("\n", .{});
+            std.debug.print("null input\n", .{});
             break;
         }
 
-        _ = VM.interpret(input.?);
+        //gotta trim the input i guess
+        const new_input = std.mem.trimRight(u8, input.?, "\r");
+
+        //std.debug.print("\nthe\n input\n was: {c} (c)\n or {d} (d)\n", .{input.?, input.?});
+        std.debug.print("the input is now: {c} (c) or {d} (d)\n", .{new_input, new_input});
+
+        _ = VM.interpret(new_input);
     }
 }
 

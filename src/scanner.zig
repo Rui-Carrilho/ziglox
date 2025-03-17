@@ -66,7 +66,7 @@ pub const Token = struct {
 
 var scanner: Scanner = undefined;
 
-pub fn initScanner(source: []u8) void {
+pub fn initScanner(source: []const u8) void {
     scanner.start = @ptrCast(source.ptr);
     scanner.current = @ptrCast(source.ptr);
     scanner.line = 1;
@@ -88,10 +88,12 @@ pub fn scanToken() Token {
     const c = advance();
     if (isAlpha(c)) return identifier();
     if (isDigit(c)) return number();
+    
+    std.debug.print("in scanToken - {d} (d)", .{c});
 
     switch (c) {
         '(' => return makeToken(TokenType.TOKEN_LEFT_PAREN),
-        ')' => return makeToken(TokenType.TOKEN_LEFT_PAREN),
+        ')' => return makeToken(TokenType.TOKEN_RIGHT_PAREN),
         '{' => return makeToken(TokenType.TOKEN_LEFT_BRACE),
         '}' => return makeToken(TokenType.TOKEN_RIGHT_BRACE),
         ';' => return makeToken(TokenType.TOKEN_SEMICOLON),
@@ -106,7 +108,9 @@ pub fn scanToken() Token {
         '<' => return makeToken(if (match('=')) TokenType.TOKEN_LESS_EQUAL else TokenType.TOKEN_LESS),
         '>' => return makeToken(if (match('=')) TokenType.TOKEN_GREATER_EQUAL else TokenType.TOKEN_GREATER),
         '"' => return string(),
-        else => {std.debug.print("we got a fuckup here - {d} {c}", .{c, c});},
+        else => {
+            //std.debug.print("we got a fuckup here: {d} (d) - {c} (c)", .{c, c});
+            },
         // other cases would go here
     }
 
