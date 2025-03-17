@@ -190,7 +190,8 @@ pub fn skipWhitespace() void {
 pub fn checkKeyword(start: u8, length: u8, rest: []const u8, tokenType: TokenType) TokenType {
     const current_length = @intFromPtr(scanner.current) - @intFromPtr(scanner.start);
     if (current_length == start + length and
-        std.mem.eql(u8, scanner.start[start .. start + length], rest)) {
+        std.mem.eql(u8, scanner.start[start .. start + length], rest))
+    {
         return tokenType;
     }
 
@@ -200,6 +201,19 @@ pub fn checkKeyword(start: u8, length: u8, rest: []const u8, tokenType: TokenTyp
 pub fn identifierType() TokenType {
     switch (scanner.start[0]) {
         'a' => return checkKeyword(1, 2, "nd", TokenType.TOKEN_AND),
+        'c' => return checkKeyword(1, 4, "lass", TokenType.TOKEN_CLASS),
+        'e' => return checkKeyword(1, 3, "lse", TokenType.TOKEN_ELSE),
+        'i' => return checkKeyword(1, 1, "f", TokenType.TOKEN_IF),
+        'n' => return checkKeyword(1, 2, "il", TokenType.TOKEN_NIL),
+        'o' => return checkKeyword(1, 1, "r", TokenType.TOKEN_OR),
+        'p' => return checkKeyword(1, 4, "rint", TokenType.TOKEN_PRINT),
+        'r' => return checkKeyword(1, 5, "eturn", TokenType.TOKEN_RETURN),
+        's' => return checkKeyword(1, 4, "uper", TokenType.TOKEN_SUPER),
+        'v' => return checkKeyword(1, 2, "ar", TokenType.TOKEN_VAR),
+        'w' => return checkKeyword(1, 4, "hile", TokenType.TOKEN_WHILE),
+        else => {
+            //std.debug.print("", .{});
+        }
     }
     return TokenType.TOKEN_IDENTIFIER;
 }
