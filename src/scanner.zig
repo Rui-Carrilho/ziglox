@@ -1,10 +1,6 @@
 const std = @import("std");
 
-pub const Scanner = struct { 
-    start: [*]const u8, 
-    current: [*]const u8, 
-    line: i8 
-};
+pub const Scanner = struct { start: [*]const u8, current: [*]const u8, line: i8 };
 
 pub const TokenType = enum {
     // Single-character tokens.
@@ -57,12 +53,7 @@ pub const TokenType = enum {
     TOKEN_EOF,
 };
 
-pub const Token = struct { 
-    type: TokenType, 
-    start: [*]const u8, 
-    length: i32, 
-    line: i32 
-};
+pub const Token = struct { type: TokenType, start: [*]const u8, length: i32, line: i32 };
 
 var scanner: Scanner = undefined;
 
@@ -88,8 +79,8 @@ pub fn scanToken() Token {
     const c = advance();
     if (isAlpha(c)) return identifier();
     if (isDigit(c)) return number();
-    
-    std.debug.print("in scanToken - {d} (d)", .{c});
+
+    //std.debug.print("in scanToken - {d} (d)", .{c});
 
     switch (c) {
         '(' => return makeToken(TokenType.TOKEN_LEFT_PAREN),
@@ -109,8 +100,8 @@ pub fn scanToken() Token {
         '>' => return makeToken(if (match('=')) TokenType.TOKEN_GREATER_EQUAL else TokenType.TOKEN_GREATER),
         '"' => return string(),
         else => {
-            //std.debug.print("we got a fuckup here: {d} (d) - {c} (c)", .{c, c});
-            },
+            std.debug.print("we got a fuckup here: {d} (d) - {c} (c)", .{ c, c });
+        },
         // other cases would go here
     }
 
@@ -161,6 +152,8 @@ pub fn makeToken(tokenType: TokenType) Token {
     token.start = scanner.start;
     token.length = @intCast(@intFromPtr(scanner.current) - @intFromPtr(scanner.start));
     token.line = scanner.line;
+    //std.debug.print("the scanner line is {d}, so the token line is {d}", .{scanner.line, token.line});
+
     return token;
 }
 
@@ -194,7 +187,20 @@ pub fn skipWhitespace() void {
     }
 }
 
+pub fn checkKeyword(start: u8, length: u8, rest: []const u8, tokenType: TokenType) TokenType {
+    const current_length = @intFromPtr(scanner.current) - @intFromPtr(scanner.start);
+    if (current_length == start + length and
+        std.mem.eql(u8, scanner.start[start .. start + length], rest)) {
+        return tokenType;
+    }
+
+    return TokenType.TOKEN_IDENTIFIER; // Assuming TOKEN_IDENTIFIER is defined as an enum
+}
+
 pub fn identifierType() TokenType {
+    switch (scanner.start[0]) {
+        'a' => return checkKeyword(1, 2, "nd", TokenType.TOKEN_AND),
+    }
     return TokenType.TOKEN_IDENTIFIER;
 }
 
