@@ -50,13 +50,13 @@ pub fn repl() !void {
         }
 
         //gotta trim the input i guess
-        const new_input = std.mem.trimRight(u8, input.?, "\r");
-        const final_input = addNullTerminator(line.len, new_input.len, line);
+        var new_input = std.mem.trimRight(u8, input.?, "\r");
+        new_input = addNullTerminator(line.len, new_input.len, line);
 
         //std.debug.print("\nthe\n input\n was: {c} (c)\n or {d} (d)\n", .{input.?, input.?});
         std.debug.print("the input is now: {c} (c) or {d} (d)\n", .{new_input, new_input});
 
-        _ = VM.interpret(final_input);
+        _ = VM.interpret(new_input);
     }
 }
 
