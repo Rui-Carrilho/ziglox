@@ -1,8 +1,8 @@
 const std = @import("std");
 
 pub const Scanner = struct { 
-    start: [*]const u8, 
-    current: [*]const u8, 
+    start: [*:0]const u8, 
+    current: [*:0]const u8, 
     line: i8 
 };
 
@@ -157,7 +157,8 @@ pub fn match(expected: u8) bool {
 pub fn makeToken(tokenType: TokenType) Token {
     var token: Token = undefined;
     token.type = tokenType;
-    token.name = scanner.start[0..scanner.current-scanner.start];
+    const length = scanner.current - scanner.start;
+    token.name = scanner.start[0..length];
     token.line = scanner.line;
     //std.debug.print("the scanner line is {d}, so the token line is {d}", .{scanner.line, token.line});
 
