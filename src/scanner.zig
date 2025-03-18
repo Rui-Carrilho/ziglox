@@ -134,7 +134,7 @@ pub fn isAtEnd() bool {
 
 pub fn advance() u8 {
     const value = scanner.current[0];
-    scanner.current = @ptrFromInt(@intFromPtr(scanner.current) + @sizeOf(u8));
+    scanner.current += 1;
     return value;
 }
 
@@ -150,7 +150,7 @@ pub fn peekNext() u8 {
 pub fn match(expected: u8) bool {
     if (isAtEnd()) return false;
     if (scanner.current[0] != expected) return false;
-    scanner.current = @ptrFromInt(@intFromPtr(scanner.current) + @sizeOf(u8));
+    scanner.current += 1;
     return true;
 }
 
@@ -195,7 +195,7 @@ pub fn skipWhitespace() void {
 }
 
 pub fn checkKeyword(start: u8, length: u8, rest: []const u8, tokenType: TokenType) TokenType {
-    const current_length = @intFromPtr(scanner.current) - @intFromPtr(scanner.start);
+    const current_length = scanner.current - scanner.start;
 
     if (current_length == start + length and std.mem.eql(u8, scanner.start[start .. start + length], rest)) {
         return tokenType;
