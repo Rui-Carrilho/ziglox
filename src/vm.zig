@@ -8,15 +8,15 @@ const STACK_MAX = 256;
 
 pub const VM = struct { 
     chunk: *Chunk.Chunk, 
-    ip: *u8, 
+    ip: [*]u8, 
     stack: [STACK_MAX]Value.Value, 
-    stackTop: *Value.Value 
+    stackTop: [*]Value.Value 
 };
 
 var vm: VM = undefined;
 
 pub fn resetStack() void {
-    vm.stackTop = &vm.stack[0];
+    vm.stackTop = @ptrCast(&vm.stack[0]);
 }
 
 pub const InterpretResult = enum { INTERPRET_OK, INTERPRET_COMPILE_ERROR, INTERPRET_RUNTIME_ERROR };
@@ -29,11 +29,11 @@ pub fn freeVM() void {}
 
 pub fn push(value: Value.Value) void {
     vm.stackTop.* = value;
-    vm.stackTop = @ptrFromInt(@intFromPtr(vm.stackTop) + @sizeOf(Value.Value));
+    vm.stackTop += 1;
 }
 
 pub fn pop() Value.Value {
-    vm.stackTop = @ptrFromInt(@intFromPtr(vm.stackTop) - @sizeOf(Value.Value));
+    vm.stackTop -= 1;
     return vm.stackTop.*;
 }
 
@@ -47,7 +47,7 @@ pub fn run() InterpretResult {
                 std.debug.print(" ]", .{});
             }
             std.debug.print("\n", .{});
-            _ = Debug.disassembleInstruction(vm.chunk, @intFromPtr(vm.ip) - @intFromPtr(&vm.chunk.code[0]));
+            _ = Debug.disassembleInstruction(vm.chunk, vm.ip - &vm.chunk.code[0]);
         }
         const instruction = readByte();
         switch (instruction) {
@@ -92,7 +92,7 @@ fn readConstant() Value.Value {
 
 fn readByte() u8 {
     const byte = vm.ip.*;
-    vm.ip = @ptrFromInt(@intFromPtr(vm.ip) + @sizeOf(u8));
+    vm.ip += 1;
     return byte;
 }
 

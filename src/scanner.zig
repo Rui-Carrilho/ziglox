@@ -210,7 +210,7 @@ pub fn identifierType() TokenType {
         'c' => return checkKeyword(1, 4, "lass", TokenType.TOKEN_CLASS),
         'e' => return checkKeyword(1, 3, "lse", TokenType.TOKEN_ELSE),
         'f' => {
-            const token_length = @intFromPtr(scanner.current) - @intFromPtr(scanner.start);
+            const token_length = scanner.current - scanner.start;
             if (token_length > 1) {
                 switch (scanner.start[1]) {
                     'a' => return checkKeyword(2, 3, "lse", TokenType.TOKEN_FALSE),
@@ -227,7 +227,7 @@ pub fn identifierType() TokenType {
         'r' => return checkKeyword(1, 5, "eturn", TokenType.TOKEN_RETURN),
         's' => return checkKeyword(1, 4, "uper", TokenType.TOKEN_SUPER),
         't' => {
-            const token_length = @intFromPtr(scanner.current) - @intFromPtr(scanner.start);
+            const token_length = scanner.current - scanner.start;
             if (token_length > 1) {
                 switch (scanner.start[1]) {
                     'h' => return checkKeyword(2, 2, "is", TokenType.TOKEN_THIS),
