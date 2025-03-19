@@ -96,9 +96,22 @@ fn readByte() u8 {
     return byte;
 }
 
-pub fn interpret(source: []const u8) InterpretResult {
-    Compiler.compile(source);
-    return InterpretResult.INTERPRET_OK;
+pub fn interpret(source: []const u8, allocator: *std.mem.Allocator) InterpretResult {
+    var chunk: Chunk.Chunk = undefined;
+    Chunk.initChunk(chunk);
+
+    if (!Compiler.compile(source, chunk)) {
+        Chunk.freeChunk(&chunk, allocator);
+        return InterpretResult.INTERPRET_COMPILE_ERROR;
+    }
+
+    vm.chunk = &chunk;
+    vm.ip = vm.chunk.code;
+
+    const result = run();
+
+    Chunk.freeChunk(&chunk, allocator);
+    return result;
 }
 
 pub fn binaryOp(comptime op: fn (f64, f64) f64) void {
