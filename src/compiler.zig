@@ -74,6 +74,10 @@ pub fn consume(tokenType: Scanner.TokenType, message: [*:0]const u8) void {
     errorAtCurrent(message);
 }
 
+pub fn emitByte(byte: u8) void {
+    writeChunk(currentChunk(), byte, parser.previous.line);
+}
+
 pub fn expression() void {
 
 }
