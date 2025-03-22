@@ -1,20 +1,36 @@
 const std = @import("std");
 const Scanner = @import("scanner.zig");
+const Chunk = @import("chunk.zig");
 
-pub fn compile(source: []const u8) void {
+pub const Parser = struct {
+    current: Scanner.Token,
+    previous: Scanner.Token,
+};
+
+var parser: Parser = undefined;
+
+pub fn compile(source: []const u8, chunk: *Chunk.Chunk) void {
     Scanner.initScanner(source);
-    //std.debug.print("in compile - source: {d} (d) {s} (s)", .{source, source});
-    var line: i32 = -1;
-    while (true) {
-        const token = Scanner.scanToken();
-        if (token.line != line) {
-            std.debug.print("{d:>4} ", .{token.line});
-            line = token.line;
-        } else {
-            std.debug.print("   | ", .{});
-        }
-        std.debug.print("{d:2} '{s}'\n", .{@intFromEnum(token.type), token.name});
+    advance();
+    expression();
+    consume(Scanner.TokenType.TOKEN_EOF, "Expected end of expression.");
+}
 
-        if (token.type == Scanner.TokenType.TOKEN_EOF) break;
+pub fn advance() void {
+    parser.previous = parser.current;
+
+    while (true) {
+        parser.current = Scanner.scanToken();
+        if(parser.current.type != Scanner.TokenType.TOKEN_ERROR) break;
+
+        errorAtCurrent(parser.current.name[0]);
     }
+}
+
+pub fn consume(type: Scanner.TokenType, message: [*:0]const u8) void {
+
+}
+
+pub fn expression() void {
+
 }
