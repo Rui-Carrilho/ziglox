@@ -22,9 +22,9 @@ pub fn main() !void {
     const arg = args.next();
 
     if (arg == null) {
-        try repl();
+        try repl(&allocator);
     } else if (args.next() == null) {
-        runFile(arg.?, &allocator);
+        try runFile(arg.?, &allocator);
     } else {
         std.debug.print("Usage: clox [path]\n", .{});
         std.process.exit(64);
@@ -33,7 +33,7 @@ pub fn main() !void {
     VM.freeVM();
 }
 
-pub fn repl() !void {
+pub fn repl(allocator: *std.mem.Allocator) !void {
     var line: [1024]u8 = undefined;
     var line_terminated: [1024]u8 = undefined;
 
@@ -56,15 +56,15 @@ pub fn repl() !void {
 
         const final_input = line_terminated[0..input.?.len :0];
 
-        _ = VM.interpret(final_input);
+        _ = try VM.interpret(final_input, allocator);
     }
 }
 
-pub fn runFile(path: []const u8, allocator: *std.mem.Allocator) void {
+pub fn runFile(path: []const u8, allocator: *std.mem.Allocator) !void {
     const source = readFile(path, allocator);
     defer allocator.free(source);
 
-    const result: VM.InterpretResult = VM.interpret(source);
+    const result = try VM.interpret(source, allocator);
 
     if (result == VM.InterpretResult.INTERPRET_COMPILE_ERROR) std.process.exit(65);
     if (result == VM.InterpretResult.INTERPRET_RUNTIME_ERROR) std.process.exit(70);

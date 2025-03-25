@@ -28,13 +28,13 @@ pub fn initVM() void {
 pub fn freeVM() void {}
 
 pub fn push(value: Value.Value) void {
-    vm.stackTop.* = value;
+    vm.stackTop[0] = value;
     vm.stackTop += 1;
 }
 
 pub fn pop() Value.Value {
     vm.stackTop -= 1;
-    return vm.stackTop.*;
+    return vm.stackTop[0];
 }
 
 pub fn run() InterpretResult {
@@ -91,22 +91,24 @@ fn readConstant() Value.Value {
 }
 
 fn readByte() u8 {
-    const byte = vm.ip.*;
+    const byte = vm.ip[0];
     vm.ip += 1;
     return byte;
 }
 
-pub fn interpret(source: []const u8, allocator: *std.mem.Allocator) InterpretResult {
+pub fn interpret(source: []const u8, allocator: *std.mem.Allocator) !InterpretResult {
     var chunk: Chunk.Chunk = undefined;
-    Chunk.initChunk(chunk);
+    Chunk.initChunk(&chunk);
 
-    if (!Compiler.compile(source, chunk)) {
+    const compilingResult = try Compiler.compile(source, &chunk, allocator);
+
+    if (!compilingResult) {
         Chunk.freeChunk(&chunk, allocator);
         return InterpretResult.INTERPRET_COMPILE_ERROR;
     }
 
     vm.chunk = &chunk;
-    vm.ip = vm.chunk.code;
+    vm.ip = vm.chunk.code.ptr;
 
     const result = run();
 
