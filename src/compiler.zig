@@ -11,6 +11,20 @@ pub const Parser = struct {
     panicMode: bool
 };
 
+pub const Precedence = enum {
+    PREC_NONE,
+    PREC_ASSIGNMENT,     // =
+    PREC_OR,             // or
+    PREC_AND,            // and
+    PREC_EQUALITY,       // == !=
+    PREC_COMPARISON,     // < > <= >=
+    PREC_TERM,           // + -
+    PREC_FACTOR,         // * /
+    PREC_UNARY,          // ! -
+    PREC_CALL,           // . ()
+    PREC_PRIMARY
+};
+
 var parser: Parser = undefined;
 var compilingChunk: *Chunk.Chunk = undefined;
 
@@ -74,6 +88,7 @@ pub fn advance() void {
 }
 
 pub fn consume(tokenType: Scanner.TokenType, message: []const u8) void {
+    //this function advances the thing until we get to the token specified in tokenType. if it doesn't find it, it spits out the message
     if(parser.current.type == tokenType) {
         advance();
         return;
@@ -113,6 +128,11 @@ pub fn endCompiler(allocator: *std.mem.Allocator) !void {
     try emitReturn(allocator);
 }
 
+pub fn grouping() void {
+    expression();
+    consume(Scanner.TokenType.TOKEN_RIGHT_PAREN, "Expect ')' after expression.");
+}
+
 pub fn number() void {
     const value = std.fmt.parseFloat(Value.Value, parser.previous.name[0..parser.previous.name.len]) catch |err| {
         std.debug.print("Error parsing float: {}\n", .{err});
@@ -121,6 +141,23 @@ pub fn number() void {
     emitConstant(value);
 }
 
-pub fn expression() void {
+pub fn unary(allocator: *std.mem.Allocator) void {
+    const operatorType = parser.previous.type;
 
+    //compile the operand
+    parsePrecedence(Precedence.PREC_UNARY);
+
+    //emit the operator instruction
+    switch (operatorType) {
+        Scanner.TokenType.TOKEN_MINUS => emitByte(Chunk.OpCode.OP_NEGATE, allocator),
+        else => unreachable
+    }
+}
+
+pub fn parsePrecedence(precedence: Precedence) void {
+
+}
+
+pub fn expression() void {
+    parsePrecedence(Precedence.PREC_ASSIGNMENT);
 }
