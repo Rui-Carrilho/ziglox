@@ -128,6 +128,20 @@ pub fn endCompiler(allocator: *std.mem.Allocator) !void {
     try emitReturn(allocator);
 }
 
+pub fn binary(allocator: *std.mem.Allocator) void {
+    const operatorType = parser.previous.type;
+    const rule = getRule(operatorType);
+    parsePrecedence(@as(Precedence, rule.precedence + 1));
+
+    switch (operatorType) {
+        Scanner.TokenType.TOKEN_PLUS => emitByte(Chunk.OpCode.OP_ADD, allocator),
+        Scanner.TokenType.TOKEN_MINUS => emitByte(Chunk.OpCode.OP_SUBTRACT, allocator),
+        Scanner.TokenType.TOKEN_STAR => emitByte(Chunk.OpCode.OP_MULTIPLY, allocator),
+        Scanner.TokenType.TOKEN_SLASH => emitByte(Chunk.OpCode.OP_DIVIDE, allocator),
+        else => unreachable
+    }
+}
+
 pub fn grouping() void {
     expression();
     consume(Scanner.TokenType.TOKEN_RIGHT_PAREN, "Expect ')' after expression.");
