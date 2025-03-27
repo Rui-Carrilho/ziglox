@@ -254,7 +254,11 @@ pub const rules: [@typeInfo(TokenType).Enum.fields.len]ParseRule = [_]ParseRule{
 };
 
 pub fn parsePrecedence(precedence: Precedence) void {
-    _ = precedence;
+    
+}
+
+pub fn getRule(ruleType: TokenType) *ParseRule {
+    return &rules[@intFromEnum(ruleType)];
 }
 
 pub fn expression() void {
