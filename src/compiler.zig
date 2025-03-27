@@ -25,6 +25,14 @@ pub const Precedence = enum {
     PREC_PRIMARY
 };
 
+const ParseFn = *const fn() void;
+
+pub const ParseRule = struct {
+    prefix: ParseFn,
+    infix: ParseFn,
+    precedence: Precedence
+};
+
 var parser: Parser = undefined;
 var compilingChunk: *Chunk.Chunk = undefined;
 
@@ -45,7 +53,7 @@ pub fn errorAt(token: *Scanner.Token, message: []const u8) void {
     } else if (token.type == Scanner.TokenType.TOKEN_ERROR) {
         //nothing
     } else {
-        stderr.print(" at '{s}'", .{token.name[0..token.name.len]}) catch {};
+        stderr.print(" at '{s}'", .{token.name}) catch {};
     }
 
     // Print the error message
@@ -147,12 +155,13 @@ pub fn grouping() void {
     consume(Scanner.TokenType.TOKEN_RIGHT_PAREN, "Expect ')' after expression.");
 }
 
-pub fn number() void {
-    const value = std.fmt.parseFloat(Value.Value, parser.previous.name[0..parser.previous.name.len]) catch |err| {
+pub fn number(allocator: *std.mem.Allocator) void {
+    const value = std.fmt.parseFloat(Value.Value, parser.previous.name) catch |err| {
         std.debug.print("Error parsing float: {}\n", .{err});
+        emitConstant(0, allocator);
         return;
     };
-    emitConstant(value);
+    emitConstant(value, allocator);
 }
 
 pub fn unary(allocator: *std.mem.Allocator) void {
@@ -168,8 +177,12 @@ pub fn unary(allocator: *std.mem.Allocator) void {
     }
 }
 
-pub fn parsePrecedence(precedence: Precedence) void {
+pub const rules: []const ParseRule = &[_]ParseRule{
+    
+} 
 
+pub fn parsePrecedence(precedence: Precedence) void {
+    _ = precedence;
 }
 
 pub fn expression() void {
