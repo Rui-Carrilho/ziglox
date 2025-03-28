@@ -2,6 +2,7 @@ const std = @import("std");
 const Scanner = @import("scanner.zig");
 const Chunk = @import("chunk.zig");
 const Value = @import("value.zig");
+const Debug = @import("debug.zig");
 
 pub const Parser = struct { current: Scanner.Token, previous: Scanner.Token, hadError: bool, panicMode: bool };
 
@@ -68,6 +69,8 @@ pub const ParseRule = struct { prefix: ParseFn, infix: ParseFn, precedence: Prec
 
 var parser: Parser = undefined;
 var compilingChunk: *Chunk.Chunk = undefined;
+
+const debugPrintCode = true;
 
 pub fn currentChunk() *Chunk.Chunk {
     return compilingChunk;
@@ -167,6 +170,12 @@ pub fn emitConstant(value: Value.Value, allocator: *std.mem.Allocator) void {
 
 pub fn endCompiler(allocator: *std.mem.Allocator) !void {
     try emitReturn(allocator);
+
+    if (debugPrintCode) {
+        if (!parser.hadError) {
+            Debug.disassembleChunk(currentChunk(), "code");
+        }
+    }
 }
 
 pub fn binary(allocator: *std.mem.Allocator) void {
@@ -210,7 +219,7 @@ pub fn unary(allocator: *std.mem.Allocator) void {
     }
 }
 
-pub const rules: [@typeInfo(TokenType).Enum.fields.len]ParseRule = [_]ParseRule{
+pub const rules: []ParseRule = [_]ParseRule{
     .{ .prefix = grouping, .infix = null, .precedence = Precedence.PREC_NONE }, // LEFT_PAREN
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // RIGHT_PAREN
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // LEFT_BRACE
@@ -254,10 +263,23 @@ pub const rules: [@typeInfo(TokenType).Enum.fields.len]ParseRule = [_]ParseRule{
 };
 
 pub fn parsePrecedence(precedence: Precedence) void {
-    
+    advance();
+    const prefixRule = getRule(parser.previous.type).prefix;
+    if (prefixRule == null) {
+        errorBase("Expect expression");
+        return;
+    }
+
+    prefixRule();
+
+    while (precedence <= getRule(parser.current.type).precedence) {
+        advance();
+        const infixRule = getRule(parser.previous.type).infix;
+        infixRule();
+    }
 }
 
-pub fn getRule(ruleType: TokenType) *ParseRule {
+pub fn getRule(ruleType: Scanner.TokenType) *ParseRule {
     return &rules[@intFromEnum(ruleType)];
 }
 
