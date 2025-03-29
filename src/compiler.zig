@@ -20,7 +20,7 @@ pub const Precedence = enum {
     PREC_PRIMARY,
 };
 
-const ParseFn = *const fn () void;
+const ParseFn = ?*const fn () void;
 
 pub const TokenType = enum(u8) {
     LEFT_PAREN,
@@ -206,17 +206,17 @@ pub fn number(allocator: *std.mem.Allocator) void {
     emitConstant(value, allocator);
 }
 
-pub fn unary(allocator: *std.mem.Allocator) void {
+pub fn unary(allocator: *std.mem.Allocator) !void {
     const operatorType = parser.previous.type;
 
     //compile the operand
     parsePrecedence(Precedence.PREC_UNARY);
 
     //emit the operator instruction
-    switch (operatorType) {
-        Scanner.TokenType.TOKEN_MINUS => emitByte(Chunk.OpCode.OP_NEGATE, allocator),
+    try switch (operatorType) {
+        Scanner.TokenType.TOKEN_MINUS => emitByte(@intFromEnum(Chunk.OpCode.OP_NEGATE), allocator),
         else => unreachable,
-    }
+    };
 }
 
 pub const rules: []ParseRule = [_]ParseRule{
