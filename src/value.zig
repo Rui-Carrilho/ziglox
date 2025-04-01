@@ -9,6 +9,12 @@ pub const ValueArray = struct {
     values: []Value
 };
 
+pub const ValueType = enum {
+    VAL_BOOL,
+    VAL_NIL,
+    VAL_NUMBER
+};
+
 pub fn initValueArray(array: *ValueArray) void {
     array.values = memory.initArray(Value);
     array.capacity = 0;
