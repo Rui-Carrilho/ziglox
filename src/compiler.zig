@@ -3,6 +3,7 @@ const Scanner = @import("scanner.zig");
 const Chunk = @import("chunk.zig");
 const Value = @import("value.zig");
 const Debug = @import("debug.zig");
+const Allocator = @import("allocator.zig");
 
 pub const Parser = struct { current: Scanner.Token, previous: Scanner.Token, hadError: bool, panicMode: bool };
 
@@ -20,7 +21,7 @@ pub const Precedence = enum {
     PREC_PRIMARY,
 };
 
-const ParseFn = ?*const fn () void;
+const ParseFn = ?*const fn () anyerror!void;
 
 pub const TokenType = enum(u8) {
     LEFT_PAREN,
@@ -65,7 +66,11 @@ pub const TokenType = enum(u8) {
     EOF,
 };
 
-pub const ParseRule = struct { prefix: ParseFn, infix: ParseFn, precedence: Precedence };
+pub const ParseRule = struct { 
+    prefix: ParseFn, 
+    infix: ParseFn, 
+    precedence: Precedence 
+};
 
 var parser: Parser = undefined;
 var compilingChunk: *Chunk.Chunk = undefined;
@@ -114,7 +119,7 @@ pub fn compile(source: []const u8, chunk: *Chunk.Chunk, allocator: *std.mem.Allo
     parser.panicMode = false;
 
     advance();
-    expression();
+    try expression();
     consume(Scanner.TokenType.TOKEN_EOF, "Expected end of expression.");
     _ = try endCompiler(allocator);
     return !parser.hadError;
@@ -145,27 +150,28 @@ pub fn emitByte(byte: u8, allocator: *std.mem.Allocator) !void {
     try Chunk.writeChunk(currentChunk(), byte, parser.previous.line, allocator);
 }
 
-pub fn emitBytes(byte1: u8, byte2: u8, allocator: *std.mem.Allocator) void {
-    emitByte(byte1, allocator);
-    emitByte(byte2, allocator);
+pub fn emitBytes(byte1: u8, byte2: u8, allocator: *std.mem.Allocator) !void {
+    try emitByte(byte1, allocator);
+    try emitByte(byte2, allocator);
 }
 
 pub fn emitReturn(allocator: *std.mem.Allocator) !void {
     try emitByte(@intFromEnum(Chunk.OpCode.OP_RETURN), allocator);
 }
 
-pub fn makeConstant(value: Value.Value) u8 {
-    const constant = Chunk.addConstant(currentChunk(), value);
-    if (constant > std.math.maxInt(u8)) {
+pub fn makeConstant(value: Value.Value) !u8 {
+    const constant = try Chunk.addConstant(currentChunk(), value, Allocator.allocator);
+    if (constant > @as(usize, std.math.maxInt(u8))) {
         errorBase("too many constants in one chunk.");
         return 0;
     }
 
-    return @as(u8, constant);
+    return @intCast(constant);
 }
 
-pub fn emitConstant(value: Value.Value, allocator: *std.mem.Allocator) void {
-    emitBytes(Chunk.OpCode.OP_CONSTANT, makeConstant(value), allocator);
+pub fn emitConstant(value: Value.Value, allocator: *std.mem.Allocator) !void {
+    const newConstant = try makeConstant(value);
+    try emitBytes(@intFromEnum(Chunk.OpCode.OP_CONSTANT), newConstant, allocator);
 }
 
 pub fn endCompiler(allocator: *std.mem.Allocator) !void {
@@ -178,48 +184,48 @@ pub fn endCompiler(allocator: *std.mem.Allocator) !void {
     }
 }
 
-pub fn binary(allocator: *std.mem.Allocator) void {
+pub fn binary() !void {
     const operatorType = parser.previous.type;
     const rule = getRule(operatorType);
-    parsePrecedence(@as(Precedence, rule.precedence + 1));
+    try parsePrecedence(@enumFromInt(@intFromEnum(rule.precedence) + 1));
 
-    switch (operatorType) {
-        Scanner.TokenType.TOKEN_PLUS => emitByte(Chunk.OpCode.OP_ADD, allocator),
-        Scanner.TokenType.TOKEN_MINUS => emitByte(Chunk.OpCode.OP_SUBTRACT, allocator),
-        Scanner.TokenType.TOKEN_STAR => emitByte(Chunk.OpCode.OP_MULTIPLY, allocator),
-        Scanner.TokenType.TOKEN_SLASH => emitByte(Chunk.OpCode.OP_DIVIDE, allocator),
+    try switch (operatorType) {
+        Scanner.TokenType.TOKEN_PLUS => emitByte(@intFromEnum(Chunk.OpCode.OP_ADD), Allocator.allocator),
+        Scanner.TokenType.TOKEN_MINUS => emitByte(@intFromEnum(Chunk.OpCode.OP_SUBTRACT), Allocator.allocator),
+        Scanner.TokenType.TOKEN_STAR => emitByte(@intFromEnum(Chunk.OpCode.OP_MULTIPLY), Allocator.allocator),
+        Scanner.TokenType.TOKEN_SLASH => emitByte(@intFromEnum(Chunk.OpCode.OP_DIVIDE), Allocator.allocator),
         else => unreachable,
-    }
+    };
 }
 
-pub fn grouping() void {
-    expression();
+pub fn grouping() !void {
+    try expression();
     consume(Scanner.TokenType.TOKEN_RIGHT_PAREN, "Expect ')' after expression.");
 }
 
-pub fn number(allocator: *std.mem.Allocator) void {
+pub fn number() !void {
     const value = std.fmt.parseFloat(Value.Value, parser.previous.name) catch |err| {
         std.debug.print("Error parsing float: {}\n", .{err});
-        emitConstant(0, allocator);
+        try emitConstant(0, Allocator.allocator);
         return;
     };
-    emitConstant(value, allocator);
+    try emitConstant(value, Allocator.allocator);
 }
 
-pub fn unary(allocator: *std.mem.Allocator) !void {
+pub fn unary() !void {
     const operatorType = parser.previous.type;
 
     //compile the operand
-    parsePrecedence(Precedence.PREC_UNARY);
+    try parsePrecedence(Precedence.PREC_UNARY);
 
     //emit the operator instruction
     try switch (operatorType) {
-        Scanner.TokenType.TOKEN_MINUS => emitByte(@intFromEnum(Chunk.OpCode.OP_NEGATE), allocator),
+        Scanner.TokenType.TOKEN_MINUS => emitByte(@intFromEnum(Chunk.OpCode.OP_NEGATE), Allocator.allocator),
         else => unreachable,
     };
 }
 
-pub const rules: []ParseRule = [_]ParseRule{
+pub const rules = [_]ParseRule{
     .{ .prefix = grouping, .infix = null, .precedence = Precedence.PREC_NONE }, // LEFT_PAREN
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // RIGHT_PAREN
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // LEFT_BRACE
@@ -262,7 +268,7 @@ pub const rules: []ParseRule = [_]ParseRule{
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // EOF
 };
 
-pub fn parsePrecedence(precedence: Precedence) void {
+pub fn parsePrecedence(precedence: Precedence) !void {
     advance();
     const prefixRule = getRule(parser.previous.type).prefix;
     if (prefixRule == null) {
@@ -270,19 +276,19 @@ pub fn parsePrecedence(precedence: Precedence) void {
         return;
     }
 
-    prefixRule();
+    try prefixRule.?();
 
-    while (precedence <= getRule(parser.current.type).precedence) {
+    while (@intFromEnum(precedence) <= @intFromEnum(getRule(parser.current.type).precedence)) {
         advance();
         const infixRule = getRule(parser.previous.type).infix;
-        infixRule();
+        try infixRule.?();
     }
 }
 
-pub fn getRule(ruleType: Scanner.TokenType) *ParseRule {
+pub fn getRule(ruleType: Scanner.TokenType) *const ParseRule {
     return &rules[@intFromEnum(ruleType)];
 }
 
-pub fn expression() void {
-    parsePrecedence(Precedence.PREC_ASSIGNMENT);
+pub fn expression() !void {
+    try parsePrecedence(Precedence.PREC_ASSIGNMENT);
 }

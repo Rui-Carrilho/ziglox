@@ -4,11 +4,13 @@ const chunk = @import("chunk.zig");
 const debug = @import("debug.zig");
 const VM = @import("vm.zig");
 const Compiler = @import("compiler.zig");
+const Allocator = @import("allocator.zig");
 
 pub fn main() !void {
     // Allocate memory
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     var allocator = gpa.allocator();
+    Allocator.allocator = &allocator;
     //defer _ = gpa.deinit();
 
     VM.initVM();
