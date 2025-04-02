@@ -1,8 +1,6 @@
 const std = @import("std");
 const memory = @import("memory.zig");
 
-pub const Value = f64;
-
 pub const ValueArray = struct {
     capacity: usize,
     count: usize,
