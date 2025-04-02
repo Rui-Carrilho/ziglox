@@ -15,6 +15,14 @@ pub const ValueType = enum {
     VAL_NUMBER
 };
 
+pub const Value = struct {
+    type: ValueType,
+    as: union{
+        boolean: bool,
+        number: f64
+    }
+};
+
 pub fn initValueArray(array: *ValueArray) void {
     array.values = memory.initArray(Value);
     array.capacity = 0;
