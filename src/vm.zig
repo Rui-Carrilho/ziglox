@@ -19,6 +19,17 @@ pub fn resetStack() void {
     vm.stackTop = @ptrCast(&vm.stack[0]);
 }
 
+pub fn runtimeError(comptime format: []const u8, args:anytype) void {
+    std.debug.print(format ++ "\n", args);
+
+    const instruction = vm.ip - &vm.chunk.code[0] - 1;
+    const line = vm.chunk.lines[instruction];
+
+    std.debug.print("[line {d}] in script\n", .{line});
+
+    resetStack();
+}
+
 pub const InterpretResult = enum { INTERPRET_OK, INTERPRET_COMPILE_ERROR, INTERPRET_RUNTIME_ERROR };
 
 pub fn initVM() void {
