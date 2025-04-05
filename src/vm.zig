@@ -49,7 +49,7 @@ pub fn pop() Value.Value {
 }
 
 pub fn peek(distance: usize) Value.Value {
-    return vm.stackTop[-1 - distance];
+    return (vm.stackTop - 1 - distance)[0];
 }
 
 pub fn run() InterpretResult {
@@ -91,10 +91,10 @@ pub fn run() InterpretResult {
             },
             @intFromEnum(Chunk.OpCode.OP_NEGATE) => {
                 if (!Value.IS_NUMBER(peek(0))) {
-                    runtimeError("Operand must be a number.");
+                    runtimeError("Operand must be a number.", .{});
                     return InterpretResult.INTERPRET_RUNTIME_ERROR;
                 }
-                push(Value.NUMBER_VAL(Value.AS_NUMBER(-pop())));
+                push(Value.NUMBER_VAL(-Value.AS_NUMBER(pop())));
             },
             else => {
                 std.debug.print("the instruction was {}", .{instruction});

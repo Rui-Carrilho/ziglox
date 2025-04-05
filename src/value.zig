@@ -81,5 +81,9 @@ pub fn freeValueArray(array: *ValueArray, allocator: *std.mem.Allocator) void {
 }
 
 pub fn printValue(value: Value) void {
-    std.debug.print("{d}", .{AS_NUMBER(value)});
+    switch(value) {
+        Value.boolean => |myValue| {std.debug.print("{}", .{myValue});},
+        Value.number => |myValue| {std.debug.print("{d}", .{myValue});},
+        Value.nil => std.debug.print("nil", .{})
+    }
 }
