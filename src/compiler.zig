@@ -198,6 +198,15 @@ pub fn binary() !void {
     };
 }
 
+pub fn literal() void {
+    switch (parser.previous.type) {
+        Scanner.TokenType.TOKEN_FALSE => emitByte(@intFromEnum(Chunk.OpCode.OP_FALSE), Allocator.allocator),
+        Scanner.TokenType.TOKEN_NIL => emitByte(@intFromEnum(Chunk.OpCode.OP_NIL), Allocator.allocator),
+        Scanner.TokenType.TOKEN_TRUE => emitByte(@intFromEnum(Chunk.OpCode.OP_TRUE), Allocator.allocator),
+        else => return
+    }
+}
+
 pub fn grouping() !void {
     try expression();
     consume(Scanner.TokenType.TOKEN_RIGHT_PAREN, "Expect ')' after expression.");
@@ -250,18 +259,18 @@ pub const rules = [_]ParseRule{
     .{ .prefix = number, .infix = null, .precedence = Precedence.PREC_NONE }, // NUMBER
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // AND
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // CLASS
-    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // ELSE
+    .{ .prefix = literal, .infix = null, .precedence = Precedence.PREC_NONE }, // ELSE
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // FALSE
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // FOR
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // FUN
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // IF
-    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // NIL
+    .{ .prefix = literal, .infix = null, .precedence = Precedence.PREC_NONE }, // NIL
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // OR
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // PRINT
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // RETURN
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // SUPER
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // THIS
-    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // TRUE
+    .{ .prefix = literal, .infix = null, .precedence = Precedence.PREC_NONE }, // TRUE
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // VAR
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // WHILE
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // ERROR
