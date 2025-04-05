@@ -135,24 +135,24 @@ pub fn interpret(source: []const u8, allocator: *std.mem.Allocator) !InterpretRe
     return result;
 }
 
-pub fn binaryOp(comptime op: fn (f64, f64) f64) void {
-    const b: f64 = pop();
-    const a: f64 = pop();
+pub fn binaryOp(comptime op: fn (f64, f64) Value.Value) void {
+    const b: f64 = Value.AS_NUMBER(pop());
+    const a: f64 = Value.AS_NUMBER(pop());
     push(op(a, b));
 }
 
-pub fn add(a: f64, b: f64) f64 {
-    return a + b;
+pub fn add(a: f64, b: f64) Value.Value {
+    return Value.NUMBER_VAL(a + b);
 }
 
-pub fn subtract(a:f64, b: f64) f64 {
-    return a - b;
+pub fn subtract(a:f64, b: f64) Value.Value {
+    return Value.NUMBER_VAL(a - b);
 }
 
-pub fn multiply(a: f64, b: f64) f64 {
-    return a * b;
+pub fn multiply(a: f64, b: f64) Value.Value {
+    return Value.NUMBER_VAL(a * b);
 }
 
-pub fn divide(a: f64, b: f64) f64 {
-    return a / b;
+pub fn divide(a: f64, b: f64) Value.Value {
+    return Value.NUMBER_VAL(a / b);
 }
