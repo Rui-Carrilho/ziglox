@@ -32,7 +32,7 @@ pub fn AS_NUMBER(value: Value) f64 {
     return switch (value) {
         Value.number => |myValue| myValue,
         else => {
-            std.debug.panic("fuckup in AS_NUMBER(value.zig)");
+            std.debug.panic("fuckup in AS_NUMBER(value.zig)", .{});
         },
     };
 }

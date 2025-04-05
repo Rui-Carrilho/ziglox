@@ -204,9 +204,9 @@ pub fn grouping() !void {
 }
 
 pub fn number() !void {
-    const value = std.fmt.parseFloat(Value.Value, parser.previous.name) catch |err| {
+    const value = std.fmt.parseFloat(f64, parser.previous.name) catch |err| {
         std.debug.print("Error parsing float: {}\n", .{err});
-        try emitConstant(0, Allocator.allocator);
+        try emitConstant(Value.NUMBER_VAL(0), Allocator.allocator);
         return;
     };
     try emitConstant(Value.NUMBER_VAL(value), Allocator.allocator);

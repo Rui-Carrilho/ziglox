@@ -49,7 +49,7 @@ pub fn pop() Value.Value {
 }
 
 pub fn peek(distance: usize) Value.Value {
-    return vm.stackTop[-1-distance];
+    return vm.stackTop[-1 - distance];
 }
 
 pub fn run() InterpretResult {
