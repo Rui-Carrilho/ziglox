@@ -3,13 +3,22 @@ const memory = @import("memory.zig");
 
 pub const ValueArray = struct { capacity: usize, count: usize, values: []Value };
 
-pub const ValueType = enum { VAL_BOOL, VAL_NIL, VAL_NUMBER };
+pub const ValueType = enum { 
+    boolean, 
+    number,
+    nil
+};
 
-pub const Value = struct { type: ValueType, as: union { boolean: bool, number: f64 } };
+//pub const Value = struct { type: ValueType, as: union { boolean: bool, number: f64 } };
+
+pub const Value = union(ValueType) {
+    boolean: bool,
+    number: f64,
+    nil: void
+};
 
 pub fn BOOL_VAL(value: bool) Value {
-    return Value{
-        .type = ValueType.VAL_BOOL,
+    return Value(ValueType.VAL_BOOL){
         .as = .{ .boolean = value },
     };
 }
@@ -24,6 +33,26 @@ pub fn NUMBER_VAL(value: f64) Value {
         .type = ValueType.VAL_NUMBER,
         .as = .{ .number = value },
     };
+}
+
+pub fn AS_BOOL(value: Value) bool {
+    return value.as.boolean;
+}
+
+pub fn AS_NUMBER(value: Value) f64 {
+    return value.as.number;
+}
+
+pub fn IS_BOOL(value: Value) bool {
+    return value.type == ValueType.VAL_BOOL;
+}
+
+pub fn IS_NIL(value: Value) bool {
+    return value.type == ValueType.VAL_NIL;
+}
+
+pub fn IS_NUMBER(value: Value) bool {
+    return value.type == ValueType.VAL_NUMBER;
 }
 
 pub fn initValueArray(array: *ValueArray) void {
@@ -49,5 +78,5 @@ pub fn freeValueArray(array: *ValueArray, allocator: *std.mem.Allocator) void {
 }
 
 pub fn printValue(value: Value) void {
-    std.debug.print("{d}", .{value});
+    std.debug.print("{d}", .{AS_NUMBER(value)});
 }

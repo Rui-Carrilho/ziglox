@@ -37,6 +37,10 @@ pub fn pop() Value.Value {
     return vm.stackTop[0];
 }
 
+pub fn peek(distance: usize) Value.Value {
+    return vm.stackTop[-1-distance];
+}
+
 pub fn run() InterpretResult {
     while (true) {
         if (Debug.debug_trace_execution) {
@@ -75,7 +79,11 @@ pub fn run() InterpretResult {
                 binaryOp(subtract);
             },
             @intFromEnum(Chunk.OpCode.OP_NEGATE) => {
-                push(-pop());
+                if (!Value.IS_NUMBER(peek(0))) {
+                    runtimeError("Operand must be a number.");
+                    return InterpretResult.INTERPRET_RUNTIME_ERROR;
+                }
+                push(Value.NUMBER_VAL(Value.AS_NUMBER(-pop())));
             },
             else => {
                 std.debug.print("the instruction was {}", .{instruction});

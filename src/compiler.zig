@@ -209,7 +209,7 @@ pub fn number() !void {
         try emitConstant(0, Allocator.allocator);
         return;
     };
-    try emitConstant(value, Allocator.allocator);
+    try emitConstant(Value.NUMBER_VAL(value), Allocator.allocator);
 }
 
 pub fn unary() !void {
