@@ -3,56 +3,59 @@ const memory = @import("memory.zig");
 
 pub const ValueArray = struct { capacity: usize, count: usize, values: []Value };
 
-pub const ValueType = enum { 
-    boolean, 
-    number,
-    nil
-};
+pub const ValueType = enum { boolean, number, nil };
 
 //pub const Value = struct { type: ValueType, as: union { boolean: bool, number: f64 } };
 
-pub const Value = union(ValueType) {
-    boolean: bool,
-    number: f64,
-    nil: void
-};
+pub const Value = union(ValueType) { boolean: bool, number: f64, nil: void };
 
 pub fn BOOL_VAL(value: bool) Value {
-    return Value(ValueType.VAL_BOOL){
-        .as = .{ .boolean = value },
-    };
+    return .{ .boolean = value };
 }
 
-pub const NIL_VAL: Value = Value{
-    .type = ValueType.VAL_NIL,
-    .as = .{ .number = 0 },
-};
+pub const NIL_VAL: Value = .nil;
 
 pub fn NUMBER_VAL(value: f64) Value {
-    return Value{
-        .type = ValueType.VAL_NUMBER,
-        .as = .{ .number = value },
-    };
+    return .{ .number = value };
 }
 
 pub fn AS_BOOL(value: Value) bool {
-    return value.as.boolean;
+    return switch (value) {
+        Value.boolean => |myValue| myValue,
+        else => {
+            std.debug.panic("fuckup in AS_BOOL(value.zig)");
+        },
+    };
 }
 
 pub fn AS_NUMBER(value: Value) f64 {
-    return value.as.number;
+    return switch (value) {
+        Value.number => |myValue| myValue,
+        else => {
+            std.debug.panic("fuckup in AS_NUMBER(value.zig)");
+        },
+    };
 }
 
 pub fn IS_BOOL(value: Value) bool {
-    return value.type == ValueType.VAL_BOOL;
+    return switch (value) {
+        Value.boolean => true,
+        else => false,
+    };
 }
 
 pub fn IS_NIL(value: Value) bool {
-    return value.type == ValueType.VAL_NIL;
+    return switch (value) {
+        Value.nil => true,
+        else => false,
+    };
 }
 
 pub fn IS_NUMBER(value: Value) bool {
-    return value.type == ValueType.VAL_NUMBER;
+    return switch (value) {
+        Value.number => true,
+        else => false,
+    };
 }
 
 pub fn initValueArray(array: *ValueArray) void {
