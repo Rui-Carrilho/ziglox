@@ -75,6 +75,15 @@ pub fn run() InterpretResult {
                 Value.printValue(constant);
                 std.debug.print("\n", .{});
             },
+            @intFromEnum(Chunk.OpCode.OP_NIL) => {
+                push(Value.NIL_VAL);
+            },
+            @intFromEnum(Chunk.OpCode.OP_TRUE) => {
+                push(Value.BOOL_VAL(true));
+            },
+            @intFromEnum(Chunk.OpCode.OP_FALSE) => {
+                push(Value.BOOL_VAL(false));
+            },
             @intFromEnum(Chunk.OpCode.OP_DIVIDE) => {
                 binaryOp(divide);
             },
