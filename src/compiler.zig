@@ -198,13 +198,13 @@ pub fn binary() !void {
     };
 }
 
-pub fn literal() void {
-    switch (parser.previous.type) {
+pub fn literal() !void {
+    try switch (parser.previous.type) {
         Scanner.TokenType.TOKEN_FALSE => emitByte(@intFromEnum(Chunk.OpCode.OP_FALSE), Allocator.allocator),
         Scanner.TokenType.TOKEN_NIL => emitByte(@intFromEnum(Chunk.OpCode.OP_NIL), Allocator.allocator),
         Scanner.TokenType.TOKEN_TRUE => emitByte(@intFromEnum(Chunk.OpCode.OP_TRUE), Allocator.allocator),
         else => return
-    }
+    };
 }
 
 pub fn grouping() !void {
