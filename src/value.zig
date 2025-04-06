@@ -23,7 +23,7 @@ pub fn AS_BOOL(value: Value) bool {
     return switch (value) {
         Value.boolean => |myValue| myValue,
         else => {
-            std.debug.panic("fuckup in AS_BOOL(value.zig)");
+            std.debug.panic("fuckup in AS_BOOL(value.zig)", .{});
         },
     };
 }

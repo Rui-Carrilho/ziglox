@@ -52,6 +52,10 @@ pub fn peek(distance: usize) Value.Value {
     return (vm.stackTop - 1 - distance)[0];
 }
 
+pub fn isFalsey(value: Value.Value) bool {
+    return Value.IS_NIL(value) or (Value.IS_BOOL(value) and !Value.AS_BOOL(value));
+}
+
 pub fn run() InterpretResult {
     while (true) {
         if (Debug.debug_trace_execution) {
@@ -97,6 +101,9 @@ pub fn run() InterpretResult {
             },
             @intFromEnum(Chunk.OpCode.OP_SUBTRACT) => {
                 binaryOp(subtract);
+            },
+            @intFromEnum(Chunk.OpCode.OP_NOT) => {
+                push(Value.BOOL_VAL(isFalsey(pop())));
             },
             @intFromEnum(Chunk.OpCode.OP_NEGATE) => {
                 if (!Value.IS_NUMBER(peek(0))) {

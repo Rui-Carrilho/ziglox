@@ -229,6 +229,7 @@ pub fn unary() !void {
 
     //emit the operator instruction
     try switch (operatorType) {
+        Scanner.TokenType.TOKEN_BANG => emitByte(@intFromEnum(Chunk.OpCode.OP_NOT), Allocator.allocator),
         Scanner.TokenType.TOKEN_MINUS => emitByte(@intFromEnum(Chunk.OpCode.OP_NEGATE), Allocator.allocator),
         else => unreachable,
     };
@@ -246,7 +247,7 @@ pub const rules = [_]ParseRule{
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // SEMICOLON
     .{ .prefix = null, .infix = binary, .precedence = Precedence.PREC_FACTOR }, // SLASH
     .{ .prefix = null, .infix = binary, .precedence = Precedence.PREC_FACTOR }, // STAR
-    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // BANG
+    .{ .prefix = unary, .infix = null, .precedence = Precedence.PREC_NONE }, // BANG
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // BANG_EQUAL
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // EQUAL
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // EQUAL_EQUAL
@@ -260,7 +261,7 @@ pub const rules = [_]ParseRule{
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // AND
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // CLASS
     .{ .prefix = literal, .infix = null, .precedence = Precedence.PREC_NONE }, // ELSE
-    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // FALSE
+    .{ .prefix = literal, .infix = null, .precedence = Precedence.PREC_NONE }, // FALSE
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // FOR
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // FUN
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // IF
