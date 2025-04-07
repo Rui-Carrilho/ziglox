@@ -248,13 +248,13 @@ pub const rules = [_]ParseRule{
     .{ .prefix = null, .infix = binary, .precedence = Precedence.PREC_FACTOR }, // SLASH
     .{ .prefix = null, .infix = binary, .precedence = Precedence.PREC_FACTOR }, // STAR
     .{ .prefix = unary, .infix = null, .precedence = Precedence.PREC_NONE }, // BANG
-    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // BANG_EQUAL
+    .{ .prefix = null, .infix = binary, .precedence = Precedence.PREC_EQUALITY }, // BANG_EQUAL
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // EQUAL
-    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // EQUAL_EQUAL
-    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // GREATER
-    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // GREATER_EQUAL
-    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // LESS
-    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // LESS_EQUAL
+    .{ .prefix = null, .infix = binary, .precedence = Precedence.PREC_EQUALITY }, // EQUAL_EQUAL
+    .{ .prefix = null, .infix = binary, .precedence = Precedence.PREC_COMPARISON }, // GREATER
+    .{ .prefix = null, .infix = binary, .precedence = Precedence.PREC_COMPARISON }, // GREATER_EQUAL
+    .{ .prefix = null, .infix = binary, .precedence = Precedence.PREC_COMPARISON }, // LESS
+    .{ .prefix = null, .infix = binary, .precedence = Precedence.PREC_COMPARISON }, // LESS_EQUAL
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // IDENTIFIER
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // STRING
     .{ .prefix = number, .infix = null, .precedence = Precedence.PREC_NONE }, // NUMBER
