@@ -66,11 +66,7 @@ pub const TokenType = enum(u8) {
     EOF,
 };
 
-pub const ParseRule = struct { 
-    prefix: ParseFn, 
-    infix: ParseFn, 
-    precedence: Precedence 
-};
+pub const ParseRule = struct { prefix: ParseFn, infix: ParseFn, precedence: Precedence };
 
 var parser: Parser = undefined;
 var compilingChunk: *Chunk.Chunk = undefined;
@@ -190,6 +186,12 @@ pub fn binary() !void {
     try parsePrecedence(@enumFromInt(@intFromEnum(rule.precedence) + 1));
 
     try switch (operatorType) {
+        Scanner.TokenType.TOKEN_BANG_EQUAL => emitBytes(@intFromEnum(Chunk.OpCode.OP_EQUAL), @intFromEnum(Chunk.OpCode.OP_NOT), Allocator.allocator),
+        Scanner.TokenType.TOKEN_EQUAL_EQUAL => emitByte(@intFromEnum(Chunk.OpCode.OP_EQUAL), Allocator.allocator),
+        Scanner.TokenType.TOKEN_GREATER => emitByte(@intFromEnum(Chunk.OpCode.OP_GREATER), Allocator.allocator),
+        Scanner.TokenType.TOKEN_GREATER_EQUAL => emitBytes(@intFromEnum(Chunk.OpCode.OP_LESS), @intFromEnum(Chunk.OpCode.OP_NOT), Allocator.allocator),
+        Scanner.TokenType.TOKEN_LESS => emitByte(@intFromEnum(Chunk.OpCode.OP_LESS), Allocator.allocator),
+        Scanner.TokenType.TOKEN_LESS_EQUAL => emitBytes(@intFromEnum(Chunk.OpCode.OP_GREATER), @intFromEnum(Chunk.OpCode.OP_NOT), Allocator.allocator),
         Scanner.TokenType.TOKEN_PLUS => emitByte(@intFromEnum(Chunk.OpCode.OP_ADD), Allocator.allocator),
         Scanner.TokenType.TOKEN_MINUS => emitByte(@intFromEnum(Chunk.OpCode.OP_SUBTRACT), Allocator.allocator),
         Scanner.TokenType.TOKEN_STAR => emitByte(@intFromEnum(Chunk.OpCode.OP_MULTIPLY), Allocator.allocator),
@@ -203,7 +205,7 @@ pub fn literal() !void {
         Scanner.TokenType.TOKEN_FALSE => emitByte(@intFromEnum(Chunk.OpCode.OP_FALSE), Allocator.allocator),
         Scanner.TokenType.TOKEN_NIL => emitByte(@intFromEnum(Chunk.OpCode.OP_NIL), Allocator.allocator),
         Scanner.TokenType.TOKEN_TRUE => emitByte(@intFromEnum(Chunk.OpCode.OP_TRUE), Allocator.allocator),
-        else => return
+        else => return,
     };
 }
 
