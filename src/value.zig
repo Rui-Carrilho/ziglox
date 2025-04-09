@@ -87,3 +87,13 @@ pub fn printValue(value: Value) void {
         Value.nil => std.debug.print("nil", .{})
     }
 }
+
+pub fn valuesEqual(a: Value, b: Value) bool {
+    if (a.type != b.type) return false;
+    switch (a.type) {
+        ValueType.boolean => return AS_BOOL(a) == AS_BOOL(b),
+        ValueType.nil => return true,
+        ValueType.number => return AS_NUMBER(a) == AS_NUMBER(b),
+        else => return false
+    }
+}

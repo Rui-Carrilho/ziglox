@@ -70,6 +70,14 @@ pub fn run() InterpretResult {
         }
         const instruction = readByte();
         switch (instruction) {
+            @intFromEnum(Chunk.OpCode.OP_EQUAL) => {
+                const b = pop();
+                const a = pop();
+                push(Value.BOOL_VAL(valuesEqual(a, b)));
+            },
+            @intFromEnum(Chunk.OpCode.OP_GREATER) => {
+                binaryOp(Value.BOOL_VAL);
+            }
             @intFromEnum(Chunk.OpCode.OP_ADD) => {
                 binaryOp(add);
             },
@@ -88,6 +96,7 @@ pub fn run() InterpretResult {
             @intFromEnum(Chunk.OpCode.OP_FALSE) => {
                 push(Value.BOOL_VAL(false));
             },
+            
             @intFromEnum(Chunk.OpCode.OP_DIVIDE) => {
                 binaryOp(divide);
             },
