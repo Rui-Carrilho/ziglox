@@ -181,3 +181,11 @@ pub fn multiply(a: f64, b: f64) Value.Value {
 pub fn divide(a: f64, b: f64) Value.Value {
     return Value.NUMBER_VAL(a / b);
 }
+
+pub fn greaterThan(a: f64, b: f64) Value.Value {
+    return Value.BOOL_VAL(a > b);
+}
+
+pub fn lessThan(a: f64, b: f64) Value.Value {
+    return Value.BOOL_VAL(a < b);
+}
