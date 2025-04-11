@@ -76,7 +76,10 @@ pub fn run() InterpretResult {
                 push(Value.BOOL_VAL(valuesEqual(a, b)));
             },
             @intFromEnum(Chunk.OpCode.OP_GREATER) => {
-                binaryOp(Value.BOOL_VAL);
+                binaryOp(greaterThan);
+            },
+            @intFromEnum(Chunk.OpCode.OP_LESS) => {
+                binaryOp(lessThan);
             }
             @intFromEnum(Chunk.OpCode.OP_ADD) => {
                 binaryOp(add);
