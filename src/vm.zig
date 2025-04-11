@@ -73,14 +73,14 @@ pub fn run() InterpretResult {
             @intFromEnum(Chunk.OpCode.OP_EQUAL) => {
                 const b = pop();
                 const a = pop();
-                push(Value.BOOL_VAL(valuesEqual(a, b)));
+                push(Value.BOOL_VAL(Value.valuesEqual(a, b)));
             },
             @intFromEnum(Chunk.OpCode.OP_GREATER) => {
                 binaryOp(greaterThan);
             },
             @intFromEnum(Chunk.OpCode.OP_LESS) => {
                 binaryOp(lessThan);
-            }
+            },
             @intFromEnum(Chunk.OpCode.OP_ADD) => {
                 binaryOp(add);
             },
