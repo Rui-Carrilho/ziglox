@@ -37,6 +37,7 @@ pub fn AS_NUMBER(value: Value) f64 {
     };
 }
 
+
 pub fn IS_BOOL(value: Value) bool {
     return switch (value) {
         Value.boolean => true,
@@ -56,6 +57,13 @@ pub fn IS_NUMBER(value: Value) bool {
         Value.number => true,
         else => false,
     };
+}
+
+pub fn IS_OBJECT(value: Value) bool {
+    return switch (value) {
+        Value.object => true,
+        else => false
+    }
 }
 
 pub fn initValueArray(array: *ValueArray) void {
