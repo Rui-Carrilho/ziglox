@@ -3,7 +3,7 @@ const memory = @import("memory.zig");
 
 pub const ValueArray = struct { capacity: usize, count: usize, values: []Value };
 
-pub const ValueType = enum { boolean, number, nil };
+pub const ValueType = enum { boolean, number, object, nil };
 
 //pub const Value = struct { type: ValueType, as: union { boolean: bool, number: f64 } };
 
