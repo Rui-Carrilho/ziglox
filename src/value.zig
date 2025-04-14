@@ -37,7 +37,6 @@ pub fn AS_NUMBER(value: Value) f64 {
     };
 }
 
-
 pub fn IS_BOOL(value: Value) bool {
     return switch (value) {
         Value.boolean => true,
