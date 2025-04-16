@@ -20,6 +20,10 @@ pub fn NUMBER_VAL(value: f64) Value {
     return .{ .number = value };
 }
 
+pub fn OBJECT_VAL(value: object.Obj) Value {
+    return .{ .obj = value};
+}
+
 pub fn AS_BOOL(value: Value) bool {
     return switch (value) {
         Value.boolean => |myValue| myValue,
