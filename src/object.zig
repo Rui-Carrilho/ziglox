@@ -13,6 +13,14 @@ pub const ObjString = struct {
     chars: [*:0]u8 
 };
 
+pub fn isObjType(value: Value.Value, myType: ObjType) bool {
+    return Value.IS_OBJECT(value) and Value.AS_OBJECT(value).type == myType;
+}
+
 pub fn OBJ_TYPE(value: Value.Value) Value.ValueType {
     return @as(Value.ValueType, Value.AS_OBJECT(value));
+}
+
+pub fn IS_STRING(value: Value.Value) bool {
+    return isObjType(value, ObjType.OBJ_STRING);
 }
