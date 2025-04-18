@@ -24,3 +24,9 @@ pub fn OBJ_TYPE(value: Value.Value) Value.ValueType {
 pub fn IS_STRING(value: Value.Value) bool {
     return isObjType(value, ObjType.OBJ_STRING);
 }
+
+pub fn AS_STRING(value: Value.Value) ObjString {
+    return switch (value) {
+
+    }
+}
