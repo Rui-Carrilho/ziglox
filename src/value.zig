@@ -72,7 +72,7 @@ pub fn IS_NUMBER(value: Value) bool {
     };
 }
 
-pub fn IS_OBJECT(value: Value) bool {
+pub fn IS_OBJ(value: Value) bool {
     return switch (value) {
         Value.obj => true,
         else => false

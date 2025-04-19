@@ -1,37 +1,31 @@
 const std = @import("std");
 const Value = @import("value.zig");
 
-pub const ObjType = enum {
-    string
-};
+pub const ObjType = enum { string };
 
-pub const Obj = union(ObjType) {
-    string: struct {
-        length: usize,
-        chars: [*:0]u8
-    }
-};
+pub const Obj = union(ObjType) { string: ObjString };
 
-pub const ObjString = struct {
-    obj: Obj, 
-    length: usize,
-    chars: [*:0]u8 
-};
+pub const ObjString = struct { length: usize, chars: [*:0]u8 };
 
 pub fn isObjType(value: Value.Value, myType: ObjType) bool {
-    return Value.IS_OBJECT(value) and Value.AS_OBJECT(value).type == myType;
+    return Value.IS_OBJ(value) and @as(ObjType, Value.AS_OBJ(value)) == myType;
 }
 
-pub fn OBJ_TYPE(value: Value.Value) Value.ValueType {
-    return @as(Value.ValueType, Value.AS_OBJECT(value));
+pub fn OBJ_TYPE(value: Value.Value) ObjType {
+    return @as(ObjType, Value.AS_OBJ(value));
 }
 
 pub fn IS_STRING(value: Value.Value) bool {
-    return isObjType(value, ObjType.OBJ_STRING);
+    return isObjType(value, ObjType.string);
 }
 
 pub fn AS_STRING(value: Value.Value) ObjString {
     return switch (value) {
+        ObjType.string => |myValue| myValue,
+        else => std.debug.print("fuckup in AS_STRING (object.zig)", .{}),
+    };
+}
 
-    }
+pub fn AS_CSTRING(value: Value.Value) [*:0]u8 {
+    return AS_STRING(value).chars;
 }
