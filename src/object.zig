@@ -1,12 +1,19 @@
 const std = @import("std");
 const Value = @import("value.zig");
 const memory = @import("memory.zig");
+const Allocator = @import("allocator.zig");
 
-pub const ObjType = enum { string };
+pub const ObjType = enum { 
+    string,
+    uninitialized //this is an erry hack
+};
 
-pub const Obj = union(ObjType) { string: ObjString };
+pub const Obj = union(ObjType) { 
+    string: ObjString,
+    uninitialized: void
+};
 
-pub const ObjString = struct { length: usize, chars: [*:0]u8 };
+pub const ObjString = struct { chars: []u8 };
 
 pub fn isObjType(value: Value.Value, myType: ObjType) bool {
     return Value.IS_OBJ(value) and @as(ObjType, Value.AS_OBJ(value)) == myType;
@@ -27,10 +34,31 @@ pub fn AS_STRING(value: Value.Value) ObjString {
     };
 }
 
-pub fn AS_CSTRING(value: Value.Value) [*:0]u8 {
-    return AS_STRING(value).chars;
+pub fn AS_CSTRING(value: Value.Value) [*]u8 {
+    return AS_STRING(value).chars.ptr;
 }
 
-pub fn copyString(name: []u8) *ObjString {
-    const heapChars = memory.ALLOCATE(u8)
+pub fn copyString(name: []const u8) !*Obj {
+    const heapChars = try memory.ALLOCATE(u8, name.len);
+    @memcpy(heapChars, name);
+    return allocateString(heapChars, name.len);
+}
+
+pub fn allocateString(chars: []u8) *Obj {
+    const string = allocateObject();
+    string.* = .{
+        .string = .{
+            .chars = chars
+        }
+    };
+
+    return string;
+}
+
+pub fn allocateObject() *Obj {
+    const object = try memory.reallocate(Obj, Allocator.allocator, null, 0, 1);
+    const finalObject = object.?;
+    const finalfinalObject: *Obj = @ptrCast(finalObject.ptr);
+    finalfinalObject.* = Obj.uninitialized;
+    return finalfinalObject;
 }

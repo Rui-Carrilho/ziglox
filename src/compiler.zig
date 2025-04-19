@@ -225,7 +225,7 @@ pub fn number() !void {
 }
 
 pub fn string() !void {
-    emitConstant(Value.OBJ_VAL(Object.copyString(parser.previous.name[1..parser.previous.name.len-1])), Allocator.allocator);
+    try emitConstant(Value.OBJ_VAL(try Object.copyString(parser.previous.name[1..parser.previous.name.len-1])), Allocator.allocator);
 }
 
 pub fn unary() !void {

@@ -20,7 +20,7 @@ pub fn NUMBER_VAL(value: f64) Value {
     return .{ .number = value };
 }
 
-pub fn OBJ_VAL(value: Object.Obj) Value {
+pub fn OBJ_VAL(value: *Object.Obj) Value {
     return .{ .obj = value};
 }
 

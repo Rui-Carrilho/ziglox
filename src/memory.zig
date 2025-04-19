@@ -9,8 +9,8 @@ pub fn FREE_ARRAY(comptime T: type, allocator: *std.mem.Allocator, pointer: []T,
     _ = try reallocate(T, allocator, pointer, old_count * @sizeOf(T), 0);
 }
 
-pub fn ALLOCATE(myType: type, count: usize) !void {
-    _ = try reallocate(myType, Allocator.allocator, null, 0, count);
+pub fn ALLOCATE(comptime T: type, count: usize) ![]T {
+    return (try reallocate(T, Allocator.allocator, null, 0, count)).?;
 }
 
 /// Type-safe array growth function
@@ -45,7 +45,7 @@ pub fn reallocate(comptime T: type, allocator: *std.mem.Allocator, pointer: ?[]T
     const new_count = newSize / @sizeOf(T);
 
     if (pointer == null) {
-        return allocator.alloc(T, newSize);
+        return try allocator.alloc(T, newSize);
     }
 
     if (newSize == 0) {
