@@ -1,5 +1,6 @@
 const std = @import("std");
 const Value = @import("value.zig");
+const memory = @import("memory.zig");
 
 pub const ObjType = enum { string };
 
@@ -28,4 +29,8 @@ pub fn AS_STRING(value: Value.Value) ObjString {
 
 pub fn AS_CSTRING(value: Value.Value) [*:0]u8 {
     return AS_STRING(value).chars;
+}
+
+pub fn copyString(name: []u8) *ObjString {
+    const heapChars = memory.ALLOCATE(u8)
 }

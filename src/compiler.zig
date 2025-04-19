@@ -4,6 +4,7 @@ const Chunk = @import("chunk.zig");
 const Value = @import("value.zig");
 const Debug = @import("debug.zig");
 const Allocator = @import("allocator.zig");
+const Object = @import("object.zig");
 
 pub const Parser = struct { current: Scanner.Token, previous: Scanner.Token, hadError: bool, panicMode: bool };
 
@@ -223,6 +224,10 @@ pub fn number() !void {
     try emitConstant(Value.NUMBER_VAL(value), Allocator.allocator);
 }
 
+pub fn string() !void {
+    emitConstant(Value.OBJ_VAL(Object.copyString(parser.previous.name[1..parser.previous.name.len-1])), Allocator.allocator);
+}
+
 pub fn unary() !void {
     const operatorType = parser.previous.type;
 
@@ -258,7 +263,7 @@ pub const rules = [_]ParseRule{
     .{ .prefix = null, .infix = binary, .precedence = Precedence.PREC_COMPARISON }, // LESS
     .{ .prefix = null, .infix = binary, .precedence = Precedence.PREC_COMPARISON }, // LESS_EQUAL
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // IDENTIFIER
-    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // STRING
+    .{ .prefix = string, .infix = null, .precedence = Precedence.PREC_NONE }, // STRING
     .{ .prefix = number, .infix = null, .precedence = Precedence.PREC_NONE }, // NUMBER
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // AND
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // CLASS

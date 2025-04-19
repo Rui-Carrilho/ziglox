@@ -105,7 +105,8 @@ pub fn printValue(value: Value) void {
     switch(value) {
         Value.boolean => |myValue| {std.debug.print("{}", .{myValue});},
         Value.number => |myValue| {std.debug.print("{d}", .{myValue});},
-        Value.nil => std.debug.print("nil", .{})
+        Value.nil => std.debug.print("nil", .{}),
+        Value.obj => std.debug.print("got an object", .{})
     }
 }
 
@@ -115,5 +116,6 @@ pub fn valuesEqual(a: Value, b: Value) bool {
         ValueType.boolean => return AS_BOOL(a) == AS_BOOL(b),
         ValueType.nil => return true,
         ValueType.number => return AS_NUMBER(a) == AS_NUMBER(b),
+        ValueType.obj => return false
     }
 }

@@ -1,4 +1,5 @@
 const std = @import("std");
+const Allocator = @import("allocator.zig");
 
 pub fn GROW_CAPACITY(capacity: usize) usize {
     return if (capacity < 8) 8 else capacity * 2;
@@ -6,6 +7,10 @@ pub fn GROW_CAPACITY(capacity: usize) usize {
 
 pub fn FREE_ARRAY(comptime T: type, allocator: *std.mem.Allocator, pointer: []T, old_count: usize) !void {
     _ = try reallocate(T, allocator, pointer, old_count * @sizeOf(T), 0);
+}
+
+pub fn ALLOCATE(myType: type, count: usize) !void {
+    _ = try reallocate(myType, Allocator.allocator, null, 0, count);
 }
 
 /// Type-safe array growth function
@@ -34,20 +39,24 @@ pub fn initArray(comptime T: type) []T {
     return &[_]T{};
 }
 
-pub fn reallocate(comptime T: type, allocator: *std.mem.Allocator, pointer: []T, oldSize: usize, newSize: usize) !?[]T {
+pub fn reallocate(comptime T: type, allocator: *std.mem.Allocator, pointer: ?[]T, oldSize: usize, newSize: usize) !?[]T {
     // If the new size is zero, free the memory and return null.
     const old_count = oldSize / @sizeOf(T);
     const new_count = newSize / @sizeOf(T);
 
+    if (pointer == null) {
+        return allocator.alloc(T, newSize);
+    }
+
     if (newSize == 0) {
-        const slice = pointer[0..old_count];
+        const slice = pointer.?[0..old_count];
         allocator.free(slice);
         return null;
     }
     // Otherwise, use the allocator's realloc function.
     // This call will automatically compute the correct byte sizes.
     //std.debug.print("pointer: {*},\nnewSize: {d}", .{ pointer, newSize });
-    const old_slice = pointer[0..old_count];
+    const old_slice = pointer.?[0..old_count];
     const result = try allocator.realloc(old_slice, new_count);
     return result;
 }
