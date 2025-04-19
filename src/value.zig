@@ -106,7 +106,13 @@ pub fn printValue(value: Value) void {
         Value.boolean => |myValue| {std.debug.print("{}", .{myValue});},
         Value.number => |myValue| {std.debug.print("{d}", .{myValue});},
         Value.nil => std.debug.print("nil", .{}),
-        Value.obj => std.debug.print("got an object", .{})
+        Value.obj => |myValue| printObject(myValue),
+    }
+}
+
+pub fn printObject(value: *Object.Obj) void {
+    switch (value.*) {
+        Object.ObjType.string => |myValue| std.debug.print("{s}", .{myValue.chars}),
     }
 }
 
