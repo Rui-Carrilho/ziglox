@@ -2,11 +2,14 @@ const std = @import("std");
 const Value = @import("value.zig");
 
 pub const ObjType = enum {
-    OBJ_STRING
+    string
 };
 
-pub const Obj = struct {
-    type: ObjType
+pub const Obj = union(ObjType) {
+    string: struct {
+        length: usize,
+        chars: [*:0]u8
+    }
 };
 
 pub const ObjString = struct {

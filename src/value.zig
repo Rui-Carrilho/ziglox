@@ -1,6 +1,6 @@
 const std = @import("std");
 const memory = @import("memory.zig");
-const object = @import("object.zig");
+const Object = @import("object.zig");
 
 pub const ValueArray = struct { capacity: usize, count: usize, values: []Value };
 
@@ -8,7 +8,7 @@ pub const ValueType = enum { boolean, number, obj, nil };
 
 //pub const Value = struct { type: ValueType, as: union { boolean: bool, number: f64 } };
 
-pub const Value = union(ValueType) { boolean: bool, number: f64, obj: object.Obj, nil: void };
+pub const Value = union(ValueType) { boolean: bool, number: f64, obj: *Object.Obj, nil: void };
 
 pub fn BOOL_VAL(value: bool) Value {
     return .{ .boolean = value };
@@ -20,7 +20,7 @@ pub fn NUMBER_VAL(value: f64) Value {
     return .{ .number = value };
 }
 
-pub fn OBJ_VAL(value: object.Obj) Value {
+pub fn OBJ_VAL(value: Object.Obj) Value {
     return .{ .obj = value};
 }
 
@@ -42,7 +42,7 @@ pub fn AS_NUMBER(value: Value) f64 {
     };
 }
 
-pub fn AS_OBJ(value: Value) object.Obj {
+pub fn AS_OBJ(value: Value) Object.Obj {
     return switch (value) {
         Value.object => |myValue| myValue,
         else => {
@@ -76,7 +76,7 @@ pub fn IS_OBJECT(value: Value) bool {
     return switch (value) {
         Value.obj => true,
         else => false
-    }
+    };
 }
 
 pub fn initValueArray(array: *ValueArray) void {
