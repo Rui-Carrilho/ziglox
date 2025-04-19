@@ -44,8 +44,8 @@ pub fn copyString(name: []const u8) !*Obj {
     return allocateString(heapChars);
 }
 
-pub fn allocateString(chars: []u8) *Obj {
-    const string = allocateObject();
+pub fn allocateString(chars: []u8) !*Obj {
+    const string = try allocateObject();
     string.* = .{
         .string = .{
             .chars = chars
