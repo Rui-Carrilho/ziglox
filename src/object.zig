@@ -41,7 +41,7 @@ pub fn AS_CSTRING(value: Value.Value) [*]u8 {
 pub fn copyString(name: []const u8) !*Obj {
     const heapChars = try memory.ALLOCATE(u8, name.len);
     @memcpy(heapChars, name);
-    return allocateString(heapChars, name.len);
+    return allocateString(heapChars);
 }
 
 pub fn allocateString(chars: []u8) *Obj {
@@ -55,7 +55,7 @@ pub fn allocateString(chars: []u8) *Obj {
     return string;
 }
 
-pub fn allocateObject() *Obj {
+pub fn allocateObject() !*Obj {
     const object = try memory.reallocate(Obj, Allocator.allocator, null, 0, 1);
     const finalObject = object.?;
     const finalfinalObject: *Obj = @ptrCast(finalObject.ptr);
