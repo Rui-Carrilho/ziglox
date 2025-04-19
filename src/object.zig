@@ -5,7 +5,9 @@ pub const ObjType = enum {
     OBJ_STRING
 };
 
-pub const Obj = struct {type: ObjType};
+pub const Obj = struct {
+    type: ObjType
+};
 
 pub const ObjString = struct {
     obj: Obj, 

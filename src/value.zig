@@ -20,7 +20,7 @@ pub fn NUMBER_VAL(value: f64) Value {
     return .{ .number = value };
 }
 
-pub fn OBJECT_VAL(value: object.Obj) Value {
+pub fn OBJ_VAL(value: object.Obj) Value {
     return .{ .obj = value};
 }
 
@@ -42,13 +42,13 @@ pub fn AS_NUMBER(value: Value) f64 {
     };
 }
 
-pub fn AS_OBJECT(value: Value) object.Obj {
+pub fn AS_OBJ(value: Value) object.Obj {
     return switch (value) {
         Value.object => |myValue| myValue,
         else => {
             std.debug.panic("fuckup in AS_OBJECT(value.zig)", .{});
-        }
-    }
+        },
+    };
 }
 
 pub fn IS_BOOL(value: Value) bool {
