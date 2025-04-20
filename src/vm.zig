@@ -3,6 +3,7 @@ const Chunk = @import("chunk.zig");
 const Value = @import("value.zig");
 const Debug = @import("debug.zig");
 const Compiler = @import("compiler.zig");
+const Object = @import("object.zig");
 
 const STACK_MAX = 256;
 
@@ -82,6 +83,13 @@ pub fn run() InterpretResult {
                 binaryOp(lessThan);
             },
             @intFromEnum(Chunk.OpCode.OP_ADD) => {
+                if(Object.IS_STRING(peek(0)) and Object.IS_STRING(peek(1))) {
+                    concatenate();
+                } else if (Value.IS_NUMBER(peek(0) and Value.IS_NUMBER(peek(1)))) {
+                    const b = Value.AS_NUMBER(pop());
+                    const a = Value.AS_NUMBER(pop());
+                    push(Value.NUMBER_VAL(a + b));
+                }
                 binaryOp(add);
             },
             @intFromEnum(Chunk.OpCode.OP_CONSTANT) => {
