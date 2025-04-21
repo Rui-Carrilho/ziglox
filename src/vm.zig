@@ -57,6 +57,10 @@ pub fn isFalsey(value: Value.Value) bool {
     return Value.IS_NIL(value) or (Value.IS_BOOL(value) and !Value.AS_BOOL(value));
 }
 
+pub fn concatenate() void {
+    
+}
+
 pub fn run() InterpretResult {
     while (true) {
         if (Debug.debug_trace_execution) {
