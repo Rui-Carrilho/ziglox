@@ -89,8 +89,10 @@ pub fn run() InterpretResult {
                     const b = Value.AS_NUMBER(pop());
                     const a = Value.AS_NUMBER(pop());
                     push(Value.NUMBER_VAL(a + b));
+                } else {
+                    runtimeError("Operands must be two numbers or two strings", .{});
+                    return InterpretResult.INTERPRET_RUNTIME_ERROR;
                 }
-                binaryOp(add);
             },
             @intFromEnum(Chunk.OpCode.OP_CONSTANT) => {
                 const constant: Value.Value = readConstant();
