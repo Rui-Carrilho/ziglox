@@ -7,12 +7,7 @@ const Object = @import("object.zig");
 
 const STACK_MAX = 256;
 
-pub const VM = struct { 
-    chunk: *Chunk.Chunk, 
-    ip: [*]u8, 
-    stack: [STACK_MAX]Value.Value, 
-    stackTop: [*]Value.Value 
-};
+pub const VM = struct { chunk: *Chunk.Chunk, ip: [*]u8, stack: [STACK_MAX]Value.Value, stackTop: [*]Value.Value };
 
 var vm: VM = undefined;
 
@@ -20,7 +15,7 @@ pub fn resetStack() void {
     vm.stackTop = @ptrCast(&vm.stack[0]);
 }
 
-pub fn runtimeError(comptime format: []const u8, args:anytype) void {
+pub fn runtimeError(comptime format: []const u8, args: anytype) void {
     std.debug.print(format ++ "\n", args);
 
     const instruction = vm.ip - &vm.chunk.code[0] - 1;
@@ -58,7 +53,8 @@ pub fn isFalsey(value: Value.Value) bool {
 }
 
 pub fn concatenate() void {
-    
+    const b = Object.AS_STRING(pop());
+    const a = Object.AS_STRING(pop());
 }
 
 pub fn run() InterpretResult {
@@ -87,7 +83,7 @@ pub fn run() InterpretResult {
                 binaryOp(lessThan);
             },
             @intFromEnum(Chunk.OpCode.OP_ADD) => {
-                if(Object.IS_STRING(peek(0)) and Object.IS_STRING(peek(1))) {
+                if (Object.IS_STRING(peek(0)) and Object.IS_STRING(peek(1))) {
                     concatenate();
                 } else if (Value.IS_NUMBER(peek(0) and Value.IS_NUMBER(peek(1)))) {
                     const b = Value.AS_NUMBER(pop());
@@ -113,7 +109,7 @@ pub fn run() InterpretResult {
             @intFromEnum(Chunk.OpCode.OP_FALSE) => {
                 push(Value.BOOL_VAL(false));
             },
-            
+
             @intFromEnum(Chunk.OpCode.OP_DIVIDE) => {
                 binaryOp(divide);
             },
@@ -187,7 +183,7 @@ pub fn add(a: f64, b: f64) Value.Value {
     return Value.NUMBER_VAL(a + b);
 }
 
-pub fn subtract(a:f64, b: f64) Value.Value {
+pub fn subtract(a: f64, b: f64) Value.Value {
     return Value.NUMBER_VAL(a - b);
 }
 
