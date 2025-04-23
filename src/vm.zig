@@ -4,6 +4,7 @@ const Value = @import("value.zig");
 const Debug = @import("debug.zig");
 const Compiler = @import("compiler.zig");
 const Object = @import("object.zig");
+const memory = @import("memory.zig");
 
 const STACK_MAX = 256;
 
@@ -55,6 +56,10 @@ pub fn isFalsey(value: Value.Value) bool {
 pub fn concatenate() void {
     const b = Object.AS_STRING(pop());
     const a = Object.AS_STRING(pop());
+
+    const length = a.chars.len + b.chars.len;
+
+    const chars = memory.ALLOCATE(u8, length + 1);
 }
 
 pub fn run() InterpretResult {
