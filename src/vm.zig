@@ -60,6 +60,13 @@ pub fn concatenate() void {
     const length = a.chars.len + b.chars.len;
 
     const chars = memory.ALLOCATE(u8, length + 1);
+
+    @memcpy(chars, a.chars);
+    @memcpy(chars + a.chars.len, b.chars);
+    chars[chars.len] = 0;
+
+    const result = takeString(chars, length);
+    push(Value.OBJ_VAL(result));
 }
 
 pub fn run() InterpretResult {
