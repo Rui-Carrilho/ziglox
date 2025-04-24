@@ -7,7 +7,6 @@ const VM = @import("vm.zig");
 pub const ObjType = enum { 
     string,
     uninitialized, //this is an erry hack
-    next
 };
 
 pub const ObjNode = union(ObjType) { 

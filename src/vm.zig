@@ -13,7 +13,7 @@ pub const VM = struct {
     ip: [*]u8, 
     stack: [STACK_MAX]Value.Value, 
     stackTop: [*]Value.Value,
-    objects: *Object.Obj
+    objects: ?*Object.Obj
 };
 
 pub var vm: VM = undefined;
