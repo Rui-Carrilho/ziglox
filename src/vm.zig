@@ -16,7 +16,7 @@ pub const VM = struct {
     objects: *Object.Obj
 };
 
-var vm: VM = undefined;
+pub var vm: VM = undefined;
 
 pub fn resetStack() void {
     vm.stackTop = @ptrCast(&vm.stack[0]);
@@ -37,9 +37,12 @@ pub const InterpretResult = enum { INTERPRET_OK, INTERPRET_COMPILE_ERROR, INTERP
 
 pub fn initVM() void {
     resetStack();
+    vm.objects = null;
 }
 
-pub fn freeVM() void {}
+pub fn freeVM() void {
+    freeObjects();
+}
 
 pub fn push(value: Value.Value) void {
     vm.stackTop[0] = value;

@@ -1,5 +1,11 @@
 const std = @import("std");
 const Allocator = @import("allocator.zig");
+const VM = @import("vm.zig");
+const Object = @import("object.zig");
+
+pub fn FREE(comptime T: type, allocator: *std.mem.Allocator, pointer: []T) !void {
+    _ = try reallocate(T, allocator, pointer, 1, 0);
+}
 
 pub fn GROW_CAPACITY(capacity: usize) usize {
     return if (capacity < 8) 8 else capacity * 2;
@@ -59,4 +65,23 @@ pub fn reallocate(comptime T: type, allocator: *std.mem.Allocator, pointer: ?[]T
     const old_slice = pointer.?[0..old_count];
     const result = try allocator.realloc(old_slice, new_count);
     return result;
+}
+
+pub fn freeObject(object: *Object.Obj) void {
+    switch (object) {
+        @intFromEnum(Object.ObjString) => {
+            const string = @as(*Object.ObjString, object.string);
+            FREE_ARRAY(u8, Allocator.allocator, string.chars, string.chars.len + 1);
+
+        }
+    }
+}
+
+pub fn freeObjects() void {
+    const object = VM.vm.objects;
+    while (object != null) {
+        const next = object.next;
+        freeObject(object);
+        object = next;
+    }
 }

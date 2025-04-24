@@ -2,10 +2,12 @@ const std = @import("std");
 const Value = @import("value.zig");
 const memory = @import("memory.zig");
 const Allocator = @import("allocator.zig");
+const VM = @import("vm.zig");
 
 pub const ObjType = enum { 
     string,
-    uninitialized //this is an erry hack
+    uninitialized, //this is an erry hack
+    next
 };
 
 pub const Obj = union(ObjType) { 
@@ -65,5 +67,7 @@ pub fn allocateObject() !*Obj {
     const finalObject = object.?;
     const finalfinalObject: *Obj = @ptrCast(finalObject.ptr);
     finalfinalObject.* = Obj.uninitialized;
+    finalfinalObject.next = VM.vm.objects;
+    VM.vm.objects = finalfinalObject;
     return finalfinalObject;
 }
