@@ -10,7 +10,8 @@ pub const ObjType = enum {
 
 pub const Obj = union(ObjType) { 
     string: ObjString,
-    uninitialized: void
+    uninitialized: void,
+    next: *Obj
 };
 
 pub const ObjString = struct { chars: []u8 };
@@ -53,6 +54,10 @@ pub fn allocateString(chars: []u8) !*Obj {
     };
 
     return string;
+}
+
+pub fn takeString(chars: []u8) !*Obj {
+    return allocateString(chars);
 }
 
 pub fn allocateObject() !*Obj {

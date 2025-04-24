@@ -8,7 +8,13 @@ const memory = @import("memory.zig");
 
 const STACK_MAX = 256;
 
-pub const VM = struct { chunk: *Chunk.Chunk, ip: [*]u8, stack: [STACK_MAX]Value.Value, stackTop: [*]Value.Value };
+pub const VM = struct { 
+    chunk: *Chunk.Chunk, 
+    ip: [*]u8, 
+    stack: [STACK_MAX]Value.Value, 
+    stackTop: [*]Value.Value,
+    objects: *Object.Obj
+};
 
 var vm: VM = undefined;
 
@@ -65,7 +71,7 @@ pub fn concatenate() void {
     @memcpy(chars + a.chars.len, b.chars);
     chars[chars.len] = 0;
 
-    const result = takeString(chars, length);
+    const result = Object.takeString(chars, length);
     push(Value.OBJ_VAL(result));
 }
 
