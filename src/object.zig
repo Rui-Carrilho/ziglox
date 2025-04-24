@@ -10,10 +10,14 @@ pub const ObjType = enum {
     next
 };
 
-pub const Obj = union(ObjType) { 
+pub const ObjNode = union(ObjType) { 
     string: ObjString,
     uninitialized: void,
-    next: *Obj
+};
+
+pub const Obj = struct {
+    node: ObjNode,
+    next: ?*Obj
 };
 
 pub const ObjString = struct { chars: []u8 };

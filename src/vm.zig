@@ -41,7 +41,7 @@ pub fn initVM() void {
 }
 
 pub fn freeVM() void {
-    freeObjects();
+    memory.freeObjects();
 }
 
 pub fn push(value: Value.Value) void {
