@@ -74,7 +74,8 @@ pub fn freeObject(object: *Object.Obj) !void {
         Object.ObjType.string => {
             const string = object.node.string;
             try FREE_ARRAY(u8, Allocator.allocator, string.chars, string.chars.len);
-            try FREE(Object.Obj, Allocator.allocator, object);
+            const objectToFree = [1]object;
+            try FREE(Object.Obj, Allocator.allocator, objectToFree);
         },
         Object.ObjType.uninitialized => std.debug.panic("lmao we hit an uninitialized in memory.zig", .{})
     }
