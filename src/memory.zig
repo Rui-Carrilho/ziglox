@@ -19,8 +19,6 @@ pub fn ALLOCATE(comptime T: type, count: usize) ![]T {
     return (try reallocate(T, Allocator.allocator, null, 0, count)).?;
 }
 
-
-
 /// Type-safe array growth function
 pub fn growArray(comptime T: type, allocator: *std.mem.Allocator, pointer: []T, new_count: usize) ![]T {
     const old_count = pointer.len;
@@ -74,10 +72,9 @@ pub fn freeObject(object: *Object.Obj) !void {
         Object.ObjType.string => {
             const string = object.node.string;
             try FREE_ARRAY(u8, Allocator.allocator, string.chars, string.chars.len);
-            const objectToFree = [1]object;
-            try FREE(Object.Obj, Allocator.allocator, objectToFree);
+            try FREE(Object.Obj, Allocator.allocator, @as([]Object.Obj, .{object.*})[0..]);
         },
-        Object.ObjType.uninitialized => std.debug.panic("lmao we hit an uninitialized in memory.zig", .{})
+        Object.ObjType.uninitialized => std.debug.panic("lmao we hit an uninitialized in memory.zig", .{}),
     }
 }
 
