@@ -40,8 +40,8 @@ pub fn initVM() void {
     vm.objects = null;
 }
 
-pub fn freeVM() void {
-    memory.freeObjects();
+pub fn freeVM() !void {
+    try memory.freeObjects();
 }
 
 pub fn push(value: Value.Value) void {
@@ -62,23 +62,22 @@ pub fn isFalsey(value: Value.Value) bool {
     return Value.IS_NIL(value) or (Value.IS_BOOL(value) and !Value.AS_BOOL(value));
 }
 
-pub fn concatenate() void {
+pub fn concatenate() !void {
     const b = Object.AS_STRING(pop());
     const a = Object.AS_STRING(pop());
 
     const length = a.chars.len + b.chars.len;
 
-    const chars = memory.ALLOCATE(u8, length + 1);
+    const chars = try memory.ALLOCATE(u8, length);
 
-    @memcpy(chars, a.chars);
-    @memcpy(chars + a.chars.len, b.chars);
-    chars[chars.len] = 0;
+    @memcpy(chars[0..b.chars.len], a.chars);
+    @memcpy(chars[a.chars.len..], b.chars);
 
-    const result = Object.takeString(chars, length);
+    const result = try Object.takeString(chars);
     push(Value.OBJ_VAL(result));
 }
 
-pub fn run() InterpretResult {
+pub fn run() !InterpretResult {
     while (true) {
         if (Debug.debug_trace_execution) {
             std.debug.print("        ", .{});
@@ -105,8 +104,8 @@ pub fn run() InterpretResult {
             },
             @intFromEnum(Chunk.OpCode.OP_ADD) => {
                 if (Object.IS_STRING(peek(0)) and Object.IS_STRING(peek(1))) {
-                    concatenate();
-                } else if (Value.IS_NUMBER(peek(0) and Value.IS_NUMBER(peek(1)))) {
+                    try concatenate();
+                } else if (Value.IS_NUMBER(peek(0)) and Value.IS_NUMBER(peek(1))) {
                     const b = Value.AS_NUMBER(pop());
                     const a = Value.AS_NUMBER(pop());
                     push(Value.NUMBER_VAL(a + b));

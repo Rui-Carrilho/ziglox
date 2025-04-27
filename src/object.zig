@@ -53,9 +53,12 @@ pub fn copyString(name: []const u8) !*Obj {
 pub fn allocateString(chars: []u8) !*Obj {
     const string = try allocateObject();
     string.* = .{
-        .string = .{
-            .chars = chars
-        }
+        .node = .{
+            .string = .{
+                .chars = chars
+            }
+        },
+        .next = null,
     };
 
     return string;
@@ -69,7 +72,7 @@ pub fn allocateObject() !*Obj {
     const object = try memory.reallocate(Obj, Allocator.allocator, null, 0, 1);
     const finalObject = object.?;
     const finalfinalObject: *Obj = @ptrCast(finalObject.ptr);
-    finalfinalObject.* = ObjNode.uninitialized;
+    finalfinalObject.node = ObjNode.uninitialized;
     finalfinalObject.next = VM.vm.objects;
     VM.vm.objects = finalfinalObject;
     return finalfinalObject;

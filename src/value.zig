@@ -42,9 +42,9 @@ pub fn AS_NUMBER(value: Value) f64 {
     };
 }
 
-pub fn AS_OBJ(value: Value) Object.Obj {
+pub fn AS_OBJ(value: Value) *Object.Obj {
     return switch (value) {
-        Value.object => |myValue| myValue,
+        Value.obj => |myValue| myValue,
         else => {
             std.debug.panic("fuckup in AS_OBJECT(value.zig)", .{});
         },
@@ -111,7 +111,7 @@ pub fn printValue(value: Value) void {
 }
 
 pub fn printObject(value: *Object.Obj) void {
-    switch (value.*) {
+    switch (value.node) {
         Object.ObjType.string => |myValue| std.debug.print("{s}", .{myValue.chars}),
         Object.ObjType.uninitialized => std.debug.print("oops, uninitialized", .{})
     }

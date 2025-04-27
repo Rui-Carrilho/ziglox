@@ -32,7 +32,7 @@ pub fn main() !void {
         std.process.exit(64);
     }
 
-    VM.freeVM();
+    try VM.freeVM();
 }
 
 pub fn repl(allocator: *std.mem.Allocator) !void {
