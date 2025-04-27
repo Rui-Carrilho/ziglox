@@ -22,7 +22,7 @@ pub const Obj = struct {
 pub const ObjString = struct { chars: []u8 };
 
 pub fn isObjType(value: Value.Value, myType: ObjType) bool {
-    return Value.IS_OBJ(value) and @as(ObjType, Value.AS_OBJ(value)) == myType;
+    return Value.IS_OBJ(value) and @as(ObjType, Value.AS_OBJ(value).node) == myType;
 }
 
 pub fn OBJ_TYPE(value: Value.Value) ObjType {
@@ -34,9 +34,9 @@ pub fn IS_STRING(value: Value.Value) bool {
 }
 
 pub fn AS_STRING(value: Value.Value) ObjString {
-    return switch (value) {
+    return switch (Value.AS_OBJ(value).node) {
         ObjType.string => |myValue| myValue,
-        else => std.debug.print("fuckup in AS_STRING (object.zig)", .{}),
+        else => std.debug.panic("fuckup in AS_STRING (object.zig)", .{}),
     };
 }
 
@@ -69,7 +69,7 @@ pub fn allocateObject() !*Obj {
     const object = try memory.reallocate(Obj, Allocator.allocator, null, 0, 1);
     const finalObject = object.?;
     const finalfinalObject: *Obj = @ptrCast(finalObject.ptr);
-    finalfinalObject.* = Obj.uninitialized;
+    finalfinalObject.* = ObjNode.uninitialized;
     finalfinalObject.next = VM.vm.objects;
     VM.vm.objects = finalfinalObject;
     return finalfinalObject;

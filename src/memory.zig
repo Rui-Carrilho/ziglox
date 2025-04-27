@@ -72,17 +72,20 @@ pub fn freeObject(object: *Object.Obj) !void {
         Object.ObjType.string => {
             const string = object.node.string;
             try FREE_ARRAY(u8, Allocator.allocator, string.chars, string.chars.len);
-            try FREE(Object.Obj, Allocator.allocator, @as([]Object.Obj, .{object.*})[0..]);
+            var objectSlice: []Object.Obj = undefined;
+            objectSlice.ptr = @ptrCast(object);
+            objectSlice.len = 1;
+            try FREE(Object.Obj, Allocator.allocator, objectSlice);
         },
         Object.ObjType.uninitialized => std.debug.panic("lmao we hit an uninitialized in memory.zig", .{}),
     }
 }
 
-pub fn freeObjects() void {
-    const object = VM.vm.objects;
+pub fn freeObjects() !void {
+    var object = VM.vm.objects;
     while (object != null) {
         const next = object.?.next;
-        freeObject(object.?);
+        try freeObject(object.?);
         object = next;
     }
 }
