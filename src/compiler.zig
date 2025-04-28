@@ -226,6 +226,7 @@ pub fn number() !void {
 
 pub fn string() !void {
     try emitConstant(Value.OBJ_VAL(try Object.copyString(parser.previous.name[1..parser.previous.name.len-1])), Allocator.allocator);
+    //Zelda Oracle games are underrated
 }
 
 pub fn unary() !void {
