@@ -85,19 +85,19 @@ pub fn initValueArray(array: *ValueArray) void {
     array.count = 0;
 }
 
-pub fn writeValueArray(array: *ValueArray, value: Value, allocator: *std.mem.Allocator) !void {
+pub fn writeValueArray(array: *ValueArray, value: Value) !void {
     if (array.capacity < array.count + 1) {
         const oldCapacity = array.capacity;
         array.capacity = memory.GROW_CAPACITY(oldCapacity);
-        array.values = try memory.growArray(Value, allocator, (array.*).values, array.capacity);
+        array.values = try memory.growArray(Value, (array.*).values, array.capacity);
     }
 
     array.values[array.count] = value;
     array.count += 1;
 }
 
-pub fn freeValueArray(array: *ValueArray, allocator: *std.mem.Allocator) void {
-    memory.FREE_ARRAY(Value, allocator, array.values, array.capacity) catch unreachable;
+pub fn freeValueArray(array: *ValueArray) void {
+    memory.FREE_ARRAY(Value, array.values, array.capacity) catch unreachable;
     initValueArray(array);
 }
 

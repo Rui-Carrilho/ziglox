@@ -108,7 +108,7 @@ pub fn errorAtCurrent(message: []const u8) void {
     errorAt(&parser.current, message);
 }
 
-pub fn compile(source: []const u8, chunk: *Chunk.Chunk, allocator: *std.mem.Allocator) !bool {
+pub fn compile(source: []const u8, chunk: *Chunk.Chunk) !bool {
     Scanner.initScanner(source);
     compilingChunk = chunk;
 
@@ -118,7 +118,7 @@ pub fn compile(source: []const u8, chunk: *Chunk.Chunk, allocator: *std.mem.Allo
     advance();
     try expression();
     consume(Scanner.TokenType.TOKEN_EOF, "Expected end of expression.");
-    _ = try endCompiler(allocator);
+    _ = try endCompiler();
     return !parser.hadError;
 }
 
@@ -143,21 +143,21 @@ pub fn consume(tokenType: Scanner.TokenType, message: []const u8) void {
     errorAtCurrent(message);
 }
 
-pub fn emitByte(byte: u8, allocator: *std.mem.Allocator) !void {
-    try Chunk.writeChunk(currentChunk(), byte, parser.previous.line, allocator);
+pub fn emitByte(byte: u8) !void {
+    try Chunk.writeChunk(currentChunk(), byte, parser.previous.line);
 }
 
-pub fn emitBytes(byte1: u8, byte2: u8, allocator: *std.mem.Allocator) !void {
-    try emitByte(byte1, allocator);
-    try emitByte(byte2, allocator);
+pub fn emitBytes(byte1: u8, byte2: u8) !void {
+    try emitByte(byte1);
+    try emitByte(byte2);
 }
 
-pub fn emitReturn(allocator: *std.mem.Allocator) !void {
-    try emitByte(@intFromEnum(Chunk.OpCode.OP_RETURN), allocator);
+pub fn emitReturn() !void {
+    try emitByte(@intFromEnum(Chunk.OpCode.OP_RETURN));
 }
 
 pub fn makeConstant(value: Value.Value) !u8 {
-    const constant = try Chunk.addConstant(currentChunk(), value, Allocator.allocator);
+    const constant = try Chunk.addConstant(currentChunk(), value);
     if (constant > @as(usize, std.math.maxInt(u8))) {
         errorBase("too many constants in one chunk.");
         return 0;
@@ -166,13 +166,13 @@ pub fn makeConstant(value: Value.Value) !u8 {
     return @intCast(constant);
 }
 
-pub fn emitConstant(value: Value.Value, allocator: *std.mem.Allocator) !void {
+pub fn emitConstant(value: Value.Value) !void {
     const newConstant = try makeConstant(value);
-    try emitBytes(@intFromEnum(Chunk.OpCode.OP_CONSTANT), newConstant, allocator);
+    try emitBytes(@intFromEnum(Chunk.OpCode.OP_CONSTANT), newConstant);
 }
 
-pub fn endCompiler(allocator: *std.mem.Allocator) !void {
-    try emitReturn(allocator);
+pub fn endCompiler() !void {
+    try emitReturn();
 
     if (debugPrintCode) {
         if (!parser.hadError) {
@@ -187,25 +187,25 @@ pub fn binary() !void {
     try parsePrecedence(@enumFromInt(@intFromEnum(rule.precedence) + 1));
 
     try switch (operatorType) {
-        Scanner.TokenType.TOKEN_BANG_EQUAL => emitBytes(@intFromEnum(Chunk.OpCode.OP_EQUAL), @intFromEnum(Chunk.OpCode.OP_NOT), Allocator.allocator),
-        Scanner.TokenType.TOKEN_EQUAL_EQUAL => emitByte(@intFromEnum(Chunk.OpCode.OP_EQUAL), Allocator.allocator),
-        Scanner.TokenType.TOKEN_GREATER => emitByte(@intFromEnum(Chunk.OpCode.OP_GREATER), Allocator.allocator),
-        Scanner.TokenType.TOKEN_GREATER_EQUAL => emitBytes(@intFromEnum(Chunk.OpCode.OP_LESS), @intFromEnum(Chunk.OpCode.OP_NOT), Allocator.allocator),
-        Scanner.TokenType.TOKEN_LESS => emitByte(@intFromEnum(Chunk.OpCode.OP_LESS), Allocator.allocator),
-        Scanner.TokenType.TOKEN_LESS_EQUAL => emitBytes(@intFromEnum(Chunk.OpCode.OP_GREATER), @intFromEnum(Chunk.OpCode.OP_NOT), Allocator.allocator),
-        Scanner.TokenType.TOKEN_PLUS => emitByte(@intFromEnum(Chunk.OpCode.OP_ADD), Allocator.allocator),
-        Scanner.TokenType.TOKEN_MINUS => emitByte(@intFromEnum(Chunk.OpCode.OP_SUBTRACT), Allocator.allocator),
-        Scanner.TokenType.TOKEN_STAR => emitByte(@intFromEnum(Chunk.OpCode.OP_MULTIPLY), Allocator.allocator),
-        Scanner.TokenType.TOKEN_SLASH => emitByte(@intFromEnum(Chunk.OpCode.OP_DIVIDE), Allocator.allocator),
+        Scanner.TokenType.TOKEN_BANG_EQUAL => emitBytes(@intFromEnum(Chunk.OpCode.OP_EQUAL), @intFromEnum(Chunk.OpCode.OP_NOT)),
+        Scanner.TokenType.TOKEN_EQUAL_EQUAL => emitByte(@intFromEnum(Chunk.OpCode.OP_EQUAL)),
+        Scanner.TokenType.TOKEN_GREATER => emitByte(@intFromEnum(Chunk.OpCode.OP_GREATER)),
+        Scanner.TokenType.TOKEN_GREATER_EQUAL => emitBytes(@intFromEnum(Chunk.OpCode.OP_LESS), @intFromEnum(Chunk.OpCode.OP_NOT)),
+        Scanner.TokenType.TOKEN_LESS => emitByte(@intFromEnum(Chunk.OpCode.OP_LESS)),
+        Scanner.TokenType.TOKEN_LESS_EQUAL => emitBytes(@intFromEnum(Chunk.OpCode.OP_GREATER), @intFromEnum(Chunk.OpCode.OP_NOT)),
+        Scanner.TokenType.TOKEN_PLUS => emitByte(@intFromEnum(Chunk.OpCode.OP_ADD)),
+        Scanner.TokenType.TOKEN_MINUS => emitByte(@intFromEnum(Chunk.OpCode.OP_SUBTRACT)),
+        Scanner.TokenType.TOKEN_STAR => emitByte(@intFromEnum(Chunk.OpCode.OP_MULTIPLY)),
+        Scanner.TokenType.TOKEN_SLASH => emitByte(@intFromEnum(Chunk.OpCode.OP_DIVIDE)),
         else => unreachable,
     };
 }
 
 pub fn literal() !void {
     try switch (parser.previous.type) {
-        Scanner.TokenType.TOKEN_FALSE => emitByte(@intFromEnum(Chunk.OpCode.OP_FALSE), Allocator.allocator),
-        Scanner.TokenType.TOKEN_NIL => emitByte(@intFromEnum(Chunk.OpCode.OP_NIL), Allocator.allocator),
-        Scanner.TokenType.TOKEN_TRUE => emitByte(@intFromEnum(Chunk.OpCode.OP_TRUE), Allocator.allocator),
+        Scanner.TokenType.TOKEN_FALSE => emitByte(@intFromEnum(Chunk.OpCode.OP_FALSE)),
+        Scanner.TokenType.TOKEN_NIL => emitByte(@intFromEnum(Chunk.OpCode.OP_NIL)),
+        Scanner.TokenType.TOKEN_TRUE => emitByte(@intFromEnum(Chunk.OpCode.OP_TRUE)),
         else => return,
     };
 }
@@ -218,14 +218,14 @@ pub fn grouping() !void {
 pub fn number() !void {
     const value = std.fmt.parseFloat(f64, parser.previous.name) catch |err| {
         std.debug.print("Error parsing float: {}\n", .{err});
-        try emitConstant(Value.NUMBER_VAL(0), Allocator.allocator);
+        try emitConstant(Value.NUMBER_VAL(0));
         return;
     };
-    try emitConstant(Value.NUMBER_VAL(value), Allocator.allocator);
+    try emitConstant(Value.NUMBER_VAL(value));
 }
 
 pub fn string() !void {
-    try emitConstant(Value.OBJ_VAL(try Object.copyString(parser.previous.name[1..parser.previous.name.len-1])), Allocator.allocator);
+    try emitConstant(Value.OBJ_VAL(try Object.copyString(parser.previous.name[1..parser.previous.name.len-1])));
     //Zelda Oracle games are underrated
 }
 
@@ -237,11 +237,11 @@ pub fn unary() !void {
 
     //emit the operator instruction
     try switch (operatorType) {
-        Scanner.TokenType.TOKEN_BANG => emitByte(@intFromEnum(Chunk.OpCode.OP_NOT), Allocator.allocator),
-        Scanner.TokenType.TOKEN_MINUS => emitByte(@intFromEnum(Chunk.OpCode.OP_NEGATE), Allocator.allocator),
+        Scanner.TokenType.TOKEN_BANG => emitByte(@intFromEnum(Chunk.OpCode.OP_NOT)),
+        Scanner.TokenType.TOKEN_MINUS => emitByte(@intFromEnum(Chunk.OpCode.OP_NEGATE)),
         else => unreachable,
     };
-    
+
 }
 
 pub const rules = [_]ParseRule{

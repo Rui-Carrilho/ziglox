@@ -174,14 +174,14 @@ fn readByte() u8 {
     return byte;
 }
 
-pub fn interpret(source: []const u8, allocator: *std.mem.Allocator) !InterpretResult {
+pub fn interpret(source: []const u8) !InterpretResult {
     var chunk: Chunk.Chunk = undefined;
     Chunk.initChunk(&chunk);
 
-    const compilingResult = try Compiler.compile(source, &chunk, allocator);
+    const compilingResult = try Compiler.compile(source, &chunk);
 
     if (!compilingResult) {
-        Chunk.freeChunk(&chunk, allocator);
+        Chunk.freeChunk(&chunk);
         return InterpretResult.INTERPRET_COMPILE_ERROR;
     }
 
@@ -190,7 +190,7 @@ pub fn interpret(source: []const u8, allocator: *std.mem.Allocator) !InterpretRe
 
     const result = run();
 
-    Chunk.freeChunk(&chunk, allocator);
+    Chunk.freeChunk(&chunk);
     return result;
 }
 

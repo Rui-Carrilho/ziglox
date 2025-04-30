@@ -36,12 +36,12 @@ pub fn initChunk(chunk: *Chunk) void {
     Value.initValueArray(&chunk.constants);
 }
 
-pub fn writeChunk(chunk: *Chunk, byte: u8, line: i32, allocator: *std.mem.Allocator) !void {
+pub fn writeChunk(chunk: *Chunk, byte: u8, line: i32) !void {
     if (chunk.capacity < chunk.count + 1) {
         const oldCapacity = chunk.capacity;
         chunk.capacity = memory.GROW_CAPACITY(oldCapacity);
-        chunk.code = try memory.growArray(u8, allocator, (chunk.*).code, chunk.capacity);
-        chunk.lines = try memory.growArray(i32, allocator, chunk.*.lines, chunk.capacity);
+        chunk.code = try memory.growArray(u8, (chunk.*).code, chunk.capacity);
+        chunk.lines = try memory.growArray(i32, chunk.*.lines, chunk.capacity);
     }
 
     chunk.code[chunk.count] = byte;
@@ -49,13 +49,13 @@ pub fn writeChunk(chunk: *Chunk, byte: u8, line: i32, allocator: *std.mem.Alloca
     chunk.count += 1;
 }
 
-pub fn addConstant(chunk: *Chunk, value: Value.Value, allocator: *std.mem.Allocator) !usize {
-    try Value.writeValueArray(&chunk.constants, value, allocator);
+pub fn addConstant(chunk: *Chunk, value: Value.Value) !usize {
+    try Value.writeValueArray(&chunk.constants, value);
     return chunk.constants.count - 1;
 }
 
-pub fn freeChunk(chunk: *Chunk, allocator: *std.mem.Allocator) void {
-    memory.FREE_ARRAY(u8, allocator, chunk.code, chunk.capacity) catch unreachable;
-    Value.freeValueArray(&chunk.constants, allocator);
+pub fn freeChunk(chunk: *Chunk) void {
+    memory.FREE_ARRAY(u8, chunk.code, chunk.capacity) catch unreachable;
+    Value.freeValueArray(&chunk.constants);
     initChunk(chunk);
 }

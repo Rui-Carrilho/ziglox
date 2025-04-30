@@ -69,7 +69,7 @@ pub fn takeString(chars: []u8) !*Obj {
 }
 
 pub fn allocateObject() !*Obj {
-    const object = try memory.reallocate(Obj, Allocator.allocator, null, 0, 1);
+    const object = try memory.reallocate(Obj, null, 0, 1);
     const finalObject = object.?;
     const finalfinalObject: *Obj = @ptrCast(finalObject.ptr);
     finalfinalObject.node = ObjNode.uninitialized;

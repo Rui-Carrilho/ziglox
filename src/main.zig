@@ -24,7 +24,7 @@ pub fn main() !void {
     const arg = args.next();
 
     if (arg == null) {
-        try repl(&allocator);
+        try repl();
     } else if (args.next() == null) {
         try runFile(arg.?, &allocator);
     } else {
@@ -35,7 +35,7 @@ pub fn main() !void {
     try VM.freeVM();
 }
 
-pub fn repl(allocator: *std.mem.Allocator) !void {
+pub fn repl() !void {
     var line: [1024]u8 = undefined;
     var line_terminated: [1024]u8 = undefined;
 
@@ -58,7 +58,7 @@ pub fn repl(allocator: *std.mem.Allocator) !void {
 
         const final_input = line_terminated[0..input.?.len :0];
 
-        _ = try VM.interpret(final_input, allocator);
+        _ = try VM.interpret(final_input);
     }
 }
 
@@ -66,7 +66,7 @@ pub fn runFile(path: []const u8, allocator: *std.mem.Allocator) !void {
     const source = readFile(path, allocator);
     defer allocator.free(source);
 
-    const result = try VM.interpret(source, allocator);
+    const result = try VM.interpret(source);
 
     if (result == VM.InterpretResult.INTERPRET_COMPILE_ERROR) std.process.exit(65);
     if (result == VM.InterpretResult.INTERPRET_RUNTIME_ERROR) std.process.exit(70);
