@@ -21,5 +21,6 @@ pub fn initTable(table: *Table) void {
 }
 
 pub fn freeTable(table: *Table) void {
-    memory.FREE_ARRAY(Entry, allocator: *std.mem.Allocator, pointer: []T, old_count: usize)
+    memory.FREE_ARRAY(Entry, table.entries.?, table.entries.?.len);
+    initTable(table);
 }
