@@ -241,6 +241,7 @@ pub fn unary() !void {
         Scanner.TokenType.TOKEN_MINUS => emitByte(@intFromEnum(Chunk.OpCode.OP_NEGATE), Allocator.allocator),
         else => unreachable,
     };
+    
 }
 
 pub const rules = [_]ParseRule{
