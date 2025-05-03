@@ -23,4 +23,5 @@ pub fn initTable(table: *Table) void {
 pub fn freeTable(table: *Table) void {
     memory.FREE_ARRAY(Entry, table.entries.?, table.entries.?.len);
     initTable(table);
+    
 }
