@@ -19,7 +19,10 @@ pub const Obj = struct {
     next: ?*Obj
 };
 
-pub const ObjString = struct { chars: []u8 };
+pub const ObjString = struct { 
+    chars: []u8,
+    hash: u32
+};
 
 pub fn isObjType(value: Value.Value, myType: ObjType) bool {
     return Value.IS_OBJ(value) and @as(ObjType, Value.AS_OBJ(value).node) == myType;
@@ -50,18 +53,30 @@ pub fn copyString(name: []const u8) !*Obj {
     return allocateString(heapChars);
 }
 
-pub fn allocateString(chars: []u8) !*Obj {
+pub fn allocateString(chars: []u8, hash: u32) !*Obj {
     const string = try allocateObject();
     string.* = .{
         .node = .{
             .string = .{
-                .chars = chars
+                .chars = chars,
+                .hash = hash
             }
         },
         .next = null,
     };
 
     return string;
+}
+
+pub fn hashString(key: []const u8) u32 {
+    const hash = 2166136261u;
+    var i: usize = 0;
+    while (i < key.len) : (i += 1) {
+        hash ^= @as(u8, key[i]);
+        hash *= 16777619;
+    }
+
+    return hash;
 }
 
 pub fn takeString(chars: []u8) !*Obj {
