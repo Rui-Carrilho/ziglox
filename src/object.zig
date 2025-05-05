@@ -48,9 +48,10 @@ pub fn AS_CSTRING(value: Value.Value) [*]u8 {
 }
 
 pub fn copyString(name: []const u8) !*Obj {
+    const hash = hashString(name);
     const heapChars = try memory.ALLOCATE(u8, name.len);
     @memcpy(heapChars, name);
-    return allocateString(heapChars);
+    return allocateString(heapChars, hash);
 }
 
 pub fn allocateString(chars: []u8, hash: u32) !*Obj {
@@ -80,7 +81,8 @@ pub fn hashString(key: []const u8) u32 {
 }
 
 pub fn takeString(chars: []u8) !*Obj {
-    return allocateString(chars);
+    const hash = hashString(chars);
+    return allocateString(chars, hash);
 }
 
 pub fn allocateObject() !*Obj {
