@@ -25,3 +25,17 @@ pub fn freeTable(table: *Table) void {
     initTable(table);
     
 }
+
+pub fn findEntry(entries: *Entry, capacity: usize, key: *Object.ObjString) *Entry {
+    const index = key.hash % capacity;
+    while (true) {
+        const entry = &entries[index];
+        if (entry.key == key ||)
+    }
+}
+
+pub fn tableSet(table: *Table, key: *Object.ObjString, value: Value.Value) bool {
+    const entry = findEntry(table.entries, table.count, key);
+    const isNewKey = entry.
+}
+
