@@ -30,12 +30,23 @@ pub fn findEntry(entries: *Entry, capacity: usize, key: *Object.ObjString) *Entr
     const index = key.hash % capacity;
     while (true) {
         const entry = &entries[index];
-        if (entry.key == key ||)
+        if (entry.key == key || entry.key == NULL) {
+            return entry;
+        }
+
+        index = (index + 1) % capacity;
     }
 }
 
 pub fn tableSet(table: *Table, key: *Object.ObjString, value: Value.Value) bool {
     const entry = findEntry(table.entries, table.count, key);
-    const isNewKey = entry.
+    const isNewKey = entry.key == NULL;
+    if (isNewKey) {
+        table.count += 1;
+    }
+
+    entry.key = key;
+    entry.value = value;
+    return isNewKey;
 }
 
