@@ -39,6 +39,11 @@ pub fn findEntry(entries: *Entry, capacity: usize, key: *Object.ObjString) *Entr
 }
 
 pub fn tableSet(table: *Table, key: *Object.ObjString, value: Value.Value) bool {
+    if (table.count + 1 > table.entries.?.len * TABLE_MAX_LOAD) {
+        const capacity = memory.GROW_CAPACITY(table.count);
+        adjustCapacity(table, capacity);
+    }
+
     const entry = findEntry(table.entries, table.count, key);
     const isNewKey = entry.key == NULL;
     if (isNewKey) {
