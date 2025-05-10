@@ -4,6 +4,7 @@ const Value = @import("value.zig");
 const memory = @import("memory.zig");
 const Allocator = @import("allocator.zig");
 
+const TABLE_MAX_LOAD = 0.75;
 
 pub const Table = struct {
     count: usize,
@@ -11,7 +12,7 @@ pub const Table = struct {
 };
 
 pub const Entry = struct {
-    key: *Object.ObjString,
+    key: ?*Object.ObjString,
     value: Value.Value
 };
 
@@ -25,15 +26,15 @@ pub fn freeTable(table: *Table) void {
     initTable(table);
 }
 
-pub fn findEntry(entries: *Entry, capacity: usize, key: *Object.ObjString) *Entry {
-    const index = key.hash % capacity;
+pub fn findEntry(entries: []Entry, key: *Object.ObjString) *Entry {
+    const index = key.hash % entries.len;
     while (true) {
-        const entry = &entries[index];
-        if (entry.key == key || entry.key == NULL) {
+        const entry = entries[index];
+        if (entry.key == key or entry.key == null) {
             return entry;
         }
 
-        index = (index + 1) % capacity;
+        index = (index + 1) % entries.len;
     }
 }
 
@@ -43,7 +44,7 @@ pub fn tableSet(table: *Table, key: *Object.ObjString, value: Value.Value) bool 
         adjustCapacity(table, capacity);
     }
 
-    const entry = findEntry(table.entries, table.count, key);
+    const entry = findEntry(table.entries.?, table.count, key);
     const isNewKey = entry.key == NULL;
     if (isNewKey) {
         table.count += 1;
