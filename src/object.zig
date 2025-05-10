@@ -70,7 +70,7 @@ pub fn allocateString(chars: []u8, hash: u32) !*Obj {
 }
 
 pub fn hashString(key: []const u8) u32 {
-    const hash = 2166136261u;
+    const hash: u32 = 2166136261;
     var i: usize = 0;
     while (i < key.len) : (i += 1) {
         hash ^= @as(u8, key[i]);
