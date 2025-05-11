@@ -38,6 +38,19 @@ pub fn findEntry(entries: []Entry, key: *Object.ObjString) *Entry {
     }
 }
 
+pub fn adjustCapacity(table: *Table, capacity: usize) void {
+    var entries = memory.ALLOCATE(Entry, capacity);
+    var i: usize = 0;
+
+    while(i < capacity) : (i = i + 1) {
+        entries[i].key = null;
+        entries[i].value = null;
+    }
+
+    table.entries = entries;
+    table.entries.?.len = capacity;
+}
+
 pub fn tableSet(table: *Table, key: *Object.ObjString, value: Value.Value) bool {
     if (table.count + 1 > table.entries.?.len * TABLE_MAX_LOAD) {
         const capacity = memory.GROW_CAPACITY(table.count);
