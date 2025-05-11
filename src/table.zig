@@ -57,6 +57,8 @@ pub fn adjustCapacity(table: *Table, capacity: usize) void {
         dest.value = entry.value;
     }
 
+    memory.FREE_ARRAY(Entry, table.entries.?, table.entries.?.len);
+
     table.entries = entries;
     table.entries.?.len = capacity;
 }
@@ -78,3 +80,13 @@ pub fn tableSet(table: *Table, key: *Object.ObjString, value: Value.Value) bool 
     return isNewKey;
 }
 
+pub fn tableAddAll(from: *Table, to: *Table) void {
+    var i: usize = 0;
+
+    while(i < from.entries.?.len) : (i = i + 1) {
+        const entry = from.entries[i];
+        if (entry.key != null) {
+            tableSet(to, entry.key, entry.value);
+        }
+    }
+}
