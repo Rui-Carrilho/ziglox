@@ -22,9 +22,17 @@ pub fn freeTable(table: *Table) void {
 
 pub fn findEntry(entries: []Entry, key: *Object.ObjString) *Entry {
     const index = key.hash % entries.len;
+    const tombstone: ?*Entry = null;
+
     while (true) {
         const entry = entries[index];
-        if (entry.key == key or entry.key == null) {
+        if (entry.key == null) {
+            if (Value.IS_NIL(entry.value)) {
+                return if(tombstone != null) tombstone.? else entry; 
+            } else {
+                if (tombstone == null) tombstone = entry;
+            }
+        } else if (entry.key == key) {
             return entry;
         }
 
@@ -72,6 +80,17 @@ pub fn tableSet(table: *Table, key: *Object.ObjString, value: Value.Value) bool 
     entry.key = key;
     entry.value = value;
     return isNewKey;
+}
+
+pub fn tableDelete(table: *Table, key: *Object.ObjString) bool {
+    if (table.count == 0) return false;
+
+    const entry = findEntry(table.entries, key);
+    if (entry.key.? == null) return false;
+
+    entry.key = null;
+    entry.value = Value.BOOL_VAL(true);
+    return true;
 }
 
 pub fn tableAddAll(from: *Table, to: *Table) void {
