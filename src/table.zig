@@ -104,6 +104,23 @@ pub fn tableAddAll(from: *Table, to: *Table) void {
     }
 }
 
+pub fn tableFindString(table: *Table, chars: []u8, hash: u32) *Object.ObjString {
+    if (table.count == 0) return null;
+
+    const index: u32 = hash % table.entries.?.len;
+
+    while (true) {
+        const entry: *Entry = &table.entries[index];
+        if (entry.key == null) {
+            if (Value.IS_NIL(entry.value)) return null;
+        } else if (entry.key.chars.len == chars.len and entry.key.hash == hash and @memcpy(entry.key.chars, chars)) {
+            return entry.key;
+        }
+
+        index = (index + 1) % table.entries.?.len; 
+    }
+}
+
 pub fn tableGet(table: *Table, key: *Object.ObjString, value: *Value.Value) bool {
     if (table.count == 0) return false;
 

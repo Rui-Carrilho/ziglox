@@ -123,6 +123,6 @@ pub fn valuesEqual(a: Value, b: Value) bool {
         ValueType.boolean => return AS_BOOL(a) == AS_BOOL(b),
         ValueType.nil => return true,
         ValueType.number => return AS_NUMBER(a) == AS_NUMBER(b),
-        ValueType.obj => return false
+        ValueType.obj => return AS_OBJ(a) == AS_OBJ(b)
     }
 }
