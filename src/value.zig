@@ -126,5 +126,5 @@ pub fn valuesEqual(a: Value, b: Value) bool {
         ValueType.obj => return AS_OBJ(a) == AS_OBJ(b)
     }
 
-    //green must proliferate
+    //one of these days I must do a real commit
 }
