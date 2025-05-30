@@ -125,5 +125,4 @@ pub fn valuesEqual(a: Value, b: Value) bool {
         ValueType.number => return AS_NUMBER(a) == AS_NUMBER(b),
         ValueType.obj => return AS_OBJ(a) == AS_OBJ(b)
     }
-    
 }
