@@ -49,6 +49,8 @@ pub fn adjustCapacity(table: *Table, capacity: usize) void {
         entries[i].value = null;
     }
 
+    table.count = 0;
+
     i = 0;
     while (i < capacity) : (i = i + 1) {
         const entry = table.entries[i];
@@ -57,6 +59,7 @@ pub fn adjustCapacity(table: *Table, capacity: usize) void {
         var dest = findEntry(entries, entry.key);
         dest.key = entry.key;
         dest.value = entry.value;
+        table.count += 1;
     }
 
     memory.FREE_ARRAY(Entry, table.entries.?, table.entries.?.len);
