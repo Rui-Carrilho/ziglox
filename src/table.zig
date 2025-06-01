@@ -73,7 +73,7 @@ pub fn tableSet(table: *Table, key: *Object.ObjString, value: Value.Value) bool 
 
     const entry = findEntry(table.entries.?, table.count, key);
     const isNewKey = entry.key == null;
-    if (isNewKey) {
+    if (isNewKey and Value.IS_NIL(entry.value)) {
         table.count += 1;
     }
 
