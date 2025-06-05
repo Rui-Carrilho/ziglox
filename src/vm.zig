@@ -5,6 +5,7 @@ const Debug = @import("debug.zig");
 const Compiler = @import("compiler.zig");
 const Object = @import("object.zig");
 const memory = @import("memory.zig");
+const Table = @import("table.zig");
 
 const STACK_MAX = 256;
 
@@ -13,7 +14,8 @@ pub const VM = struct {
     ip: [*]u8, 
     stack: [STACK_MAX]Value.Value, 
     stackTop: [*]Value.Value,
-    objects: ?*Object.Obj
+    objects: ?*Object.Obj,
+    strings: Table.Table
 };
 
 pub var vm: VM = undefined;
@@ -38,9 +40,11 @@ pub const InterpretResult = enum { INTERPRET_OK, INTERPRET_COMPILE_ERROR, INTERP
 pub fn initVM() void {
     resetStack();
     vm.objects = null;
+    Table.initTable(&vm.strings);
 }
 
 pub fn freeVM() !void {
+    Table.freeTable(&vm.strings);
     try memory.freeObjects();
 }
 

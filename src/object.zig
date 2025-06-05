@@ -3,6 +3,7 @@ const Value = @import("value.zig");
 const memory = @import("memory.zig");
 const Allocator = @import("allocator.zig");
 const VM = @import("vm.zig");
+const Table = @import("table.zig");
 
 pub const ObjType = enum { 
     string,
@@ -65,6 +66,7 @@ pub fn allocateString(chars: []u8, hash: u32) !*Obj {
         },
         .next = null,
     };
+    Table.tableSet(&VM.vm.strings, string, Value.NIL_VAL);
 
     return string;
 }
