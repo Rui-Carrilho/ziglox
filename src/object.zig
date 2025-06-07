@@ -37,6 +37,8 @@ pub fn IS_STRING(value: Value.Value) bool {
     return isObjType(value, ObjType.string);
 }
 
+
+
 pub fn AS_STRING(value: Value.Value) ObjString {
     return switch (Value.AS_OBJ(value).node) {
         ObjType.string => |myValue| myValue,
@@ -76,7 +78,7 @@ pub fn allocateString(chars: []u8, hash: u32) !*Obj {
         },
         .next = null,
     };
-    _ = Table.tableSet(&VM.vm.strings, string, Value.NIL_VAL);
+    _ = try Table.tableSet(&VM.vm.strings, string, Value.NIL_VAL);
 
     return string;
 }

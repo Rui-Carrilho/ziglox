@@ -8,7 +8,7 @@ const TABLE_MAX_LOAD = 0.75;
 
 pub const Table = struct { count: usize, entries: ?[]Entry };
 
-pub const Entry = struct { key: ?*Object.Obj, value: Value.Value };
+pub const Entry = struct { key: ?*Object.Obj, value: ?Value.Value };
 
 pub fn initTable(table: *Table) void {
     table.count = 0;
@@ -20,7 +20,7 @@ pub fn freeTable(table: *Table) !void {
     initTable(table);
 }
 
-pub fn findEntry(entries: []Entry, key: *Object.ObjString) *Entry {
+pub fn findEntry(entries: []Entry, key: *Object.Obj) *Entry {
     const index = key.hash % entries.len;
     const tombstone: ?*Entry = null;
 
@@ -40,7 +40,7 @@ pub fn findEntry(entries: []Entry, key: *Object.ObjString) *Entry {
     }
 }
 
-pub fn adjustCapacity(table: *Table, capacity: usize) void {
+pub fn adjustCapacity(table: *Table, capacity: usize) !void {
     var entries = try memory.ALLOCATE(Entry, capacity);
     var i: usize = 0;
 
@@ -53,10 +53,10 @@ pub fn adjustCapacity(table: *Table, capacity: usize) void {
 
     i = 0;
     while (i < capacity) : (i = i + 1) {
-        const entry = table.entries[i];
+        const entry = table.entries.?[i];
         if (entry.key == null) continue;
 
-        var dest = findEntry(entries, entry.key);
+        var dest = findEntry(entries, entry.key.?);
         dest.key = entry.key;
         dest.value = entry.value;
         table.count += 1;
@@ -68,10 +68,10 @@ pub fn adjustCapacity(table: *Table, capacity: usize) void {
     table.entries.?.len = capacity;
 }
 
-pub fn tableSet(table: *Table, key: *Object.Obj, value: Value.Value) bool {
+pub fn tableSet(table: *Table, key: *Object.Obj, value: Value.Value) !bool {
     if (table.count + 1 > @as(usize, @intFromFloat(@as(f64, @floatFromInt(table.entries.?.len)) * TABLE_MAX_LOAD))) {
         const capacity = memory.GROW_CAPACITY(table.count);
-        adjustCapacity(table, capacity);
+        try adjustCapacity(table, capacity);
     }
 
     const entry = findEntry(table.entries.?, table.count, key);
@@ -110,7 +110,7 @@ pub fn tableAddAll(from: *Table, to: *Table) void {
 pub fn tableFindString(table: *Table, chars: []const u8, hash: u32) ?*Object.ObjString {
     if (table.count == 0) return null;
 
-    const index: u32 = hash % table.entries.?.len;
+    const index = hash % table.entries.?.len;
 
     while (true) {
         const entry: *Entry = &table.entries[index];
