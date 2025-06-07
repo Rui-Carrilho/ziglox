@@ -51,6 +51,11 @@ pub fn AS_CSTRING(value: Value.Value) [*]u8 {
 pub fn copyString(name: []const u8) !*Obj {
     const hash = hashString(name);
     const heapChars = try memory.ALLOCATE(u8, name.len);
+
+    const interned = Table.tableFindString(&VM.vm.strings, name, hash);
+
+    if (interned != null) return interned;
+    
     @memcpy(heapChars, name);
     return allocateString(heapChars, hash);
 }

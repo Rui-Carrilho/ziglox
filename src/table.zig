@@ -116,8 +116,8 @@ pub fn tableFindString(table: *Table, chars: []u8, hash: u32) *Object.ObjString 
         const entry: *Entry = &table.entries[index];
         if (entry.key == null) {
             if (Value.IS_NIL(entry.value)) return null;
-        } else if (entry.key.chars.len == chars.len and entry.key.hash == hash and @memcpy(entry.key.chars, chars)) {
-            return entry.key;
+        } else if (entry.key.?.chars.len == chars.len and entry.key.?.hash == hash and entry.key.?.chars == chars) {
+            return entry.key.?;
         }
 
         index = (index + 1) % table.entries.?.len; 
