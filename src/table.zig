@@ -107,7 +107,7 @@ pub fn tableAddAll(from: *Table, to: *Table) void {
     }
 }
 
-pub fn tableFindString(table: *Table, chars: []const u8, hash: u32) *Object.ObjString {
+pub fn tableFindString(table: *Table, chars: []const u8, hash: u32) ?*Object.ObjString {
     if (table.count == 0) return null;
 
     const index: u32 = hash % table.entries.?.len;
