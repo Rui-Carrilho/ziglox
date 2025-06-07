@@ -5,25 +5,19 @@ const Allocator = @import("allocator.zig");
 const VM = @import("vm.zig");
 const Table = @import("table.zig");
 
-pub const ObjType = enum { 
+pub const ObjType = enum {
     string,
     uninitialized, //this is an erry hack
 };
 
-pub const ObjNode = union(ObjType) { 
+pub const ObjNode = union(ObjType) {
     string: ObjString,
     uninitialized: void,
 };
 
-pub const Obj = struct {
-    node: ObjNode,
-    next: ?*Obj
-};
+pub const Obj = struct { node: ObjNode, next: ?*Obj };
 
-pub const ObjString = struct { 
-    chars: []u8,
-    hash: u32
-};
+pub const ObjString = struct { chars: []u8, hash: u32 };
 
 pub fn isObjType(value: Value.Value, myType: ObjType) bool {
     return Value.IS_OBJ(value) and @as(ObjType, Value.AS_OBJ(value).node) == myType;
@@ -37,7 +31,12 @@ pub fn IS_STRING(value: Value.Value) bool {
     return isObjType(value, ObjType.string);
 }
 
-
+pub fn OBJ_AS_STRING(obj: Obj) ObjString {
+    return switch (obj.node) {
+        ObjType.string => |myValue| myValue,
+        else => std.debug.panic("fuckup in OBJ_AS_STRING (object.zig)", .{}),
+    };
+}
 
 pub fn AS_STRING(value: Value.Value) ObjString {
     return switch (Value.AS_OBJ(value).node) {
@@ -57,9 +56,7 @@ pub fn copyString(name: []const u8) !*Obj {
     const interned = Table.tableFindString(&VM.vm.strings, name, hash);
 
     if (interned != null) return .{
-        .node = .{
-            .string = interned.?
-        },
+        .node = .{ .string = interned.? },
         .next = null,
     };
 
@@ -70,12 +67,7 @@ pub fn copyString(name: []const u8) !*Obj {
 pub fn allocateString(chars: []u8, hash: u32) !*Obj {
     const string = try allocateObject();
     string.* = .{
-        .node = .{
-            .string = .{
-                .chars = chars,
-                .hash = hash
-            }
-        },
+        .node = .{ .string = .{ .chars = chars, .hash = hash } },
         .next = null,
     };
     _ = try Table.tableSet(&VM.vm.strings, string, Value.NIL_VAL);

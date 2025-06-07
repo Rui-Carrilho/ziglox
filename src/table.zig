@@ -21,19 +21,20 @@ pub fn freeTable(table: *Table) !void {
 }
 
 pub fn findEntry(entries: []Entry, key: *Object.Obj) *Entry {
-    const index = key.hash % entries.len;
-    const tombstone: ?*Entry = null;
+    const keyString = Object.OBJ_AS_STRING(key.*);
+    var index = keyString.hash % entries.len;
+    var tombstone: ?*Entry = null;
 
     while (true) {
-        const entry = entries[index];
+        var entry = entries[index];
         if (entry.key == null) {
-            if (Value.IS_NIL(entry.value)) {
-                return if(tombstone != null) tombstone.? else entry; 
+            if (Value.IS_NIL(entry.value.?)) {
+                return if(tombstone != null) tombstone.? else &entry; 
             } else {
-                if (tombstone == null) tombstone = entry;
+                if (tombstone == null) tombstone = &entry;
             }
-        } else if (entry.key == key) {
-            return entry;
+        } else if (entry.key.? == key) {
+            return &entry;
         }
 
         index = (index + 1) % entries.len;
@@ -62,7 +63,7 @@ pub fn adjustCapacity(table: *Table, capacity: usize) !void {
         table.count += 1;
     }
 
-    memory.FREE_ARRAY(Entry, table.entries.?, table.entries.?.len);
+    try memory.FREE_ARRAY(Entry, table.entries.?, table.entries.?.len);
 
     table.entries = entries;
     table.entries.?.len = capacity;
@@ -74,9 +75,9 @@ pub fn tableSet(table: *Table, key: *Object.Obj, value: Value.Value) !bool {
         try adjustCapacity(table, capacity);
     }
 
-    const entry = findEntry(table.entries.?, table.count, key);
+    const entry = findEntry(table.entries.?, key);
     const isNewKey = entry.key == null;
-    if (isNewKey and Value.IS_NIL(entry.value)) {
+    if (isNewKey and Value.IS_NIL(entry.value.?)) {
         table.count += 1;
     }
 
