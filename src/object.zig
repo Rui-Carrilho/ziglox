@@ -76,7 +76,7 @@ pub fn allocateString(chars: []u8, hash: u32) !*Obj {
         },
         .next = null,
     };
-    Table.tableSet(&VM.vm.strings, string, Value.NIL_VAL);
+    _ = Table.tableSet(&VM.vm.strings, string, Value.NIL_VAL);
 
     return string;
 }
