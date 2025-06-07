@@ -54,8 +54,13 @@ pub fn copyString(name: []const u8) !*Obj {
 
     const interned = Table.tableFindString(&VM.vm.strings, name, hash);
 
-    if (interned != null) return interned;
-    
+    if (interned != null) return .{
+        .node = .{
+            .string = interned.?
+        },
+        .next = null,
+    };
+
     @memcpy(heapChars, name);
     return allocateString(heapChars, hash);
 }
