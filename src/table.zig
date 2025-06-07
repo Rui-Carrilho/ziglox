@@ -15,8 +15,8 @@ pub fn initTable(table: *Table) void {
     table.entries = null;
 }
 
-pub fn freeTable(table: *Table) void {
-    memory.FREE_ARRAY(Entry, table.entries.?, table.entries.?.len);
+pub fn freeTable(table: *Table) !void {
+    try memory.FREE_ARRAY(Entry, table.entries.?, table.entries.?.len);
     initTable(table);
 }
 
@@ -41,7 +41,7 @@ pub fn findEntry(entries: []Entry, key: *Object.ObjString) *Entry {
 }
 
 pub fn adjustCapacity(table: *Table, capacity: usize) void {
-    var entries = memory.ALLOCATE(Entry, capacity);
+    var entries = try memory.ALLOCATE(Entry, capacity);
     var i: usize = 0;
 
     while (i < capacity) : (i = i + 1) {
@@ -69,7 +69,7 @@ pub fn adjustCapacity(table: *Table, capacity: usize) void {
 }
 
 pub fn tableSet(table: *Table, key: *Object.Obj, value: Value.Value) bool {
-    if (table.count + 1 > table.entries.?.len * TABLE_MAX_LOAD) {
+    if (table.count + 1 > @as(usize, @intFromFloat(@as(f64, @floatFromInt(table.entries.?.len)) * TABLE_MAX_LOAD))) {
         const capacity = memory.GROW_CAPACITY(table.count);
         adjustCapacity(table, capacity);
     }
