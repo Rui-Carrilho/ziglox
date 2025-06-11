@@ -95,7 +95,6 @@ pub fn tableDelete(table: *Table, key: *Object.ObjString) bool {
     entry.key = null;
     entry.value = Value.BOOL_VAL(true);
     return true;
-    //sorry
 }
 
 pub fn tableAddAll(from: *Table, to: *Table) void {
