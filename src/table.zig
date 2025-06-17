@@ -106,7 +106,6 @@ pub fn tableAddAll(from: *Table, to: *Table) void {
             tableSet(to, entry.key, entry.value);
         }
     }
-    //sorry not sorry
 }
 
 pub fn tableFindString(table: *Table, chars: []const u8, hash: u32) ?*Object.ObjString {
