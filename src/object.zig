@@ -97,6 +97,17 @@ pub fn hashString(key: []const u8) u32 {
 
 pub fn takeString(chars: []u8) !*Obj {
     const hash = hashString(chars);
+    const interned = Table.tableFindString(&VM.vm.strings, chars, hash);
+
+    if (interned != null) {
+        memory.FREE_ARRAY(u8, chars, chars.len);
+        const string = try allocateObject();
+        string.* = .{
+            .node = .{ .string = interned.?.* },
+            .next = null,
+        };
+        return string;
+    }
     return allocateString(chars, hash);
 }
 
