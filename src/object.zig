@@ -55,10 +55,19 @@ pub fn copyString(name: []const u8) !*Obj {
 
     const interned = Table.tableFindString(&VM.vm.strings, name, hash);
 
-    if (interned != null) return .{
-        .node = .{ .string = interned.? },
-        .next = null,
-    };
+    if (interned != null) {
+        const string = try allocateObject();
+        string.* = .{
+            .node = .{ .string = interned.?.* },
+            .next = null,
+        };
+        return string;
+    }
+
+    //if (interned != null) return .{
+    //    .node = .{ .string = interned.? },
+    //    .next = null,
+    //};
 
     @memcpy(heapChars, name);
     return allocateString(heapChars, hash);
