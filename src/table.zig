@@ -117,7 +117,7 @@ pub fn tableFindString(table: *Table, chars: []const u8, hash: u32) ?*Object.Obj
         const entry = &table.entries.?[index];
         if (entry.key == null) {
             if (Value.IS_NIL(entry.value.?)) return null;
-        } else if (entry.key.?.node.string.hash == hash and entry.key.?.node.string.chars == chars) {
+        } else if (entry.key.?.node.string.hash == hash and std.mem.eql(u8, entry.key.?.node.string.chars, chars)) {
             return entry.key.?;
         }
 
