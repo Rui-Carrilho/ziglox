@@ -114,10 +114,10 @@ pub fn tableFindString(table: *Table, chars: []const u8, hash: u32) ?*Object.Obj
     const index = hash % table.entries.?.len;
 
     while (true) {
-        const entry: *Entry = &table.entries[index];
+        const entry = &table.entries.?[index];
         if (entry.key == null) {
-            if (Value.IS_NIL(entry.value)) return null;
-        } else if (entry.key.?.hash == hash and entry.key.?.chars == chars) {
+            if (Value.IS_NIL(entry.value.?)) return null;
+        } else if (entry.key.?.node.string.hash == hash and entry.key.?.node.string.chars == chars) {
             return entry.key.?;
         }
 

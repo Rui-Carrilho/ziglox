@@ -100,7 +100,7 @@ pub fn takeString(chars: []u8) !*Obj {
     const interned = Table.tableFindString(&VM.vm.strings, chars, hash);
 
     if (interned != null) {
-        memory.FREE_ARRAY(u8, chars, chars.len);
+        try memory.FREE_ARRAY(u8, chars, chars.len);
         const string = try allocateObject();
         string.* = .{
             .node = .{ .string = interned.?.* },
