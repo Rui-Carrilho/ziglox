@@ -58,7 +58,7 @@ pub fn copyString(name: []const u8) !*Obj {
     if (interned != null) {
         const string = try allocateObject();
         string.* = .{
-            .node = .{ .string = interned.?.* },
+            .node = .{ .string = interned.? },
             .next = null,
         };
         return string;
