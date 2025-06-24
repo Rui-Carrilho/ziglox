@@ -64,11 +64,6 @@ pub fn copyString(name: []const u8) !*Obj {
         return string;
     }
 
-    //if (interned != null) return .{
-    //    .node = .{ .string = interned.? },
-    //    .next = null,
-    //};
-
     @memcpy(heapChars, name);
     return allocateString(heapChars, hash);
 }
