@@ -98,7 +98,7 @@ pub fn takeString(chars: []u8) !*Obj {
         try memory.FREE_ARRAY(u8, chars, chars.len);
         const string = try allocateObject();
         string.* = .{
-            .node = .{ .string = interned.?.* },
+            .node = .{ .string = interned.? },
             .next = null,
         };
         return string;

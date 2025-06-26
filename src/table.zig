@@ -111,7 +111,7 @@ pub fn tableAddAll(from: *Table, to: *Table) void {
 pub fn tableFindString(table: *Table, chars: []const u8, hash: u32) ?Object.ObjString {
     if (table.count == 0) return null;
 
-    const index = hash % table.entries.?.len;
+    var index = hash % table.entries.?.len;
 
     while (true) {
         const entry = &table.entries.?[index];
