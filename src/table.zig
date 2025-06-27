@@ -29,7 +29,7 @@ pub fn findEntry(entries: []Entry, key: *Object.Obj) *Entry {
         var entry = entries[index];
         if (entry.key == null) {
             if (Value.IS_NIL(entry.value.?)) {
-                return if(tombstone != null) tombstone.? else &entry; 
+                return if (tombstone != null) tombstone.? else &entry;
             } else {
                 if (tombstone == null) tombstone = &entry;
             }
@@ -47,7 +47,7 @@ pub fn adjustCapacity(table: *Table, capacity: usize) !void {
 
     while (i < capacity) : (i = i + 1) {
         entries[i].key = null;
-        entries[i].value = null;
+        entries[i].value = Value.NIL_VAL;
     }
 
     table.count = 0;
@@ -55,7 +55,7 @@ pub fn adjustCapacity(table: *Table, capacity: usize) !void {
     i = 0;
 
     const tableCapacity = if (table.entries == null) 0 else (table.entries.?.len);
-    
+
     while (i < tableCapacity) : (i = i + 1) {
         const entry = table.entries.?[i];
         if (entry.key == null) continue;
@@ -66,14 +66,15 @@ pub fn adjustCapacity(table: *Table, capacity: usize) !void {
         table.count += 1;
     }
 
-    try memory.FREE_ARRAY(Entry, table.entries.?, table.entries.?.len);
+    if (table.entries != null) {
+        try memory.FREE_ARRAY(Entry, table.entries.?, table.entries.?.len);
+    }
 
     table.entries = entries;
     table.entries.?.len = capacity;
 }
 
 pub fn tableSet(table: *Table, key: *Object.Obj, value: Value.Value) !bool {
-
     const tableCapacity = if (table.entries == null) 0 else table.entries.?.len;
 
     if (table.count + 1 > @as(usize, @intFromFloat(@as(f64, @floatFromInt(tableCapacity)) * TABLE_MAX_LOAD))) {
@@ -127,7 +128,7 @@ pub fn tableFindString(table: *Table, chars: []const u8, hash: u32) ?Object.ObjS
             return entry.key.?.node.string;
         }
 
-        index = (index + 1) % table.entries.?.len; 
+        index = (index + 1) % table.entries.?.len;
     }
     // :)
 }
