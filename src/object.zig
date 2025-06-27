@@ -84,7 +84,7 @@ pub fn hashString(key: []const u8) u32 {
     var i: usize = 0;
     while (i < key.len) : (i += 1) {
         hash ^= @as(u8, key[i]);
-        hash *= 16777619;
+        hash *%= 16777619;
     }
 
     return hash;
