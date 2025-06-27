@@ -53,7 +53,10 @@ pub fn adjustCapacity(table: *Table, capacity: usize) !void {
     table.count = 0;
 
     i = 0;
-    while (i < capacity) : (i = i + 1) {
+
+    const tableCapacity = if (table.entries == null) 0 else (table.entries.?.len);
+    
+    while (i < tableCapacity) : (i = i + 1) {
         const entry = table.entries.?[i];
         if (entry.key == null) continue;
 
@@ -71,7 +74,9 @@ pub fn adjustCapacity(table: *Table, capacity: usize) !void {
 
 pub fn tableSet(table: *Table, key: *Object.Obj, value: Value.Value) !bool {
 
-    if (table.count + 1 > @as(usize, @intFromFloat(@as(f64, @floatFromInt(table.entries.?.len)) * TABLE_MAX_LOAD))) {
+    const tableCapacity = if (table.entries == null) 0 else table.entries.?.len;
+
+    if (table.count + 1 > @as(usize, @intFromFloat(@as(f64, @floatFromInt(tableCapacity)) * TABLE_MAX_LOAD))) {
         const capacity = memory.GROW_CAPACITY(table.count);
         try adjustCapacity(table, capacity);
     }
