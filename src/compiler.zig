@@ -294,8 +294,22 @@ pub fn printStatement() !void {
     try emitByte(@intFromEnum(Chunk.OpCode.OP_PRINT));
 }
 
+pub fn synchronize() void {
+    parser.panicMode = false;
+
+    while (parser.current.type != Scanner.TokenType.TOKEN_EOF) {
+        if (parser.previous.type == Scanner.TokenType.TOKEN_SEMICOLON) return;
+        switch (parser.current.type) {
+            @intFromEnum(Scanner.TokenType.TOKEN_CLASS) => {};
+            
+        }
+    }
+}
+
 pub fn declaration() !void {
     try statement();
+
+    if (parser.panicMode) synchronize();
 }
 
 pub fn statement() !void {
