@@ -26,15 +26,16 @@ pub fn disassembleInstruction(chunk: *Chunk.Chunk, offset: usize) usize {
     switch (instruction) {
         @intFromEnum(Chunk.OpCode.OP_ADD) => return simpleInstruction("OP_ADD", offset),
         @intFromEnum(Chunk.OpCode.OP_CONSTANT) => return constantInstruction("OP_CONSTANT", chunk, offset),
-        @intFromEnum(Chunk.OpCode.OP_NIL) => return simpleInstruction("OP_NIL", offset),
-        @intFromEnum(Chunk.OpCode.OP_TRUE) => return simpleInstruction("OP_TRUE", offset),
-        @intFromEnum(Chunk.OpCode.OP_FALSE) => return simpleInstruction("OP_FALSE", offset),
         @intFromEnum(Chunk.OpCode.OP_DIVIDE) => return simpleInstruction("OP_DIVIDE", offset),
-        @intFromEnum(Chunk.OpCode.OP_NOT) => return simpleInstruction("OP_NOT", offset),
+        @intFromEnum(Chunk.OpCode.OP_FALSE) => return simpleInstruction("OP_FALSE", offset),
         @intFromEnum(Chunk.OpCode.OP_MULTIPLY) => return simpleInstruction("OP_MULTIPLY", offset),
         @intFromEnum(Chunk.OpCode.OP_NEGATE) => return simpleInstruction("OP_NEGATE", offset),
+        @intFromEnum(Chunk.OpCode.OP_NIL) => return simpleInstruction("OP_NIL", offset),
+        @intFromEnum(Chunk.OpCode.OP_NOT) => return simpleInstruction("OP_NOT", offset),
+        @intFromEnum(Chunk.OpCode.OP_PRINT) => return simpleInstruction("OP_PRINT", offset),
         @intFromEnum(Chunk.OpCode.OP_RETURN) => return simpleInstruction("OP_RETURN", offset),
         @intFromEnum(Chunk.OpCode.OP_SUBTRACT) => return simpleInstruction("OP_SUBTRACT", offset),
+        @intFromEnum(Chunk.OpCode.OP_TRUE) => return simpleInstruction("OP_TRUE", offset),
         else => {
             std.debug.print("Unknown opcode {d}\n", .{instruction});
             return offset + 1;
