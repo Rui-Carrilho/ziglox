@@ -116,8 +116,11 @@ pub fn compile(source: []const u8, chunk: *Chunk.Chunk) !bool {
     parser.panicMode = false;
 
     advance();
-    try expression();
-    consume(Scanner.TokenType.TOKEN_EOF, "Expected end of expression.");
+    
+    while (!match(TokenType.EOF)) {
+        declaration();
+    }
+
     _ = try endCompiler();
     return !parser.hadError;
 }
@@ -141,6 +144,12 @@ pub fn consume(tokenType: Scanner.TokenType, message: []const u8) void {
     }
 
     errorAtCurrent(message);
+}
+
+pub fn match(myType: TokenType) bool {
+    if (!check(myType)) return false;
+    advance();
+    return true;
 }
 
 pub fn emitByte(byte: u8) !void {
@@ -310,4 +319,14 @@ pub fn getRule(ruleType: Scanner.TokenType) *const ParseRule {
 
 pub fn expression() !void {
     try parsePrecedence(Precedence.PREC_ASSIGNMENT);
+}
+
+pub fn declaration() !void {
+    statement();
+}
+
+pub fn statement() !void {
+    if (match(TokenType.PRINT)) {
+        printStatement();
+    }
 }
