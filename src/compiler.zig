@@ -24,8 +24,6 @@ pub const Precedence = enum {
 
 const ParseFn = ?*const fn () anyerror!void;
 
-
-
 pub const ParseRule = struct { prefix: ParseFn, infix: ParseFn, precedence: Precedence };
 
 var parser: Parser = undefined;
@@ -184,7 +182,7 @@ pub fn literal() !void {
 
 pub fn grouping() !void {
     try expression();
-    consume(Scanner.TokenType.TOKEN_RIGHT_PAREN, "Expect ')' after expression.");
+    try consume(Scanner.TokenType.TOKEN_RIGHT_PAREN, "Expect ')' after expression.");
 }
 
 pub fn number() !void {
@@ -296,6 +294,6 @@ pub fn declaration() !void {
 
 pub fn statement() !void {
     if (match(Scanner.TokenType.TOKEN_PRINT)) {
-        printStatement();
+        try printStatement();
     }
 }
