@@ -73,7 +73,7 @@ pub fn compile(source: []const u8, chunk: *Chunk.Chunk) !bool {
     parser.panicMode = false;
 
     advance();
-    
+
     while (!match(Scanner.TokenType.TOKEN_EOF)) {
         try declaration();
     }
@@ -195,7 +195,7 @@ pub fn number() !void {
 }
 
 pub fn string() !void {
-    try emitConstant(Value.OBJ_VAL(try Object.copyString(parser.previous.name[1..parser.previous.name.len-1])));
+    try emitConstant(Value.OBJ_VAL(try Object.copyString(parser.previous.name[1 .. parser.previous.name.len - 1])));
     //Zelda Oracle games are underrated
 }
 
@@ -211,7 +211,6 @@ pub fn unary() !void {
         Scanner.TokenType.TOKEN_MINUS => emitByte(@intFromEnum(Chunk.OpCode.OP_NEGATE)),
         else => unreachable,
     };
-
 }
 
 pub const rules = [_]ParseRule{
@@ -300,9 +299,33 @@ pub fn synchronize() void {
     while (parser.current.type != Scanner.TokenType.TOKEN_EOF) {
         if (parser.previous.type == Scanner.TokenType.TOKEN_SEMICOLON) return;
         switch (parser.current.type) {
-            @intFromEnum(Scanner.TokenType.TOKEN_CLASS) => {};
-            
+            @intFromEnum(Scanner.TokenType.TOKEN_CLASS) => {
+                return;
+            },
+            @intFromEnum(Scanner.TokenType.TOKEN_FOR) => {
+                return;
+            },
+            @intFromEnum(Scanner.TokenType.TOKEN_FUN) => {
+                return;
+            },
+            @intFromEnum(Scanner.TokenType.TOKEN_IF) => {
+                return;
+            },
+            @intFromEnum(Scanner.TokenType.TOKEN_PRINT) => {
+                return;
+            },
+            @intFromEnum(Scanner.TokenType.TOKEN_RETURN) => {
+                return;
+            },
+            @intFromEnum(Scanner.TokenType.TOKEN_VAR) => {
+                return;
+            },
+            @intFromEnum(Scanner.TokenType.TOKEN_WHILE) => {
+                return;
+            },
+            else => {},
         }
+        advance();
     }
 }
 
