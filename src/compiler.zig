@@ -118,7 +118,7 @@ pub fn compile(source: []const u8, chunk: *Chunk.Chunk) !bool {
     advance();
     
     while (!match(TokenType.EOF)) {
-        declaration();
+        try declaration();
     }
 
     _ = try endCompiler();
