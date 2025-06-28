@@ -146,6 +146,10 @@ pub fn consume(tokenType: Scanner.TokenType, message: []const u8) void {
     errorAtCurrent(message);
 }
 
+pub fn check(myType: TokenType) bool {
+    return parser.current.type == myType;
+}
+
 pub fn match(myType: TokenType) bool {
     if (!check(myType)) return false;
     advance();
@@ -319,6 +323,12 @@ pub fn getRule(ruleType: Scanner.TokenType) *const ParseRule {
 
 pub fn expression() !void {
     try parsePrecedence(Precedence.PREC_ASSIGNMENT);
+}
+
+pub fn printStatement() !void {
+    expression();
+    consume(TokenType.SEMICOLON, "Expect ';' after value.");
+    emitByte(Chunk.OpCode.OP_PRINT);
 }
 
 pub fn declaration() !void {

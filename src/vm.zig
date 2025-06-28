@@ -9,14 +9,7 @@ const Table = @import("table.zig");
 
 const STACK_MAX = 256;
 
-pub const VM = struct { 
-    chunk: *Chunk.Chunk, 
-    ip: [*]u8, 
-    stack: [STACK_MAX]Value.Value, 
-    stackTop: [*]Value.Value,
-    objects: ?*Object.Obj,
-    strings: Table.Table
-};
+pub const VM = struct { chunk: *Chunk.Chunk, ip: [*]u8, stack: [STACK_MAX]Value.Value, stackTop: [*]Value.Value, objects: ?*Object.Obj, strings: Table.Table };
 
 pub var vm: VM = undefined;
 
@@ -81,7 +74,6 @@ pub fn concatenate() !void {
     push(Value.OBJ_VAL(result));
 }
 
-
 pub fn run() !InterpretResult {
     while (true) {
         if (Debug.debug_trace_execution) {
@@ -96,17 +88,6 @@ pub fn run() !InterpretResult {
         }
         const instruction = readByte();
         switch (instruction) {
-            @intFromEnum(Chunk.OpCode.OP_EQUAL) => {
-                const b = pop();
-                const a = pop();
-                push(Value.BOOL_VAL(Value.valuesEqual(a, b)));
-            },
-            @intFromEnum(Chunk.OpCode.OP_GREATER) => {
-                binaryOp(greaterThan);
-            },
-            @intFromEnum(Chunk.OpCode.OP_LESS) => {
-                binaryOp(lessThan);
-            },
             @intFromEnum(Chunk.OpCode.OP_ADD) => {
                 if (Object.IS_STRING(peek(0)) and Object.IS_STRING(peek(1))) {
                     try concatenate();
@@ -125,21 +106,42 @@ pub fn run() !InterpretResult {
                 Value.printValue(constant);
                 std.debug.print("\n", .{});
             },
-            @intFromEnum(Chunk.OpCode.OP_NIL) => {
-                push(Value.NIL_VAL);
+            @intFromEnum(Chunk.OpCode.OP_DIVIDE) => {
+                binaryOp(divide);
             },
-            @intFromEnum(Chunk.OpCode.OP_TRUE) => {
-                push(Value.BOOL_VAL(true));
+            @intFromEnum(Chunk.OpCode.OP_EQUAL) => {
+                const b = pop();
+                const a = pop();
+                push(Value.BOOL_VAL(Value.valuesEqual(a, b)));
             },
             @intFromEnum(Chunk.OpCode.OP_FALSE) => {
                 push(Value.BOOL_VAL(false));
             },
-
-            @intFromEnum(Chunk.OpCode.OP_DIVIDE) => {
-                binaryOp(divide);
+            @intFromEnum(Chunk.OpCode.OP_GREATER) => {
+                binaryOp(greaterThan);
+            },
+            @intFromEnum(Chunk.OpCode.OP_LESS) => {
+                binaryOp(lessThan);
             },
             @intFromEnum(Chunk.OpCode.OP_MULTIPLY) => {
                 binaryOp(multiply);
+            },
+            @intFromEnum(Chunk.OpCode.OP_NEGATE) => {
+                if (!Value.IS_NUMBER(peek(0))) {
+                    runtimeError("Operand must be a number.", .{});
+                    return InterpretResult.INTERPRET_RUNTIME_ERROR;
+                }
+                push(Value.NUMBER_VAL(-Value.AS_NUMBER(pop())));
+            },
+            @intFromEnum(Chunk.OpCode.OP_NIL) => {
+                push(Value.NIL_VAL);
+            },
+            @intFromEnum(Chunk.OpCode.OP_NOT) => {
+                push(Value.BOOL_VAL(isFalsey(pop())));
+            },
+            @intFromEnum(Chunk.OpCode.OP_PRINT) => {
+                Value.printValue(pop());
+                std.debug.print("\n", .{});
             },
             @intFromEnum(Chunk.OpCode.OP_RETURN) => {
                 Value.printValue(pop());
@@ -149,15 +151,8 @@ pub fn run() !InterpretResult {
             @intFromEnum(Chunk.OpCode.OP_SUBTRACT) => {
                 binaryOp(subtract);
             },
-            @intFromEnum(Chunk.OpCode.OP_NOT) => {
-                push(Value.BOOL_VAL(isFalsey(pop())));
-            },
-            @intFromEnum(Chunk.OpCode.OP_NEGATE) => {
-                if (!Value.IS_NUMBER(peek(0))) {
-                    runtimeError("Operand must be a number.", .{});
-                    return InterpretResult.INTERPRET_RUNTIME_ERROR;
-                }
-                push(Value.NUMBER_VAL(-Value.AS_NUMBER(pop())));
+            @intFromEnum(Chunk.OpCode.OP_TRUE) => {
+                push(Value.BOOL_VAL(true));
             },
             else => {
                 std.debug.print("the instruction was {}", .{instruction});
