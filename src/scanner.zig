@@ -6,7 +6,7 @@ pub const Scanner = struct {
     line: i8 
 };
 
-pub const TokenType = enum {
+pub const TokenType = enum(u8) {
     // Single-character tokens.
     TOKEN_LEFT_PAREN,
     TOKEN_RIGHT_PAREN,

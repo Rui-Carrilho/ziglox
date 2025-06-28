@@ -24,48 +24,7 @@ pub const Precedence = enum {
 
 const ParseFn = ?*const fn () anyerror!void;
 
-pub const TokenType = enum(u8) {
-    LEFT_PAREN,
-    RIGHT_PAREN,
-    LEFT_BRACE,
-    RIGHT_BRACE,
-    COMMA,
-    DOT,
-    MINUS,
-    PLUS,
-    SEMICOLON,
-    SLASH,
-    STAR,
-    BANG,
-    BANG_EQUAL,
-    EQUAL,
-    EQUAL_EQUAL,
-    GREATER,
-    GREATER_EQUAL,
-    LESS,
-    LESS_EQUAL,
-    IDENTIFIER,
-    STRING,
-    NUMBER,
-    AND,
-    CLASS,
-    ELSE,
-    FALSE,
-    FOR,
-    FUN,
-    IF,
-    NIL,
-    OR,
-    PRINT,
-    RETURN,
-    SUPER,
-    THIS,
-    TRUE,
-    VAR,
-    WHILE,
-    ERROR,
-    EOF,
-};
+
 
 pub const ParseRule = struct { prefix: ParseFn, infix: ParseFn, precedence: Precedence };
 
@@ -117,7 +76,7 @@ pub fn compile(source: []const u8, chunk: *Chunk.Chunk) !bool {
 
     advance();
     
-    while (!match(TokenType.EOF)) {
+    while (!match(Scanner.TokenType.TOKEN_EOF)) {
         try declaration();
     }
 
@@ -136,7 +95,7 @@ pub fn advance() void {
     }
 }
 
-pub fn consume(tokenType: Scanner.TokenType, message: []const u8) void {
+pub fn consume(tokenType: Scanner.TokenType, message: []const u8) !void {
     //this function advances the thing until we get to the token specified in tokenType. if it doesn't find it, it spits out the message
     if (parser.current.type == tokenType) {
         advance();
@@ -146,11 +105,11 @@ pub fn consume(tokenType: Scanner.TokenType, message: []const u8) void {
     errorAtCurrent(message);
 }
 
-pub fn check(myType: TokenType) bool {
+pub fn check(myType: Scanner.TokenType) bool {
     return parser.current.type == myType;
 }
 
-pub fn match(myType: TokenType) bool {
+pub fn match(myType: Scanner.TokenType) bool {
     if (!check(myType)) return false;
     advance();
     return true;
@@ -258,46 +217,46 @@ pub fn unary() !void {
 }
 
 pub const rules = [_]ParseRule{
-    .{ .prefix = grouping, .infix = null, .precedence = Precedence.PREC_NONE }, // LEFT_PAREN
-    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // RIGHT_PAREN
-    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // LEFT_BRACE
-    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // RIGHT_BRACE
-    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // COMMA
-    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // DOT
-    .{ .prefix = unary, .infix = binary, .precedence = Precedence.PREC_TERM }, // MINUS
-    .{ .prefix = null, .infix = binary, .precedence = Precedence.PREC_TERM }, // PLUS
-    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // SEMICOLON
-    .{ .prefix = null, .infix = binary, .precedence = Precedence.PREC_FACTOR }, // SLASH
-    .{ .prefix = null, .infix = binary, .precedence = Precedence.PREC_FACTOR }, // STAR
-    .{ .prefix = unary, .infix = null, .precedence = Precedence.PREC_NONE }, // BANG
-    .{ .prefix = null, .infix = binary, .precedence = Precedence.PREC_EQUALITY }, // BANG_EQUAL
-    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // EQUAL
-    .{ .prefix = null, .infix = binary, .precedence = Precedence.PREC_EQUALITY }, // EQUAL_EQUAL
-    .{ .prefix = null, .infix = binary, .precedence = Precedence.PREC_COMPARISON }, // GREATER
-    .{ .prefix = null, .infix = binary, .precedence = Precedence.PREC_COMPARISON }, // GREATER_EQUAL
-    .{ .prefix = null, .infix = binary, .precedence = Precedence.PREC_COMPARISON }, // LESS
-    .{ .prefix = null, .infix = binary, .precedence = Precedence.PREC_COMPARISON }, // LESS_EQUAL
-    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // IDENTIFIER
-    .{ .prefix = string, .infix = null, .precedence = Precedence.PREC_NONE }, // STRING
-    .{ .prefix = number, .infix = null, .precedence = Precedence.PREC_NONE }, // NUMBER
-    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // AND
-    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // CLASS
-    .{ .prefix = literal, .infix = null, .precedence = Precedence.PREC_NONE }, // ELSE
-    .{ .prefix = literal, .infix = null, .precedence = Precedence.PREC_NONE }, // FALSE
-    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // FOR
-    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // FUN
-    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // IF
-    .{ .prefix = literal, .infix = null, .precedence = Precedence.PREC_NONE }, // NIL
-    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // OR
-    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // PRINT
-    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // RETURN
-    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // SUPER
-    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // THIS
-    .{ .prefix = literal, .infix = null, .precedence = Precedence.PREC_NONE }, // TRUE
-    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // VAR
-    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // WHILE
-    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // ERROR
-    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // EOF
+    .{ .prefix = grouping, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_LEFT_PAREN
+    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_RIGHT_PAREN
+    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_LEFT_BRACE
+    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_RIGHT_BRACE
+    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_COMMA
+    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_DOT
+    .{ .prefix = unary, .infix = binary, .precedence = Precedence.PREC_TERM }, // TOKEN_MINUS
+    .{ .prefix = null, .infix = binary, .precedence = Precedence.PREC_TERM }, // TOKEN_PLUS
+    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_SEMICOLON
+    .{ .prefix = null, .infix = binary, .precedence = Precedence.PREC_FACTOR }, // TOKEN_SLASH
+    .{ .prefix = null, .infix = binary, .precedence = Precedence.PREC_FACTOR }, // TOKEN_STAR
+    .{ .prefix = unary, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_BANG
+    .{ .prefix = null, .infix = binary, .precedence = Precedence.PREC_EQUALITY }, // TOKEN_BANG_EQUAL
+    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_EQUAL
+    .{ .prefix = null, .infix = binary, .precedence = Precedence.PREC_EQUALITY }, // TOKEN_EQUAL_EQUAL
+    .{ .prefix = null, .infix = binary, .precedence = Precedence.PREC_COMPARISON }, // TOKEN_GREATER
+    .{ .prefix = null, .infix = binary, .precedence = Precedence.PREC_COMPARISON }, // TOKEN_GREATER_EQUAL
+    .{ .prefix = null, .infix = binary, .precedence = Precedence.PREC_COMPARISON }, // TOKEN_LESS
+    .{ .prefix = null, .infix = binary, .precedence = Precedence.PREC_COMPARISON }, // TOKEN_LESS_EQUAL
+    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_IDENTIFIER
+    .{ .prefix = string, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_STRING
+    .{ .prefix = number, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_NUMBER
+    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_AND
+    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_CLASS
+    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_ELSE
+    .{ .prefix = literal, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_FALSE
+    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_FOR
+    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_FUN
+    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_IF
+    .{ .prefix = literal, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_NIL
+    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_OR
+    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_PRINT
+    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_RETURN
+    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_SUPER
+    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_THIS
+    .{ .prefix = literal, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_TRUE
+    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_VAR
+    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_WHILE
+    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_ERROR
+    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_EOF
 };
 
 pub fn parsePrecedence(precedence: Precedence) !void {
@@ -326,9 +285,9 @@ pub fn expression() !void {
 }
 
 pub fn printStatement() !void {
-    expression();
-    consume(TokenType.SEMICOLON, "Expect ';' after value.");
-    emitByte(Chunk.OpCode.OP_PRINT);
+    try expression();
+    try consume(Scanner.TokenType.TOKEN_SEMICOLON, "Expect ';' after value.");
+    try emitByte(@intFromEnum(Chunk.OpCode.OP_PRINT));
 }
 
 pub fn declaration() !void {
