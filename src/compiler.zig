@@ -291,11 +291,11 @@ pub fn printStatement() !void {
 }
 
 pub fn declaration() !void {
-    statement();
+    try statement();
 }
 
 pub fn statement() !void {
-    if (match(TokenType.PRINT)) {
+    if (match(Scanner.TokenType.TOKEN_PRINT)) {
         printStatement();
     }
 }
