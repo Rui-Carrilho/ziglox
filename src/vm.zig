@@ -144,8 +144,7 @@ pub fn run() !InterpretResult {
                 std.debug.print("\n", .{});
             },
             @intFromEnum(Chunk.OpCode.OP_RETURN) => {
-                Value.printValue(pop());
-                std.debug.print("\n", .{});
+                //exit interpreter
                 return InterpretResult.INTERPRET_OK;
             },
             @intFromEnum(Chunk.OpCode.OP_SUBTRACT) => {
