@@ -282,6 +282,12 @@ pub fn expression() !void {
     try parsePrecedence(Precedence.PREC_ASSIGNMENT);
 }
 
+pub fn expressionStatement() !void {
+    try expression();
+    try consume(Scanner.TokenType.TOKEN_SEMICOLON, "Expect ';' after expression.");
+    try emitByte(Chunk.OpCode.OP_POP);
+}
+
 pub fn printStatement() !void {
     try expression();
     try consume(Scanner.TokenType.TOKEN_SEMICOLON, "Expect ';' after value.");
@@ -295,5 +301,7 @@ pub fn declaration() !void {
 pub fn statement() !void {
     if (match(Scanner.TokenType.TOKEN_PRINT)) {
         try printStatement();
+    } else {
+        expressionStatement();
     }
 }

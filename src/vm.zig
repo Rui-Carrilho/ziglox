@@ -139,6 +139,9 @@ pub fn run() !InterpretResult {
             @intFromEnum(Chunk.OpCode.OP_NOT) => {
                 push(Value.BOOL_VAL(isFalsey(pop())));
             },
+            @intFromEnum(Chunk.OpCode.OP_POP) => {
+                pop();
+            },
             @intFromEnum(Chunk.OpCode.OP_PRINT) => {
                 Value.printValue(pop());
                 std.debug.print("\n", .{});

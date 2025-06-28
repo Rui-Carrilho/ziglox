@@ -32,6 +32,7 @@ pub fn disassembleInstruction(chunk: *Chunk.Chunk, offset: usize) usize {
         @intFromEnum(Chunk.OpCode.OP_NEGATE) => return simpleInstruction("OP_NEGATE", offset),
         @intFromEnum(Chunk.OpCode.OP_NIL) => return simpleInstruction("OP_NIL", offset),
         @intFromEnum(Chunk.OpCode.OP_NOT) => return simpleInstruction("OP_NOT", offset),
+        @intFromEnum(Chunk.OpCode.OP_POP) => return simpleInstruction("OP_POP", offset),
         @intFromEnum(Chunk.OpCode.OP_PRINT) => return simpleInstruction("OP_PRINT", offset),
         @intFromEnum(Chunk.OpCode.OP_RETURN) => return simpleInstruction("OP_RETURN", offset),
         @intFromEnum(Chunk.OpCode.OP_SUBTRACT) => return simpleInstruction("OP_SUBTRACT", offset),
