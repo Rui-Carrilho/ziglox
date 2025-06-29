@@ -46,6 +46,7 @@ pub fn initVM() void {
 }
 
 pub fn freeVM() !void {
+    try Table.freeTable(&vm.globals);
     try Table.freeTable(&vm.strings);
     try memory.freeObjects();
 }
