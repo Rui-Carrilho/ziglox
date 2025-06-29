@@ -9,7 +9,14 @@ const Table = @import("table.zig");
 
 const STACK_MAX = 256;
 
-pub const VM = struct { chunk: *Chunk.Chunk, ip: [*]u8, stack: [STACK_MAX]Value.Value, stackTop: [*]Value.Value, objects: ?*Object.Obj, strings: Table.Table };
+pub const VM = struct { 
+    chunk: *Chunk.Chunk, 
+    ip: [*]u8, 
+    stack: [STACK_MAX]Value.Value, 
+    stackTop: [*]Value.Value,
+    globals: Table.Table, 
+    objects: ?*Object.Obj, 
+    strings: Table.Table };
 
 pub var vm: VM = undefined;
 
@@ -105,6 +112,10 @@ pub fn run() !InterpretResult {
                 push(constant);
                 Value.printValue(constant);
                 std.debug.print("\n", .{});
+            },
+            @intFromEnum(Chunk.OpCode.OP_DEFINE_GLOBAL) => {
+                const name = READ_STRING();
+                Table.tableSet(vm., key: *Object.Obj, value: Value.Value)
             },
             @intFromEnum(Chunk.OpCode.OP_DIVIDE) => {
                 binaryOp(divide);

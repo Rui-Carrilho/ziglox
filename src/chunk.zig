@@ -6,29 +6,24 @@ const Value = @import("value.zig");
 pub const OpCode = enum(u8) {
     OP_ADD,
     OP_CONSTANT,
-    OP_NIL,
-    OP_TRUE,
-    OP_FALSE,
+    OP_DEFINE_GLOBAL,
+    OP_DIVIDE,
     OP_EQUAL,
+    OP_FALSE,
     OP_GREATER,
     OP_LESS,
-    OP_DIVIDE,
-    OP_NOT,
     OP_MULTIPLY,
     OP_NEGATE,
+    OP_NIL,
+    OP_NOT,
     OP_POP,
     OP_PRINT,
     OP_RETURN,
     OP_SUBTRACT,
+    OP_TRUE,
 };
 
-pub const Chunk = struct { 
-    code: []u8, 
-    count: usize, 
-    capacity: usize, 
-    constants: Value.ValueArray, 
-    lines: []i32 
-};
+pub const Chunk = struct { code: []u8, count: usize, capacity: usize, constants: Value.ValueArray, lines: []i32 };
 
 pub fn initChunk(chunk: *Chunk) void {
     chunk.code = memory.initArray(u8);

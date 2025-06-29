@@ -282,6 +282,10 @@ pub fn parseVariable(errorMessage: []const u8) u8 {
     return identifierConstant(&parser.previous);
 }
 
+pub fn defineVariable(global: u8) !void {
+    emitBytes(Chunk.OpCode.OP_DEFINE_GLOBAL, global);
+}
+
 pub fn getRule(ruleType: Scanner.TokenType) *const ParseRule {
     return &rules[@intFromEnum(ruleType)];
 }
