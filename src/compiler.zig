@@ -273,6 +273,10 @@ pub fn parsePrecedence(precedence: Precedence) !void {
     }
 }
 
+pub fn identifierConstant(name: *Scanner.Token) !void {
+    return makeConstant(Value.OBJ_VAL(Object.copyString(name.name)));
+}
+
 pub fn parseVariable(errorMessage: []const u8) u8 {
     consume(Scanner.TokenType.TOKEN_IDENTIFIER, errorMessage);
     return identifierConstant(&parser.previous);
