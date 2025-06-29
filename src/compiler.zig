@@ -273,17 +273,18 @@ pub fn parsePrecedence(precedence: Precedence) !void {
     }
 }
 
-pub fn identifierConstant(name: *Scanner.Token) !void {
-    return makeConstant(Value.OBJ_VAL(Object.copyString(name.name)));
+pub fn identifierConstant(name: *Scanner.Token) !u8 {
+    const newString = try Object.copyString(name.name);
+    return makeConstant(Value.OBJ_VAL(newString));
 }
 
-pub fn parseVariable(errorMessage: []const u8) u8 {
-    consume(Scanner.TokenType.TOKEN_IDENTIFIER, errorMessage);
-    return identifierConstant(&parser.previous);
+pub fn parseVariable(errorMessage: []const u8) !u8 {
+    try consume(Scanner.TokenType.TOKEN_IDENTIFIER, errorMessage);
+    return try identifierConstant(&parser.previous);
 }
 
 pub fn defineVariable(global: u8) !void {
-    emitBytes(Chunk.OpCode.OP_DEFINE_GLOBAL, global);
+    try emitBytes(@intFromEnum(Chunk.OpCode.OP_DEFINE_GLOBAL), global);
 }
 
 pub fn getRule(ruleType: Scanner.TokenType) *const ParseRule {
@@ -295,17 +296,17 @@ pub fn expression() !void {
 }
 
 pub fn varDeclaration() !void {
-    const global = parseVariable("Expect variable name.");
+    const global = try parseVariable("Expect variable name.");
 
     if (match(Scanner.TokenType.TOKEN_EQUAL)) {
-        expression();
+        try expression();
     } else {
-        emitByte(Scanner.TokenType.TOKEN_NIL);
+        try emitByte(@intFromEnum(Chunk.OpCode.OP_NIL));
     }
 
-    consume(Scanner.TokenType.TOKEN_SEMICOLON, "Expect ';' after variable declaration.");
+    try consume(Scanner.TokenType.TOKEN_SEMICOLON, "Expect ';' after variable declaration.");
 
-    defineVariable(global);
+    try defineVariable(global);
 }
 
 pub fn expressionStatement() !void {
@@ -358,7 +359,7 @@ pub fn synchronize() void {
 
 pub fn declaration() !void {
     if (match(Scanner.TokenType.TOKEN_VAR)) {
-        varDeclaration();
+        try varDeclaration();
     } else {
         try statement();
     }
