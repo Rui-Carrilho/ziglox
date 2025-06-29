@@ -26,6 +26,7 @@ pub fn disassembleInstruction(chunk: *Chunk.Chunk, offset: usize) usize {
     switch (instruction) {
         @intFromEnum(Chunk.OpCode.OP_ADD) => return simpleInstruction("OP_ADD", offset),
         @intFromEnum(Chunk.OpCode.OP_CONSTANT) => return constantInstruction("OP_CONSTANT", chunk, offset),
+        @intFromEnum(Chunk.OpCode.OP_DEFINE_GLOBAL) => return constantInstruction("OP_DEFINE_GLOBAL", chunk, offset),
         @intFromEnum(Chunk.OpCode.OP_DIVIDE) => return simpleInstruction("OP_DIVIDE", offset),
         @intFromEnum(Chunk.OpCode.OP_FALSE) => return simpleInstruction("OP_FALSE", offset),
         @intFromEnum(Chunk.OpCode.OP_MULTIPLY) => return simpleInstruction("OP_MULTIPLY", offset),
