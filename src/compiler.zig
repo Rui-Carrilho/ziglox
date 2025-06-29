@@ -273,12 +273,31 @@ pub fn parsePrecedence(precedence: Precedence) !void {
     }
 }
 
+pub fn parseVariable(errorMessage: []const u8) u8 {
+    consume(Scanner.TokenType.TOKEN_IDENTIFIER, errorMessage);
+    return identifierConstant(&parser.previous);
+}
+
 pub fn getRule(ruleType: Scanner.TokenType) *const ParseRule {
     return &rules[@intFromEnum(ruleType)];
 }
 
 pub fn expression() !void {
     try parsePrecedence(Precedence.PREC_ASSIGNMENT);
+}
+
+pub fn varDeclaration() !void {
+    const global = parseVariable("Expect variable name.");
+
+    if (match(Scanner.TokenType.TOKEN_EQUAL)) {
+        expression();
+    } else {
+        emitByte(Scanner.TokenType.TOKEN_NIL);
+    }
+
+    consume(Scanner.TokenType.TOKEN_SEMICOLON, "Expect ';' after variable declaration.");
+
+    defineVariable(global);
 }
 
 pub fn expressionStatement() !void {
@@ -330,7 +349,11 @@ pub fn synchronize() void {
 }
 
 pub fn declaration() !void {
-    try statement();
+    if (match(Scanner.TokenType.TOKEN_VAR)) {
+        varDeclaration();
+    } else {
+        try statement();
+    }
 
     if (parser.panicMode) synchronize();
 }
