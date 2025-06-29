@@ -327,7 +327,7 @@ pub fn synchronize() void {
     while (parser.current.type != Scanner.TokenType.TOKEN_EOF) {
         if (parser.previous.type == Scanner.TokenType.TOKEN_SEMICOLON) return;
         switch (parser.current.type) {
-            @intFromEnum(Scanner.TokenType.TOKEN_CLASS) => {
+            Scanner.TokenType.TOKEN_CLASS => {
                 return;
             },
             @intFromEnum(Scanner.TokenType.TOKEN_FOR) => {
