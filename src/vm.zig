@@ -16,7 +16,8 @@ pub const VM = struct {
     stackTop: [*]Value.Value,
     globals: Table.Table, 
     objects: ?*Object.Obj, 
-    strings: Table.Table };
+    strings: Table.Table 
+};
 
 pub var vm: VM = undefined;
 
@@ -40,6 +41,7 @@ pub const InterpretResult = enum { INTERPRET_OK, INTERPRET_COMPILE_ERROR, INTERP
 pub fn initVM() void {
     resetStack();
     vm.objects = null;
+    Table.initTable(&vm.globals);
     Table.initTable(&vm.strings);
 }
 
@@ -114,8 +116,9 @@ pub fn run() !InterpretResult {
                 std.debug.print("\n", .{});
             },
             @intFromEnum(Chunk.OpCode.OP_DEFINE_GLOBAL) => {
-                const name = READ_STRING();
-                Table.tableSet(vm., key: *Object.Obj, value: Value.Value)
+                const name = readString();
+                Table.tableSet(&vm.globals, name, peek(0));
+                pop();
             },
             @intFromEnum(Chunk.OpCode.OP_DIVIDE) => {
                 binaryOp(divide);
@@ -178,6 +181,10 @@ pub fn run() !InterpretResult {
 
 fn readConstant() Value.Value {
     return vm.chunk.constants.values[readByte()];
+}
+
+fn readString() Object.ObjString {
+    return Object.AS_STRING(readConstant());
 }
 
 fn readByte() u8 {
