@@ -327,30 +327,14 @@ pub fn synchronize() void {
     while (parser.current.type != Scanner.TokenType.TOKEN_EOF) {
         if (parser.previous.type == Scanner.TokenType.TOKEN_SEMICOLON) return;
         switch (parser.current.type) {
-            Scanner.TokenType.TOKEN_CLASS => {
-                return;
-            },
-            @intFromEnum(Scanner.TokenType.TOKEN_FOR) => {
-                return;
-            },
-            @intFromEnum(Scanner.TokenType.TOKEN_FUN) => {
-                return;
-            },
-            @intFromEnum(Scanner.TokenType.TOKEN_IF) => {
-                return;
-            },
-            @intFromEnum(Scanner.TokenType.TOKEN_PRINT) => {
-                return;
-            },
-            @intFromEnum(Scanner.TokenType.TOKEN_RETURN) => {
-                return;
-            },
-            @intFromEnum(Scanner.TokenType.TOKEN_VAR) => {
-                return;
-            },
-            @intFromEnum(Scanner.TokenType.TOKEN_WHILE) => {
-                return;
-            },
+            Scanner.TokenType.TOKEN_CLASS,
+            Scanner.TokenType.TOKEN_FUN,
+            Scanner.TokenType.TOKEN_VAR,
+            Scanner.TokenType.TOKEN_FOR,
+            Scanner.TokenType.TOKEN_IF,
+            Scanner.TokenType.TOKEN_WHILE,
+            Scanner.TokenType.TOKEN_PRINT,
+            Scanner.TokenType.TOKEN_RETURN => return,
             else => {},
         }
         advance();
