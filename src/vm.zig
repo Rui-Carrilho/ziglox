@@ -118,6 +118,7 @@ pub fn run() !InterpretResult {
             },
             @intFromEnum(Chunk.OpCode.OP_DEFINE_GLOBAL) => {
                 const name = readString();
+                //need to build my own Obj here, with this string
                 Table.tableSet(&vm.globals, name, peek(0));
                 pop();
             },
