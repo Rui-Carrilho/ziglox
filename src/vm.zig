@@ -116,7 +116,7 @@ pub fn run() !InterpretResult {
                     .node = .{ .string = name },
                     .next = null,
                 };
-                Table.tableSet(&vm.globals, string, peek(0));
+                _ = try Table.tableSet(&vm.globals, string, peek(0));
                 pop();
             },
             @intFromEnum(Chunk.OpCode.OP_DIVIDE) => {
