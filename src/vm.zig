@@ -9,15 +9,7 @@ const Table = @import("table.zig");
 
 const STACK_MAX = 256;
 
-pub const VM = struct { 
-    chunk: *Chunk.Chunk, 
-    ip: [*]u8, 
-    stack: [STACK_MAX]Value.Value, 
-    stackTop: [*]Value.Value,
-    globals: Table.Table, 
-    objects: ?*Object.Obj, 
-    strings: Table.Table 
-};
+pub const VM = struct { chunk: *Chunk.Chunk, ip: [*]u8, stack: [STACK_MAX]Value.Value, stackTop: [*]Value.Value, globals: Table.Table, objects: ?*Object.Obj, strings: Table.Table };
 
 pub var vm: VM = undefined;
 
@@ -119,7 +111,12 @@ pub fn run() !InterpretResult {
             @intFromEnum(Chunk.OpCode.OP_DEFINE_GLOBAL) => {
                 const name = readString();
                 //need to build my own Obj here, with this string
-                Table.tableSet(&vm.globals, name, peek(0));
+                const string = try Object.allocateObject();
+                string.* = .{
+                    .node = .{ .string = name },
+                    .next = null,
+                };
+                Table.tableSet(&vm.globals, string, peek(0));
                 pop();
             },
             @intFromEnum(Chunk.OpCode.OP_DIVIDE) => {
