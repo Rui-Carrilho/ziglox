@@ -153,7 +153,7 @@ pub fn run() !InterpretResult {
                 push(Value.BOOL_VAL(isFalsey(pop())));
             },
             @intFromEnum(Chunk.OpCode.OP_POP) => {
-                pop();
+                _ = pop();
             },
             @intFromEnum(Chunk.OpCode.OP_PRINT) => {
                 Value.printValue(pop());
