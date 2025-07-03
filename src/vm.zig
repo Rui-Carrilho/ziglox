@@ -117,7 +117,7 @@ pub fn run() !InterpretResult {
                     .next = null,
                 };
                 _ = try Table.tableSet(&vm.globals, string, peek(0));
-                pop();
+                _ = pop();
             },
             @intFromEnum(Chunk.OpCode.OP_DIVIDE) => {
                 binaryOp(divide);
