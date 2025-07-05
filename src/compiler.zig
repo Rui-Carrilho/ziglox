@@ -196,7 +196,6 @@ pub fn number() !void {
 
 pub fn string() !void {
     try emitConstant(Value.OBJ_VAL(try Object.copyString(parser.previous.name[1 .. parser.previous.name.len - 1])));
-    //Zelda Oracle games are underrated
 }
 
 pub fn unary() !void {
@@ -233,7 +232,7 @@ pub const rules = [_]ParseRule{
     .{ .prefix = null, .infix = binary, .precedence = Precedence.PREC_COMPARISON }, // TOKEN_GREATER_EQUAL
     .{ .prefix = null, .infix = binary, .precedence = Precedence.PREC_COMPARISON }, // TOKEN_LESS
     .{ .prefix = null, .infix = binary, .precedence = Precedence.PREC_COMPARISON }, // TOKEN_LESS_EQUAL
-    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_IDENTIFIER
+    .{ .prefix = variable, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_IDENTIFIER
     .{ .prefix = string, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_STRING
     .{ .prefix = number, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_NUMBER
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_AND
