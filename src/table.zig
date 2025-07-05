@@ -136,7 +136,7 @@ pub fn tableFindString(table: *Table, chars: []const u8, hash: u32) ?Object.ObjS
 pub fn tableGet(table: *Table, key: *Object.ObjString, value: *Value.Value) bool {
     if (table.count == 0) return false;
 
-    const entry = findEntry(table.entries, key);
+    const entry = findEntry(table.entries.?, key);
     if (entry.key.? == null) return false;
 
     value.* = entry.value;

@@ -131,9 +131,9 @@ pub fn run() !InterpretResult {
                 push(Value.BOOL_VAL(false));
             },
             @intFromEnum(Chunk.OpCode.OP_GET_GLOBAL) => {
-                const name = readString();
-                const value: Value.Value = null;
-                if (!Table.tableGet(&vm.globals, name, &value)) {
+                var name = readString();
+                var value: Value.Value = Value.NIL_VAL;
+                if (!Table.tableGet(&vm.globals, &name, &value)) {
                     runtimeError("Undefined variable '{s}'.", name.chars);
                     return InterpretResult.INTERPRET_RUNTIME_ERROR;
                 }

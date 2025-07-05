@@ -199,12 +199,13 @@ pub fn string() !void {
 }
 
 pub fn variable() !void {
-    namedVariable(parser.previous);
+    try namedVariable(parser.previous);
 }
 
 pub fn namedVariable(name: Scanner.Token) !void {
-    const arg = identifierConstant(&name);
-    emitBytes(Chunk.OpCode.OP_GET_GLOBAL, arg);
+    var mutableName = name;
+    const arg = try identifierConstant(&mutableName);
+    try emitBytes(@intFromEnum(Chunk.OpCode.OP_GET_GLOBAL), arg);
 }
 
 pub fn unary() !void {
