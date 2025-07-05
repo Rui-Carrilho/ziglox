@@ -198,6 +198,10 @@ pub fn string() !void {
     try emitConstant(Value.OBJ_VAL(try Object.copyString(parser.previous.name[1 .. parser.previous.name.len - 1])));
 }
 
+pub fn variable() !void {
+    namedVariable(parser.previous);
+}
+
 pub fn unary() !void {
     const operatorType = parser.previous.type;
 
