@@ -130,6 +130,15 @@ pub fn run() !InterpretResult {
             @intFromEnum(Chunk.OpCode.OP_FALSE) => {
                 push(Value.BOOL_VAL(false));
             },
+            @intFromEnum(Chunk.OpCode.OP_GET_GLOBAL) => {
+                const name = readString();
+                const value: Value.Value = null;
+                if (!Table.tableGet(&vm.globals, name, &value)) {
+                    runtimeError("Undefined variable '{s}'.", name.chars);
+                    return InterpretResult.INTERPRET_RUNTIME_ERROR;
+                }
+                push(value);
+            },
             @intFromEnum(Chunk.OpCode.OP_GREATER) => {
                 binaryOp(greaterThan);
             },
