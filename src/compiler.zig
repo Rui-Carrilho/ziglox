@@ -202,6 +202,11 @@ pub fn variable() !void {
     namedVariable(parser.previous);
 }
 
+pub fn namedVariable(name: Scanner.Token) !void {
+    const arg = identifierConstant(&name);
+    emitBytes(Chunk.OpCode.OP_GET_GLOBAL, arg);
+}
+
 pub fn unary() !void {
     const operatorType = parser.previous.type;
 
