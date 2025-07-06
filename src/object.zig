@@ -56,7 +56,8 @@ pub fn copyString(name: []const u8) !*Obj {
     const interned = Table.tableFindString(&VM.vm.strings, name, hash);
 
     if (interned != null) {
-        return objMaker(interned);
+        const newObj = try objMaker(interned);
+        return newObj;
     }
 
     @memcpy(heapChars, name);
@@ -91,7 +92,8 @@ pub fn takeString(chars: []u8) !*Obj {
 
     if (interned != null) {
         try memory.FREE_ARRAY(u8, chars, chars.len);
-        return objMaker(interned);
+        const newObj = try objMaker(interned);
+        return newObj;
     }
     return allocateString(chars, hash);
     //haha
