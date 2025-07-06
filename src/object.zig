@@ -96,12 +96,7 @@ pub fn takeString(chars: []u8) !*Obj {
 
     if (interned != null) {
         try memory.FREE_ARRAY(u8, chars, chars.len);
-        const string = try allocateObject();
-        string.* = .{
-            .node = .{ .string = interned.? },
-            .next = null,
-        };
-        return string;
+        return objMaker(interned);
     }
     return allocateString(chars, hash);
     //haha
