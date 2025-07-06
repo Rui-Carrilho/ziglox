@@ -113,7 +113,7 @@ pub fn run() !InterpretResult {
                 const name = readString();
                 const string = try Object.objMaker(name);
                 _ = try Table.tableSet(&vm.globals, string, peek(0));
-                std.debug.print("", .{});
+                Table.debugPrintTable(&vm.globals);
                 _ = pop();
             },
             @intFromEnum(Chunk.OpCode.OP_DIVIDE) => {

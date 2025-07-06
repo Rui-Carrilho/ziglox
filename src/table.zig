@@ -152,3 +152,27 @@ pub fn tableGet(table: *Table, key: *Object.ObjString, value: *Value.Value) !boo
     value.* = entry.value.?;
     return true;
 }
+
+fn debugPrintTable(table: *Table) !void {
+    std.debug.print("== table ==\n", .{});
+    std.debug.print("count: {}\n", .{table.count});
+    if(table.entries == null) {
+        std.debug.print("no table sadge\n", .{});
+        return;
+    }
+    for (table.entries.?) |entry| {
+        if (entry.key == null and entry.value == null) {
+            continue;
+        } else if (entry.key == null or entry.value == null) {
+            std.debug.print("one of these was null\n", .{});
+            continue;
+        } else if (!Object.IS_STRING(entry.key.?)) {
+            std.debug.print("our key was not a string monkaS \n", .{});
+            continue;
+        } else {
+            std.debug.print("key: {s}, value:", .{entry.key.?});
+            Value.printValue(entry.value.?);
+            std.debug.print("\n", .{});
+        }
+    } 
+}
