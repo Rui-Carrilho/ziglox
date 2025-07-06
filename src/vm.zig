@@ -69,7 +69,7 @@ pub fn concatenate() !void {
 
     const chars = try memory.ALLOCATE(u8, length);
 
-    @memcpy(chars[0..b.chars.len], a.chars);
+    @memcpy(chars[0..a.chars.len], a.chars);
     @memcpy(chars[a.chars.len..], b.chars);
 
     const result = try Object.takeString(chars);
