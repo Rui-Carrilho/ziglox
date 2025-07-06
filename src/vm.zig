@@ -129,7 +129,9 @@ pub fn run() !InterpretResult {
             @intFromEnum(Chunk.OpCode.OP_GET_GLOBAL) => {
                 var name = readString();
                 var value: Value.Value = Value.NIL_VAL;
-                if (!Table.tableGet(&vm.globals, &name, &value)) {
+
+                const tableGet = try Table.tableGet(&vm.globals, &name, &value);
+                if (tableGet) {
                     runtimeError("Undefined variable '{s}'.", name.chars);
                     return InterpretResult.INTERPRET_RUNTIME_ERROR;
                 }
