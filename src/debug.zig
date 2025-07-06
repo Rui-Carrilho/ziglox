@@ -29,6 +29,7 @@ pub fn disassembleInstruction(chunk: *Chunk.Chunk, offset: usize) usize {
         @intFromEnum(Chunk.OpCode.OP_DEFINE_GLOBAL) => return constantInstruction("OP_DEFINE_GLOBAL", chunk, offset),
         @intFromEnum(Chunk.OpCode.OP_DIVIDE) => return simpleInstruction("OP_DIVIDE", offset),
         @intFromEnum(Chunk.OpCode.OP_FALSE) => return simpleInstruction("OP_FALSE", offset),
+        @intFromEnum(Chunk.OpCode.OP_GET_GLOBAL) => return simpleInstruction("OP_GET_GLOBAL", offset),
         @intFromEnum(Chunk.OpCode.OP_MULTIPLY) => return simpleInstruction("OP_MULTIPLY", offset),
         @intFromEnum(Chunk.OpCode.OP_NEGATE) => return simpleInstruction("OP_NEGATE", offset),
         @intFromEnum(Chunk.OpCode.OP_NIL) => return simpleInstruction("OP_NIL", offset),
