@@ -86,7 +86,6 @@ pub fn run() !InterpretResult {
                 std.debug.print(" ]", .{});
             }
             std.debug.print("\n", .{});
-            std.debug.
             _ = Debug.disassembleInstruction(vm.chunk, vm.ip - &vm.chunk.code[0]);
         }
         const instruction = readByte();

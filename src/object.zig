@@ -38,6 +38,10 @@ pub fn OBJ_AS_STRING(obj: Obj) ObjString {
     };
 }
 
+pub fn OBJ_IS_STRING(obj: Obj) bool {
+    return @as(ObjType, obj.node) == ObjType.string;
+}
+
 pub fn AS_STRING(value: Value.Value) ObjString {
     return switch (Value.AS_OBJ(value).node) {
         ObjType.string => |myValue| myValue,
