@@ -88,8 +88,31 @@ pub fn tableSet(table: *Table, key: *Object.Obj, value: Value.Value) !bool {
         table.count += 1;
     }
 
-    entry.key = key;
+    if (entry.key != null and entry.value != null) {
+        std.debug.print("entry.key - {},\nentry.value - {}\n", .{ entry.key.?, entry.value.? });
+    } else {
+        std.debug.print("null shit was happening - 1\n", .{});
+    }
+
+    std.debug.print("setting values\n", .{});
+
+    entry.*.key.? = key;
     entry.value = value;
+
+    if (entry.key != null and entry.value != null) {
+        std.debug.print("entry.key - {},\n", .{entry.key.?});
+        //std.debug.print("======tableSet debug (not yet)======\n", .{});
+        std.debug.print("entry.key - {},\n", .{entry.key.?});
+        //Value.printValue(entry.value.?);
+        std.debug.print("\n", .{});
+    } else {
+        std.debug.print("null shit was happening - 2\n", .{});
+    }
+
+    std.debug.print("======tableSet debug======\n", .{});
+    std.debug.print("key: {},\nvalue:", .{entry.key.?});
+    //Value.printValue(entry.value.?);
+    std.debug.print("\n", .{});
     return isNewKey;
 }
 
@@ -137,7 +160,7 @@ pub fn tableGet(table: *Table, key: *Object.ObjString, value: *Value.Value) !boo
     if (table.count == 0) return false;
 
     const newString = try Object.allocateObject();
-    
+
     newString.* = .{
         .node = .{ .string = key.* },
         .next = null,
@@ -153,26 +176,31 @@ pub fn tableGet(table: *Table, key: *Object.ObjString, value: *Value.Value) !boo
     return true;
 }
 
-pub fn debugPrintTable(table: *Table) !void {
+pub fn debugPrintTable(table: *Table) void {
     std.debug.print("== table ==\n", .{});
     std.debug.print("count: {}\n", .{table.count});
-    if(table.entries == null) {
+    if (table.entries == null) {
         std.debug.print("no table sadge\n", .{});
         return;
     }
     for (table.entries.?) |entry| {
         if (entry.key == null and entry.value == null) {
             continue;
-        } else if (entry.key == null or entry.value == null) {
-            std.debug.print("one of these was null\n", .{});
+        } else if (entry.key == null and Value.IS_NIL(entry.value.?)) {
             continue;
-        } else if (!Object.IS_STRING(entry.key.?)) {
+        } else if (entry.key == null) {
+            std.debug.print("key was null\n", .{});
+            continue;
+        } else if (entry.value == null) {
+            std.debug.print("value was null\n", .{});
+            continue;
+        } else if (!Object.OBJ_IS_STRING(entry.key.?.*)) {
             std.debug.print("our key was not a string monkaS \n", .{});
             continue;
         } else {
-            std.debug.print("key: {s}, value:", .{entry.key.?});
+            std.debug.print("key: {s}, value:", .{Object.OBJ_AS_STRING(entry.key.?.*).chars});
             Value.printValue(entry.value.?);
             std.debug.print("\n", .{});
         }
-    } 
+    }
 }

@@ -111,6 +111,7 @@ pub fn run() !InterpretResult {
             @intFromEnum(Chunk.OpCode.OP_DEFINE_GLOBAL) => {
                 const name = readString();
                 const string = try Object.objMaker(name);
+                Table.debugPrintTable(&vm.globals);
                 _ = try Table.tableSet(&vm.globals, string, peek(0));
                 Table.debugPrintTable(&vm.globals);
                 _ = pop();
