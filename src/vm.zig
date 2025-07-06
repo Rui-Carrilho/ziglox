@@ -111,11 +111,7 @@ pub fn run() !InterpretResult {
             @intFromEnum(Chunk.OpCode.OP_DEFINE_GLOBAL) => {
                 const name = readString();
                 //need to build my own Obj here, with this string
-                const string = try Object.allocateObject();
-                string.* = .{
-                    .node = .{ .string = name },
-                    .next = null,
-                };
+                const string = Object.objMaker(name);
                 _ = try Table.tableSet(&vm.globals, string, peek(0));
                 _ = pop();
             },
