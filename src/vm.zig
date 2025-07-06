@@ -86,6 +86,7 @@ pub fn run() !InterpretResult {
                 std.debug.print(" ]", .{});
             }
             std.debug.print("\n", .{});
+            std.debug.
             _ = Debug.disassembleInstruction(vm.chunk, vm.ip - &vm.chunk.code[0]);
         }
         const instruction = readByte();
@@ -110,9 +111,9 @@ pub fn run() !InterpretResult {
             },
             @intFromEnum(Chunk.OpCode.OP_DEFINE_GLOBAL) => {
                 const name = readString();
-                //need to build my own Obj here, with this string
                 const string = try Object.objMaker(name);
                 _ = try Table.tableSet(&vm.globals, string, peek(0));
+                std.debug.print("", .{});
                 _ = pop();
             },
             @intFromEnum(Chunk.OpCode.OP_DIVIDE) => {
@@ -131,7 +132,8 @@ pub fn run() !InterpretResult {
                 var value: Value.Value = Value.NIL_VAL;
 
                 const tableGet = try Table.tableGet(&vm.globals, &name, &value);
-                if (tableGet) {
+                std.debug.print("tableGet: {}\n", .{tableGet});
+                if (!tableGet) {
                     runtimeError("Undefined variable '{s}'.", .{name.chars});
                     return InterpretResult.INTERPRET_RUNTIME_ERROR;
                 }

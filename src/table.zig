@@ -146,6 +146,9 @@ pub fn tableGet(table: *Table, key: *Object.ObjString, value: *Value.Value) !boo
     const entry = findEntry(table.entries.?, newString);
     if (entry.key == null) return false;
 
+    std.debug.print("we are testing in tableGet\n", .{});
+    Value.printValue(entry.value.?);
+
     value.* = entry.value.?;
     return true;
 }
