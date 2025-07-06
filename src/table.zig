@@ -144,8 +144,8 @@ pub fn tableGet(table: *Table, key: *Object.ObjString, value: *Value.Value) !boo
     };
 
     const entry = findEntry(table.entries.?, newString);
-    if (entry.key.?.* == Object.) return false;
+    if (entry.key == null) return false;
 
-    value.* = entry.value;
+    value.* = entry.value.?;
     return true;
 }
