@@ -133,11 +133,18 @@ pub fn tableFindString(table: *Table, chars: []const u8, hash: u32) ?Object.ObjS
     // :)
 }
 
-pub fn tableGet(table: *Table, key: *Object.ObjString, value: *Value.Value) bool {
+pub fn tableGet(table: *Table, key: *Object.ObjString, value: *Value.Value) !bool {
     if (table.count == 0) return false;
 
-    const entry = findEntry(table.entries.?, key);
-    if (entry.key.? == null) return false;
+    const newString = try Object.allocateObject();
+    
+    newString.* = .{
+        .node = .{ .string = key.* },
+        .next = null,
+    };
+
+    const entry = findEntry(table.entries.?, newString);
+    if (entry.key.?.* == Object.) return false;
 
     value.* = entry.value;
     return true;

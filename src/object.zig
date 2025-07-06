@@ -96,7 +96,6 @@ pub fn takeString(chars: []u8) !*Obj {
         return newObj;
     }
     return allocateString(chars, hash);
-    //haha
 }
 
 pub fn allocateObject() !*Obj {
