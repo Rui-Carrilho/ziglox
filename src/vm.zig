@@ -132,7 +132,7 @@ pub fn run() !InterpretResult {
 
                 const tableGet = try Table.tableGet(&vm.globals, &name, &value);
                 if (tableGet) {
-                    runtimeError("Undefined variable '{s}'.", name.chars);
+                    runtimeError("Undefined variable '{s}'.", .{name.chars});
                     return InterpretResult.INTERPRET_RUNTIME_ERROR;
                 }
                 push(value);
