@@ -116,3 +116,12 @@ pub fn allocateObject() !*Obj {
     VM.vm.objects = finalfinalObject;
     return finalfinalObject;
 }
+
+pub fn objMaker(objString: ?ObjString) *Obj {
+    const newString = try allocateObject();
+    newString.* = .{
+        .node = .{ .string = objString.? },
+        .next = null,
+    };
+    return newString;
+}
