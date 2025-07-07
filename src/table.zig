@@ -131,7 +131,6 @@ pub fn tableFindString(table: *Table, chars: []const u8, hash: u32) ?Object.ObjS
 
         index = (index + 1) % table.entries.?.len;
     }
-    // :)
 }
 
 pub fn tableGet(table: *Table, key: *Object.ObjString, value: *Value.Value) !bool {
