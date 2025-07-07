@@ -26,15 +26,15 @@ pub fn findEntry(entries: []Entry, key: *Object.Obj) *Entry {
     var tombstone: ?*Entry = null;
 
     while (true) {
-        var entry = entries[index];
+        const entry = &entries[index];
         if (entry.key == null) {
             if (Value.IS_NIL(entry.value.?)) {
-                return if (tombstone != null) tombstone.? else &entry;
+                return if (tombstone != null) tombstone.? else entry;
             } else {
-                if (tombstone == null) tombstone = &entry;
+                if (tombstone == null) tombstone = entry;
             }
         } else if (entry.key.? == key) {
-            return &entry;
+            return entry;
         }
 
         index = (index + 1) % entries.len;
