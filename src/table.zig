@@ -88,31 +88,9 @@ pub fn tableSet(table: *Table, key: *Object.Obj, value: Value.Value) !bool {
         table.count += 1;
     }
 
-    if (entry.key != null and entry.value != null) {
-        std.debug.print("entry.key - {},\nentry.value - {}\n", .{ entry.key.?, entry.value.? });
-    } else {
-        std.debug.print("null shit was happening - 1\n", .{});
-    }
-
-    std.debug.print("setting values\n", .{});
-
-    entry.*.key.? = key;
+    entry.key = key;
     entry.value = value;
 
-    if (entry.key != null and entry.value != null) {
-        std.debug.print("entry.key - {},\n", .{entry.key.?});
-        //std.debug.print("======tableSet debug (not yet)======\n", .{});
-        std.debug.print("entry.key - {},\n", .{entry.key.?});
-        //Value.printValue(entry.value.?);
-        std.debug.print("\n", .{});
-    } else {
-        std.debug.print("null shit was happening - 2\n", .{});
-    }
-
-    std.debug.print("======tableSet debug======\n", .{});
-    std.debug.print("key: {},\nvalue:", .{entry.key.?});
-    //Value.printValue(entry.value.?);
-    std.debug.print("\n", .{});
     return isNewKey;
 }
 
