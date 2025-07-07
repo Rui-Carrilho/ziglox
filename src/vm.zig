@@ -79,13 +79,15 @@ pub fn concatenate() !void {
 pub fn run() !InterpretResult {
     while (true) {
         if (Debug.debug_trace_execution) {
-            std.debug.print("        ", .{});
+            std.debug.print("== stack ==\n", .{});
             for (vm.stack) |slot| {
                 std.debug.print("[ ", .{});
                 Value.printValue(slot);
                 std.debug.print(" ]", .{});
             }
             std.debug.print("\n", .{});
+            std.debug.print("== globals ==\n", .{});
+            Table.debugPrintTable(&vm.globals);
             _ = Debug.disassembleInstruction(vm.chunk, vm.ip - &vm.chunk.code[0]);
         }
         const instruction = readByte();
@@ -111,9 +113,7 @@ pub fn run() !InterpretResult {
             @intFromEnum(Chunk.OpCode.OP_DEFINE_GLOBAL) => {
                 const name = readString();
                 const string = try Object.objMaker(name);
-                Table.debugPrintTable(&vm.globals);
                 _ = try Table.tableSet(&vm.globals, string, peek(0));
-                Table.debugPrintTable(&vm.globals);
                 _ = pop();
             },
             @intFromEnum(Chunk.OpCode.OP_DIVIDE) => {

@@ -154,7 +154,6 @@ pub fn tableGet(table: *Table, key: *Object.ObjString, value: *Value.Value) !boo
 }
 
 pub fn debugPrintTable(table: *Table) void {
-    std.debug.print("== table ==\n", .{});
     std.debug.print("count: {}\n", .{table.count});
     if (table.entries == null) {
         std.debug.print("no table sadge\n", .{});
