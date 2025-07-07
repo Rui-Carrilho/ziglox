@@ -49,6 +49,13 @@ pub fn AS_STRING(value: Value.Value) ObjString {
     };
 }
 
+pub fn AS_STRING_OBJ(value: Value.Value) *Obj {
+    return switch (Value.AS_OBJ(value).node) {
+        ObjType.string => |_| Value.AS_OBJ(value),
+        else => std.debug.panic("fuckup in AS_STRING (object.zig)", .{}),
+    };
+}
+
 pub fn AS_CSTRING(value: Value.Value) [*]u8 {
     return AS_STRING(value).chars.ptr;
 }
@@ -60,8 +67,7 @@ pub fn copyString(name: []const u8) !*Obj {
     const interned = Table.tableFindString(&VM.vm.strings, name, hash);
 
     if (interned != null) {
-        const newObj = try objMaker(interned);
-        return newObj;
+        return interned.?;
     }
 
     @memcpy(heapChars, name);
@@ -96,8 +102,7 @@ pub fn takeString(chars: []u8) !*Obj {
 
     if (interned != null) {
         try memory.FREE_ARRAY(u8, chars, chars.len);
-        const newObj = try objMaker(interned);
-        return newObj;
+        return interned.?;
     }
     return allocateString(chars, hash);
 }
@@ -110,13 +115,4 @@ pub fn allocateObject() !*Obj {
     finalfinalObject.next = VM.vm.objects;
     VM.vm.objects = finalfinalObject;
     return finalfinalObject;
-}
-
-pub fn objMaker(objString: ?ObjString) !*Obj {
-    const newString = try allocateObject();
-    newString.* = .{
-        .node = .{ .string = objString.? },
-        .next = null,
-    };
-    return newString;
 }
