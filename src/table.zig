@@ -94,7 +94,7 @@ pub fn tableSet(table: *Table, key: *Object.Obj, value: Value.Value) !bool {
     return isNewKey;
 }
 
-pub fn tableDelete(table: *Table, key: *Object.ObjString) bool {
+pub fn tableDelete(table: *Table, key: *Object.Obj) bool {
     if (table.count == 0) return false;
 
     const entry = findEntry(table.entries, key);
@@ -116,7 +116,7 @@ pub fn tableAddAll(from: *Table, to: *Table) void {
     }
 }
 
-pub fn tableFindString(table: *Table, chars: []const u8, hash: u32) ?Object.ObjString {
+pub fn tableFindString(table: *Table, chars: []const u8, hash: u32) ?*Object.Obj {
     if (table.count == 0) return null;
 
     var index = hash % table.entries.?.len;
@@ -126,24 +126,17 @@ pub fn tableFindString(table: *Table, chars: []const u8, hash: u32) ?Object.ObjS
         if (entry.key == null) {
             if (Value.IS_NIL(entry.value.?)) return null;
         } else if (entry.key.?.node.string.hash == hash and std.mem.eql(u8, entry.key.?.node.string.chars, chars)) {
-            return entry.key.?.node.string;
+            return entry.key;
         }
 
         index = (index + 1) % table.entries.?.len;
     }
 }
 
-pub fn tableGet(table: *Table, key: *Object.ObjString, value: *Value.Value) !bool {
+pub fn tableGet(table: *Table, key: *Object.Obj, value: *Value.Value) !bool {
     if (table.count == 0) return false;
 
-    const newString = try Object.allocateObject();
-
-    newString.* = .{
-        .node = .{ .string = key.* },
-        .next = null,
-    };
-
-    const entry = findEntry(table.entries.?, newString);
+    const entry = findEntry(table.entries.?, key);
     if (entry.key == null) return false;
 
     std.debug.print("we are testing in tableGet\n", .{});
@@ -154,7 +147,6 @@ pub fn tableGet(table: *Table, key: *Object.ObjString, value: *Value.Value) !boo
 }
 
 pub fn debugPrintTable(table: *Table) void {
-    std.debug.print("== table ==\n", .{});
     std.debug.print("count: {}\n", .{table.count});
     if (table.entries == null) {
         std.debug.print("no table sadge\n", .{});

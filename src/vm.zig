@@ -79,13 +79,15 @@ pub fn concatenate() !void {
 pub fn run() !InterpretResult {
     while (true) {
         if (Debug.debug_trace_execution) {
-            std.debug.print("        ", .{});
+            std.debug.print("== stack ==\n", .{});
             for (vm.stack) |slot| {
                 std.debug.print("[ ", .{});
                 Value.printValue(slot);
                 std.debug.print(" ]", .{});
             }
             std.debug.print("\n", .{});
+            std.debug.print("== globals ==\n", .{});
+            Table.debugPrintTable(&vm.globals);
             _ = Debug.disassembleInstruction(vm.chunk, vm.ip - &vm.chunk.code[0]);
         }
         const instruction = readByte();
@@ -110,10 +112,7 @@ pub fn run() !InterpretResult {
             },
             @intFromEnum(Chunk.OpCode.OP_DEFINE_GLOBAL) => {
                 const name = readString();
-                const string = try Object.objMaker(name);
-                Table.debugPrintTable(&vm.globals);
-                _ = try Table.tableSet(&vm.globals, string, peek(0));
-                Table.debugPrintTable(&vm.globals);
+                _ = try Table.tableSet(&vm.globals, name, peek(0));
                 _ = pop();
             },
             @intFromEnum(Chunk.OpCode.OP_DIVIDE) => {
@@ -128,13 +127,13 @@ pub fn run() !InterpretResult {
                 push(Value.BOOL_VAL(false));
             },
             @intFromEnum(Chunk.OpCode.OP_GET_GLOBAL) => {
-                var name = readString();
+                const name = readString();
                 var value: Value.Value = Value.NIL_VAL;
 
-                const tableGet = try Table.tableGet(&vm.globals, &name, &value);
+                const tableGet = try Table.tableGet(&vm.globals, name, &value);
                 std.debug.print("tableGet: {}\n", .{tableGet});
                 if (!tableGet) {
-                    runtimeError("Undefined variable '{s}'.", .{name.chars});
+                    runtimeError("Undefined variable '{s}'.", .{Object.OBJ_AS_STRING(name.*).chars});
                     return InterpretResult.INTERPRET_RUNTIME_ERROR;
                 }
                 push(value);
@@ -191,8 +190,8 @@ fn readConstant() Value.Value {
     return vm.chunk.constants.values[readByte()];
 }
 
-fn readString() Object.ObjString {
-    return Object.AS_STRING(readConstant());
+fn readString() *Object.Obj {
+    return Object.AS_STRING_OBJ(readConstant());
 }
 
 fn readByte() u8 {
