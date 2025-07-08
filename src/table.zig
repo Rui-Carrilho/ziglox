@@ -98,7 +98,7 @@ pub fn tableDelete(table: *Table, key: *Object.Obj) bool {
     if (table.count == 0) return false;
 
     const entry = findEntry(table.entries.?, key);
-    if (entry.key.? == null) return false;
+    if (entry.key == null) return false;
 
     entry.key = null;
     entry.value = Value.BOOL_VAL(true);
