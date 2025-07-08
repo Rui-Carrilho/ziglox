@@ -171,6 +171,15 @@ pub fn run() !InterpretResult {
                 //exit interpreter
                 return InterpretResult.INTERPRET_OK;
             },
+            @intFromEnum(Chunk.OpCode.OP_SET_GLOBAL) => {
+                const name = readString();
+                const tableSet = Table.tableSet(&vm.globals, name, peek(0));
+                if (tableSet) {
+                    Table.tableDelete(&vm.globals, name);
+                    runtimeError("Undefined variable {s}", .{name.node.string.chars});
+                    return InterpretResult.INTERPRET_RUNTIME_ERROR;
+                }
+            },
             @intFromEnum(Chunk.OpCode.OP_SUBTRACT) => {
                 binaryOp(subtract);
             },
