@@ -22,7 +22,7 @@ pub const Precedence = enum {
     PREC_PRIMARY,
 };
 
-const ParseFn = ?*const fn () anyerror!void;
+const ParseFn = ?*const fn (canAssign: bool) anyerror!void;
 
 pub const ParseRule = struct { prefix: ParseFn, infix: ParseFn, precedence: Precedence };
 
@@ -151,7 +151,8 @@ pub fn endCompiler() !void {
     }
 }
 
-pub fn binary() !void {
+pub fn binary(canAssign: bool) !void {
+    _ = canAssign;
     const operatorType = parser.previous.type;
     const rule = getRule(operatorType);
     try parsePrecedence(@enumFromInt(@intFromEnum(rule.precedence) + 1));
@@ -171,7 +172,8 @@ pub fn binary() !void {
     };
 }
 
-pub fn literal() !void {
+pub fn literal(canAssign: bool) !void {
+    _ = canAssign;
     try switch (parser.previous.type) {
         Scanner.TokenType.TOKEN_FALSE => emitByte(@intFromEnum(Chunk.OpCode.OP_FALSE)),
         Scanner.TokenType.TOKEN_NIL => emitByte(@intFromEnum(Chunk.OpCode.OP_NIL)),
@@ -180,12 +182,14 @@ pub fn literal() !void {
     };
 }
 
-pub fn grouping() !void {
+pub fn grouping(canAssign: bool) !void {
+    _ = canAssign;
     try expression();
     try consume(Scanner.TokenType.TOKEN_RIGHT_PAREN, "Expect ')' after expression.");
 }
 
-pub fn number() !void {
+pub fn number(canAssign: bool) !void {
+    _ = canAssign;
     const value = std.fmt.parseFloat(f64, parser.previous.name) catch |err| {
         std.debug.print("Error parsing float: {}\n", .{err});
         try emitConstant(Value.NUMBER_VAL(0));
@@ -194,7 +198,8 @@ pub fn number() !void {
     try emitConstant(Value.NUMBER_VAL(value));
 }
 
-pub fn string() !void {
+pub fn string(canAssign: bool) !void {
+    _ = canAssign;
     try emitConstant(Value.OBJ_VAL(try Object.copyString(parser.previous.name[1 .. parser.previous.name.len - 1])));
 }
 
@@ -285,7 +290,7 @@ pub fn parsePrecedence(precedence: Precedence) !void {
     while (@intFromEnum(precedence) <= @intFromEnum(getRule(parser.current.type).precedence)) {
         advance();
         const infixRule = getRule(parser.previous.type).infix;
-        try infixRule.?();
+        try infixRule.?(canAssign);
     }
 
     if (canAssign and match(Scanner.TokenType.TOKEN_EQUAL)) {
