@@ -198,15 +198,15 @@ pub fn string() !void {
     try emitConstant(Value.OBJ_VAL(try Object.copyString(parser.previous.name[1 .. parser.previous.name.len - 1])));
 }
 
-pub fn variable() !void {
-    try namedVariable(parser.previous);
+pub fn variable(canAssign: bool) !void {
+    try namedVariable(parser.previous, canAssign);
 }
 
-pub fn namedVariable(name: Scanner.Token) !void {
+pub fn namedVariable(name: Scanner.Token, canAssign: bool) !void {
     var mutableName = name;
     const arg = try identifierConstant(&mutableName);
 
-    if (match(Scanner.TokenType.TOKEN_EQUAL)) {
+    if (canAssign and match(Scanner.TokenType.TOKEN_EQUAL)) {
         try expression();
         try emitBytes(@intFromEnum(Chunk.OpCode.OP_SET_GLOBAL), arg);
     } else {
@@ -286,6 +286,10 @@ pub fn parsePrecedence(precedence: Precedence) !void {
         advance();
         const infixRule = getRule(parser.previous.type).infix;
         try infixRule.?();
+    }
+
+    if (canAssign and match(Scanner.TokenType.TOKEN_EQUAL)) {
+        errorBase("Invalid assignment target.");
     }
 }
 
