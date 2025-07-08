@@ -219,7 +219,8 @@ pub fn namedVariable(name: Scanner.Token, canAssign: bool) !void {
     }
 }
 
-pub fn unary() !void {
+pub fn unary(canAssign: bool) !void {
+    _ = canAssign;
     const operatorType = parser.previous.type;
 
     //compile the operand
