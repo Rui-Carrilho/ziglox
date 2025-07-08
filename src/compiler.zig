@@ -205,7 +205,7 @@ pub fn variable() !void {
 pub fn namedVariable(name: Scanner.Token) !void {
     var mutableName = name;
     const arg = try identifierConstant(&mutableName);
-    
+
     if (match(Scanner.TokenType.TOKEN_EQUAL)) {
         try expression();
         try emitBytes(@intFromEnum(Chunk.OpCode.OP_SET_GLOBAL), arg);
@@ -279,7 +279,8 @@ pub fn parsePrecedence(precedence: Precedence) !void {
         return;
     }
 
-    try prefixRule.?();
+    const canAssign = precedence <= Precedence.PREC_ASSIGNMENT;
+    prefixRule.?(canAssign);
 
     while (@intFromEnum(precedence) <= @intFromEnum(getRule(parser.current.type).precedence)) {
         advance();
@@ -342,14 +343,7 @@ pub fn synchronize() void {
     while (parser.current.type != Scanner.TokenType.TOKEN_EOF) {
         if (parser.previous.type == Scanner.TokenType.TOKEN_SEMICOLON) return;
         switch (parser.current.type) {
-            Scanner.TokenType.TOKEN_CLASS,
-            Scanner.TokenType.TOKEN_FUN,
-            Scanner.TokenType.TOKEN_VAR,
-            Scanner.TokenType.TOKEN_FOR,
-            Scanner.TokenType.TOKEN_IF,
-            Scanner.TokenType.TOKEN_WHILE,
-            Scanner.TokenType.TOKEN_PRINT,
-            Scanner.TokenType.TOKEN_RETURN => return,
+            Scanner.TokenType.TOKEN_CLASS, Scanner.TokenType.TOKEN_FUN, Scanner.TokenType.TOKEN_VAR, Scanner.TokenType.TOKEN_FOR, Scanner.TokenType.TOKEN_IF, Scanner.TokenType.TOKEN_WHILE, Scanner.TokenType.TOKEN_PRINT, Scanner.TokenType.TOKEN_RETURN => return,
             else => {},
         }
         advance();
