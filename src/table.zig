@@ -97,7 +97,7 @@ pub fn tableSet(table: *Table, key: *Object.Obj, value: Value.Value) !bool {
 pub fn tableDelete(table: *Table, key: *Object.Obj) bool {
     if (table.count == 0) return false;
 
-    const entry = findEntry(table.entries, key);
+    const entry = findEntry(table.entries.?, key);
     if (entry.key.? == null) return false;
 
     entry.key = null;
