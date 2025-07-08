@@ -207,10 +207,10 @@ pub fn namedVariable(name: Scanner.Token) !void {
     const arg = try identifierConstant(&mutableName);
     
     if (match(Scanner.TokenType.TOKEN_EQUAL)) {
-        expression();
-        emitBytes(Chunk.OpCode.OP_SET_GLOBAL, arg);
+        try expression();
+        try emitBytes(@intFromEnum(Chunk.OpCode.OP_SET_GLOBAL), arg);
     } else {
-        emitBytes(Chunk.OpCode.OP_GET_GLOBAL, arg);
+        try emitBytes(@intFromEnum(Chunk.OpCode.OP_GET_GLOBAL), arg);
     }
 }
 
