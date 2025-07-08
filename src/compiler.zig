@@ -285,8 +285,8 @@ pub fn parsePrecedence(precedence: Precedence) !void {
         return;
     }
 
-    const canAssign = precedence <= Precedence.PREC_ASSIGNMENT;
-    prefixRule.?(canAssign);
+    const canAssign = @intFromEnum(precedence) <= @intFromEnum(Precedence.PREC_ASSIGNMENT);
+    try prefixRule.?(canAssign);
 
     while (@intFromEnum(precedence) <= @intFromEnum(getRule(parser.current.type).precedence)) {
         advance();
