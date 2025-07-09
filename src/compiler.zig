@@ -6,6 +6,8 @@ const Debug = @import("debug.zig");
 const Allocator = @import("allocator.zig");
 const Object = @import("object.zig");
 
+const UINT8_COUNT = std.math.maxInt(u8) + 1;
+
 pub const Parser = struct { current: Scanner.Token, previous: Scanner.Token, hadError: bool, panicMode: bool };
 
 pub const Precedence = enum {
@@ -26,10 +28,13 @@ const ParseFn = ?*const fn (canAssign: bool) anyerror!void;
 
 pub const ParseRule = struct { prefix: ParseFn, infix: ParseFn, precedence: Precedence };
 
-pub const Local = struct {
-    name: Scanner.Token,
-    depth: usize
+pub const Compiler = struct {
+    locals: [UINT8_COUNT]Local,
+    localCount: usize,
+    scopeDepth: usize
 };
+
+pub const Local = struct { name: Scanner.Token, depth: usize };
 
 var parser: Parser = undefined;
 var compilingChunk: *Chunk.Chunk = undefined;
