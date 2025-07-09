@@ -26,6 +26,11 @@ const ParseFn = ?*const fn (canAssign: bool) anyerror!void;
 
 pub const ParseRule = struct { prefix: ParseFn, infix: ParseFn, precedence: Precedence };
 
+pub const Local = struct {
+    name: Scanner.Token,
+    depth: usize
+};
+
 var parser: Parser = undefined;
 var compilingChunk: *Chunk.Chunk = undefined;
 
