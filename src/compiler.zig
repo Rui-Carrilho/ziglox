@@ -30,11 +30,11 @@ pub const ParseRule = struct { prefix: ParseFn, infix: ParseFn, precedence: Prec
 
 pub const Compiler = struct {
     locals: [UINT8_COUNT]Local,
-    localCount: usize,
-    scopeDepth: usize
+    localCount: i32,
+    scopeDepth: i32
 };
 
-pub const Local = struct { name: Scanner.Token, depth: usize };
+pub const Local = struct { name: Scanner.Token, depth: i32 };
 
 var parser: Parser = undefined;
 var compilingChunk: *Chunk.Chunk = undefined;
