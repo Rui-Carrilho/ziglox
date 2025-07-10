@@ -394,6 +394,10 @@ pub fn declaration() !void {
 pub fn statement() !void {
     if (match(Scanner.TokenType.TOKEN_PRINT)) {
         try printStatement();
+    } else if (match(Scanner.TokenType.TOKEN_PRINT)) {
+        beginScope();
+        block();
+        endScope();
     } else {
         try expressionStatement();
     }
