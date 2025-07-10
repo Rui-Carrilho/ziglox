@@ -37,6 +37,7 @@ pub const Compiler = struct {
 pub const Local = struct { name: Scanner.Token, depth: i32 };
 
 var parser: Parser = undefined;
+var current: *Compiler = null;
 var compilingChunk: *Chunk.Chunk = undefined;
 
 const debugPrintCode = true;
@@ -77,6 +78,8 @@ pub fn errorAtCurrent(message: []const u8) void {
 
 pub fn compile(source: []const u8, chunk: *Chunk.Chunk) !bool {
     Scanner.initScanner(source);
+    var compiler: Compiler = null;
+    initCompiler(compiler);
     compilingChunk = chunk;
 
     parser.hadError = false;
@@ -149,6 +152,12 @@ pub fn makeConstant(value: Value.Value) !u8 {
 pub fn emitConstant(value: Value.Value) !void {
     const newConstant = try makeConstant(value);
     try emitBytes(@intFromEnum(Chunk.OpCode.OP_CONSTANT), newConstant);
+}
+
+pub fn initCompiler(compiler: *Compiler) void {
+    compiler.localCount = 0;
+    compiler.scopeDepth = 0;
+    current = compiler;
 }
 
 pub fn endCompiler() !void {
