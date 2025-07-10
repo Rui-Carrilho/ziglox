@@ -79,7 +79,7 @@ pub fn errorAtCurrent(message: []const u8) void {
 pub fn compile(source: []const u8, chunk: *Chunk.Chunk) !bool {
     Scanner.initScanner(source);
     var compiler: Compiler = null;
-    initCompiler(compiler);
+    initCompiler(&compiler);
     compilingChunk = chunk;
 
     parser.hadError = false;
