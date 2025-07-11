@@ -338,7 +338,7 @@ pub fn expression() !void {
 
 pub fn block() !void {
     while (!check(Scanner.TokenType.TOKEN_RIGHT_BRACE) and !check(Scanner.TokenType.TOKEN_EOF)) {
-        declaration();
+        try declaration();
     }
 
     consume(Scanner.TokenType.TOKEN_RIGHT_BRACE, "Expect '}' after block.");
@@ -398,7 +398,7 @@ pub fn statement() !void {
         try printStatement();
     } else if (match(Scanner.TokenType.TOKEN_PRINT)) {
         beginScope();
-        block();
+        try block();
         endScope();
     } else {
         try expressionStatement();
