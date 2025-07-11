@@ -406,13 +406,9 @@ pub fn statement() !void {
 }
 
 pub fn beginScope() void {
-    if (current != null) {
-        current.?.scopeDepth += 1;
-    }
+    current.?.scopeDepth += 1;
 }
 
 pub fn endScope() void {
-    if (current != null) {
-        current.?.scopeDepth += 1;
-    }
+    current.?.scopeDepth += 1;
 }
