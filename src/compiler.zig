@@ -300,8 +300,6 @@ pub fn parsePrecedence(precedence: Precedence) !void {
         return;
     }
 
-    //I've earned myself some green :D
-
     const canAssign = @intFromEnum(precedence) <= @intFromEnum(Precedence.PREC_ASSIGNMENT);
     try prefixRule.?(canAssign);
 
