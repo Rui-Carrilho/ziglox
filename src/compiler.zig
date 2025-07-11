@@ -28,11 +28,7 @@ const ParseFn = ?*const fn (canAssign: bool) anyerror!void;
 
 pub const ParseRule = struct { prefix: ParseFn, infix: ParseFn, precedence: Precedence };
 
-pub const Compiler = struct {
-    locals: [UINT8_COUNT]Local,
-    localCount: i32,
-    scopeDepth: i32
-};
+pub const Compiler = struct { locals: [UINT8_COUNT]Local, localCount: i32, scopeDepth: i32 };
 
 pub const Local = struct { name: Scanner.Token, depth: i32 };
 
@@ -342,6 +338,14 @@ pub fn expression() !void {
     try parsePrecedence(Precedence.PREC_ASSIGNMENT);
 }
 
+pub fn block() !void {
+    while (!check(Scanner.TokenType.TOKEN_RIGHT_BRACE) and !check(Scanner.TokenType.TOKEN_EOF)) {
+        declaration();
+    }
+
+    consume(Scanner.TokenType.TOKEN_RIGHT_BRACE, "Expect '}' after block.");
+}
+
 pub fn varDeclaration() !void {
     const global = try parseVariable("Expect variable name.");
 
@@ -403,14 +407,6 @@ pub fn statement() !void {
     }
 }
 
-pub fn beginScope() void {
+pub fn beginScope() void {}
 
-}
-
-pub fn endScope() void {
-
-}
-
-
-
-
+pub fn endScope() void {}
