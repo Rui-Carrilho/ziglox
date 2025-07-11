@@ -336,12 +336,12 @@ pub fn expression() !void {
     try parsePrecedence(Precedence.PREC_ASSIGNMENT);
 }
 
-pub fn block() !void {
+pub fn block() anyerror!void {
     while (!check(Scanner.TokenType.TOKEN_RIGHT_BRACE) and !check(Scanner.TokenType.TOKEN_EOF)) {
         try declaration();
     }
 
-    consume(Scanner.TokenType.TOKEN_RIGHT_BRACE, "Expect '}' after block.");
+    try consume(Scanner.TokenType.TOKEN_RIGHT_BRACE, "Expect '}' after block.");
 }
 
 pub fn varDeclaration() !void {
