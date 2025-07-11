@@ -74,7 +74,7 @@ pub fn errorAtCurrent(message: []const u8) void {
 
 pub fn compile(source: []const u8, chunk: *Chunk.Chunk) !bool {
     Scanner.initScanner(source);
-    var compiler: Compiler = null;
+    var compiler: ?Compiler = null;
     initCompiler(&compiler);
     compilingChunk = chunk;
 
@@ -407,6 +407,14 @@ pub fn statement() !void {
     }
 }
 
-pub fn beginScope() void {}
+pub fn beginScope() void {
+    if (current != null) {
+        current.?.scopeDepth += 1;
+    }
+}
 
-pub fn endScope() void {}
+pub fn endScope() void {
+    if (current != null) {
+        current.?.scopeDepth += 1;
+    }
+}
