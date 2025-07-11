@@ -33,7 +33,7 @@ pub const Compiler = struct { locals: [UINT8_COUNT]Local, localCount: i32, scope
 pub const Local = struct { name: Scanner.Token, depth: i32 };
 
 var parser: Parser = undefined;
-var current: ?*Compiler = null;
+var current: *Compiler = undefined;
 var compilingChunk: *Chunk.Chunk = undefined;
 
 const debugPrintCode = true;
@@ -74,7 +74,7 @@ pub fn errorAtCurrent(message: []const u8) void {
 
 pub fn compile(source: []const u8, chunk: *Chunk.Chunk) !bool {
     Scanner.initScanner(source);
-    var compiler: ?Compiler = null;
+    var compiler: Compiler = undefined;
     initCompiler(&compiler);
     compilingChunk = chunk;
 
