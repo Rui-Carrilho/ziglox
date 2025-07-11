@@ -402,3 +402,15 @@ pub fn statement() !void {
         try expressionStatement();
     }
 }
+
+pub fn beginScope() void {
+
+}
+
+pub fn endScope() void {
+
+}
+
+
+
+
