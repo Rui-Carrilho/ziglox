@@ -42,6 +42,10 @@ pub fn currentChunk() *Chunk.Chunk {
     return compilingChunk;
 }
 
+// nevermind, we seem to be lagging behind for some reason
+//
+// wait, what? this says the file is the same? wtf
+
 pub fn errorAt(token: *Scanner.Token, message: []const u8) void {
     if (parser.panicMode) return;
     parser.panicMode = true;
