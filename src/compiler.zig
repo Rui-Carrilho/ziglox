@@ -247,6 +247,8 @@ pub fn unary(canAssign: bool) !void {
         Scanner.TokenType.TOKEN_MINUS => emitByte(@intFromEnum(Chunk.OpCode.OP_NEGATE)),
         else => unreachable,
     };
+
+    //lmao, lets test gi
 }
 
 pub const rules = [_]ParseRule{
