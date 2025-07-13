@@ -36,6 +36,8 @@ var parser: Parser = undefined;
 var current: ?*Compiler = null;
 var compilingChunk: *Chunk.Chunk = undefined;
 
+/vim.keymap.set('n', '<leader>zr', ':split | terminal zig run main.zig<CR>', { desc = 'Run main.zig in terminal' })/test with the new zig hotkey
+
 const debugPrintCode = true;
 
 pub fn currentChunk() *Chunk.Chunk {
