@@ -36,8 +36,6 @@ var parser: Parser = undefined;
 var current: ?*Compiler = null;
 var compilingChunk: *Chunk.Chunk = undefined;
 
-//test with the new zig hotkey
-
 const debugPrintCode = true;
 
 pub fn currentChunk() *Chunk.Chunk {
@@ -155,6 +153,9 @@ pub fn emitConstant(value: Value.Value) !void {
     const newConstant = try makeConstant(value);
     try emitBytes(@intFromEnum(Chunk.OpCode.OP_CONSTANT), newConstant);
 }
+
+//hahahh
+//fgadfsj
 
 pub fn initCompiler(compiler: *Compiler) void {
     compiler.localCount = 0;
