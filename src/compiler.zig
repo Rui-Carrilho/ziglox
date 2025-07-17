@@ -32,6 +32,8 @@ pub const Compiler = struct { locals: [UINT8_COUNT]Local, localCount: i32, scope
 
 pub const Local = struct { name: Scanner.Token, depth: i32 };
 
+//test test
+
 var parser: Parser = undefined;
 var current: ?*Compiler = null;
 var compilingChunk: *Chunk.Chunk = undefined;
