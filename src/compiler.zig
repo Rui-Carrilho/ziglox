@@ -332,6 +332,9 @@ pub fn identifierConstant(name: *Scanner.Token) !u8 {
 
 pub fn parseVariable(errorMessage: []const u8) !u8 {
     try consume(Scanner.TokenType.TOKEN_IDENTIFIER, errorMessage);
+
+    declareVariable();
+
     return try identifierConstant(&parser.previous);
 }
 
