@@ -335,6 +335,8 @@ pub fn parseVariable(errorMessage: []const u8) !u8 {
 
     declareVariable();
 
+    if (current.?.scopeDepth > 0) return 0;
+
     return try identifierConstant(&parser.previous);
 }
 
