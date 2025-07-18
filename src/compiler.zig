@@ -335,12 +335,19 @@ pub fn parseVariable(errorMessage: []const u8) !u8 {
 
     declareVariable();
 
-    if (current.?.scopeDepth > 0) return 0;
+    if (current != null) {
+        if (current.?.scopeDepth > 0) return 0;
+    }
 
     return try identifierConstant(&parser.previous);
 }
 
 pub fn defineVariable(global: u8) !void {
+    if (current != null) {
+        if (current.?.scopeDepth > 0) {
+            return;
+        }
+    }
     try emitBytes(@intFromEnum(Chunk.OpCode.OP_DEFINE_GLOBAL), global);
 }
 
