@@ -330,6 +330,15 @@ pub fn identifierConstant(name: *Scanner.Token) !u8 {
     return makeConstant(Value.OBJ_VAL(newString));
 }
 
+pub fn declarVariable() !void {
+    if (current != null) {
+        if (current.?.scopeDepth == 0) return;
+    }
+
+    const name = &parser.previous;
+    addLocal(name.*);
+}
+
 pub fn parseVariable(errorMessage: []const u8) !u8 {
     try consume(Scanner.TokenType.TOKEN_IDENTIFIER, errorMessage);
 
