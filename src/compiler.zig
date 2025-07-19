@@ -334,9 +334,9 @@ pub fn addLocal(name: Scanner.Token) void {
     if (current != null) {
         const local = current.?.locals[current.?.localCount + 1];
         local.name = name;
-        local.depth ) current.?.scopeDepth;
+        local.depth = current.?.scopeDepth;
     }
-}  
+}
 
 pub fn declareVariable() !void {
     if (current != null) {
