@@ -28,7 +28,7 @@ const ParseFn = ?*const fn (canAssign: bool) anyerror!void;
 
 pub const ParseRule = struct { prefix: ParseFn, infix: ParseFn, precedence: Precedence };
 
-pub const Compiler = struct { locals: [UINT8_COUNT]Local, localCount: i32, scopeDepth: i32 };
+pub const Compiler = struct { locals: [UINT8_COUNT]Local, localCount: usize, scopeDepth: i32 };
 
 pub const Local = struct { name: Scanner.Token, depth: i32 };
 
@@ -350,7 +350,7 @@ pub fn declareVariable() !void {
 pub fn parseVariable(errorMessage: []const u8) !u8 {
     try consume(Scanner.TokenType.TOKEN_IDENTIFIER, errorMessage);
 
-    declareVariable();
+    try declareVariable();
 
     if (current != null) {
         if (current.?.scopeDepth > 0) return 0;
