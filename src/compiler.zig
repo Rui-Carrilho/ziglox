@@ -32,8 +32,6 @@ pub const Compiler = struct { locals: [UINT8_COUNT]Local, localCount: usize, sco
 
 pub const Local = struct { name: Scanner.Token, depth: i32 };
 
-//test test
-
 var parser: Parser = undefined;
 var current: ?*Compiler = null;
 var compilingChunk: *Chunk.Chunk = undefined;
@@ -43,10 +41,6 @@ const debugPrintCode = true;
 pub fn currentChunk() *Chunk.Chunk {
     return compilingChunk;
 }
-
-// nevermind, we seem to be lagging behind for some reason
-//
-// wait, what? this says the file is the same? wtf
 
 pub fn errorAt(token: *Scanner.Token, message: []const u8) void {
     if (parser.panicMode) return;
