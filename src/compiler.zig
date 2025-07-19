@@ -332,7 +332,7 @@ pub fn identifierConstant(name: *Scanner.Token) !u8 {
 
 pub fn addLocal(name: Scanner.Token) void {
     if (current != null) {
-        const local = current.?.locals[current.?.localCount + 1];
+        var local = current.?.locals[current.?.localCount + 1];
         local.name = name;
         local.depth = current.?.scopeDepth;
     }
