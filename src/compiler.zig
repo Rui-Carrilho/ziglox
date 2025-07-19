@@ -326,6 +326,10 @@ pub fn identifierConstant(name: *Scanner.Token) !u8 {
 
 pub fn addLocal(name: Scanner.Token) void {
     if (current != null) {
+        if (current.?.localCount == UINT8_COUNT) {
+            errorBase("Too many local variables in function.");
+            return;
+        }
         var local = current.?.locals[current.?.localCount + 1];
         local.name = name;
         local.depth = current.?.scopeDepth;
