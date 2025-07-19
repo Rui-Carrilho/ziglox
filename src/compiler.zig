@@ -330,7 +330,15 @@ pub fn identifierConstant(name: *Scanner.Token) !u8 {
     return makeConstant(Value.OBJ_VAL(newString));
 }
 
-pub fn declarVariable() !void {
+pub fn addLocal(name: Scanner.Token) void {
+    if (current != null) {
+        const local = current.?.locals[current.?.localCount + 1];
+        local.name = name;
+        local.depth ) current.?.scopeDepth;
+    }
+}  
+
+pub fn declareVariable() !void {
     if (current != null) {
         if (current.?.scopeDepth == 0) return;
     }
