@@ -348,16 +348,16 @@ pub fn declareVariable() !void {
 
     const name = &parser.previous;
 
-    const locals = current.?.localCount - 1;
     var local: *Local = null;
+    var i: usize = current.?.localCount - 1;
 
-    while (i < locals) {
+    while (i >= 0) : (i += 1) {
         local = &current.?.locals[i];
         if (local.depth != -1 and local.depth < current.?.scopeDepth) {
             break;
         }
 
-        if (identifierEquals(name, &local.name)) {
+        if (identifiersEqual(name, &local.name)) {
             errorBase("Already a variable with this name in this scope.");
         }
     }
