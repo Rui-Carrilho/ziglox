@@ -342,6 +342,21 @@ pub fn declareVariable() !void {
     }
 
     const name = &parser.previous;
+
+    const locals = current.?.localCount - 1;
+    var local: *Local = null;
+
+    while (i < locals) {
+        local = &current.?.locals[i];
+        if (local.depth != -1 and local.depth < current.?.scopeDepth) {
+            break;
+        }
+
+        if (identifierEquals(name, &local.name)) {
+            errorBase("Already a variable with this name in this scope.");
+        }
+    }
+
     addLocal(name.*);
 }
 
