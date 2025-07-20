@@ -346,6 +346,7 @@ pub fn declareVariable() !void {
         if (current.?.scopeDepth == 0) return;
     }
 
+    //dummy commit because i can
     const name = &parser.previous;
 
     var local: *Local = undefined;
