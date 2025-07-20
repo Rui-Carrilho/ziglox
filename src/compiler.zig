@@ -348,7 +348,7 @@ pub fn declareVariable() !void {
 
     const name = &parser.previous;
 
-    var local: *Local = null;
+    var local: *Local = undefined;
     var i: usize = current.?.localCount - 1;
 
     while (i >= 0) : (i += 1) {
