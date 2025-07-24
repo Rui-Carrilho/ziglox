@@ -470,7 +470,7 @@ pub fn beginScope() void {
     current.?.scopeDepth += 1;
 }
 
-pub fn endScope() void {
+pub fn endScope() !void {
     current.?.scopeDepth += 1;
 
     while (current.?.localCount > 0 and current.?.locals[current.?.localCount - 1].depth > current.?.scopeDepth) {
