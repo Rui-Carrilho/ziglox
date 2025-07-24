@@ -226,6 +226,19 @@ pub fn variable(canAssign: bool) !void {
 }
 
 pub fn namedVariable(name: Scanner.Token, canAssign: bool) !void {
+    const getOp = undefined;
+    const setOp = undefined;
+
+    var arg = resolveLocal(current.?, &name);
+    if (arg != -1) {
+        getOp = @intFromEnum(Chunk.OpCode.OP_GET_LOCAL);
+        setOp = @intFromEnum(Chunk.OpCode.OP_SET_LOCAL);
+    } else {
+        arg = identifierConstant(&name);
+        getOp = @intFromEnum(Chunk.OpCode.OP_GET_GLOBAL);
+        setOp = @intFromEnum(Chunk.OpCode.OP_SET_GLOBAL);
+    }
+
     var mutableName = name;
     const arg = try identifierConstant(&mutableName);
 
