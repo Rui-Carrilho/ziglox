@@ -458,7 +458,7 @@ pub fn statement() !void {
     } else if (match(Scanner.TokenType.TOKEN_PRINT)) {
         beginScope();
         try block();
-        endScope();
+        try endScope();
     } else {
         try expressionStatement();
     }
