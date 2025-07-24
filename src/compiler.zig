@@ -474,7 +474,7 @@ pub fn endScope() void {
     current.?.scopeDepth += 1;
 
     while (current.?.localCount > 0 and current.?.locals[current.?.localCount - 1].depth > current.?.scopeDepth) {
-        emitByte(@intFromEnum(Chunk.OpCode.OP_POP));
+        try emitByte(@intFromEnum(Chunk.OpCode.OP_POP));
         current.?.scopeDepth -= 1;
     }
 }
