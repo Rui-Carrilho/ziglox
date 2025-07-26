@@ -226,8 +226,8 @@ pub fn variable(canAssign: bool) !void {
 }
 
 pub fn namedVariable(name: Scanner.Token, canAssign: bool) !void {
-    const getOp = undefined;
-    const setOp = undefined;
+    var getOp = undefined;
+    var setOp = undefined;
 
     var arg = resolveLocal(current.?, &name);
     if (arg != -1) {
