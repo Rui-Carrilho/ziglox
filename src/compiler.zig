@@ -334,7 +334,7 @@ pub fn identifierConstant(name: *Scanner.Token) !u8 {
     return makeConstant(Value.OBJ_VAL(newString));
 }
 
-pub fn identifiersEqual(a: *Scanner.Token, b: *Scanner.Token) bool {
+pub fn identifiersEqual(a: *const Scanner.Token, b: *Scanner.Token) bool {
     if (a.name.len != b.name.len) return false;
     return std.mem.eql(u8, a.name, b.name);
 }
