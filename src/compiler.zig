@@ -342,12 +342,12 @@ pub fn identifiersEqual(a: *Scanner.Token, b: *Scanner.Token) bool {
     return std.mem.eql(u8, a.name, b.name);
 }
 
-pub fn resolveLocal(compiler: *Compiler, name: *Scanner.Token) {
+pub fn resolveLocal(compiler: *Compiler, name: *Scanner.Token) u8 {
     var i = compiler.localCount - 1;
     while (i >= 0) : (i -= 1) {
         const local = &compiler.locals[i];
         if (identifiersEqual(name, &local.name)) {
-            return i;
+            return @as(u8, i);
         }
     }
 
