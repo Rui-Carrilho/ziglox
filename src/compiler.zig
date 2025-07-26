@@ -240,7 +240,7 @@ pub fn namedVariable(name: Scanner.Token, canAssign: bool) !void {
     }
 
     var mutableName = name;
-    const arg = try identifierConstant(&mutableName);
+    var arg = try identifierConstant(&mutableName);
 
     if (canAssign and match(Scanner.TokenType.TOKEN_EQUAL)) {
         try expression();
