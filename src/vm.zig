@@ -184,6 +184,10 @@ pub fn run() !InterpretResult {
                     return InterpretResult.INTERPRET_RUNTIME_ERROR;
                 }
             },
+            @intFromEnum(Chunk.OpCode.OP_SET_LOCAL) => {
+                const slot = readByte();
+                vm.stack[slot] = peek(0);
+            },
             @intFromEnum(Chunk.OpCode.OP_SUBTRACT) => {
                 binaryOp(subtract);
             },
