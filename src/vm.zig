@@ -141,7 +141,7 @@ pub fn run() !InterpretResult {
             @intFromEnum(Chunk.OpCode.OP_GET_LOCAL) => {
                 const slot = readByte();
                 push(vm.stack[slot]);
-            }
+            },
             @intFromEnum(Chunk.OpCode.OP_GREATER) => {
                 binaryOp(greaterThan);
             },
