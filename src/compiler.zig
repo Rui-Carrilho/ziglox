@@ -344,7 +344,7 @@ pub fn resolveLocal(compiler: *Compiler, name: *const Scanner.Token) u8 {
     while (i >= 0) : (i -= 1) {
         const local = &compiler.locals[i];
         if (identifiersEqual(name, &local.name)) {
-            return @as(u8, i);
+            return @intCast(i);
         }
     }
 
