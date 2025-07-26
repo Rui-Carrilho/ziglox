@@ -234,7 +234,7 @@ pub fn namedVariable(name: Scanner.Token, canAssign: bool) !void {
         getOp = @intFromEnum(Chunk.OpCode.OP_GET_LOCAL);
         setOp = @intFromEnum(Chunk.OpCode.OP_SET_LOCAL);
     } else {
-        arg = identifierConstant(&name);
+        arg = try identifierConstant(&name);
         getOp = @intFromEnum(Chunk.OpCode.OP_GET_GLOBAL);
         setOp = @intFromEnum(Chunk.OpCode.OP_SET_GLOBAL);
     }
@@ -244,9 +244,9 @@ pub fn namedVariable(name: Scanner.Token, canAssign: bool) !void {
 
     if (canAssign and match(Scanner.TokenType.TOKEN_EQUAL)) {
         try expression();
-        try emitBytes(@intFromEnum(Chunk.OpCode.OP_SET_GLOBAL), arg);
+        try emitBytes(setOp, arg);
     } else {
-        try emitBytes(@intFromEnum(Chunk.OpCode.OP_GET_GLOBAL), arg);
+        try emitBytes(getOp, arg);
     }
 }
 
