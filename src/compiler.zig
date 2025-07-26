@@ -239,9 +239,6 @@ pub fn namedVariable(name: Scanner.Token, canAssign: bool) !void {
         setOp = @intFromEnum(Chunk.OpCode.OP_SET_GLOBAL);
     }
 
-    var mutableName = name;
-    var arg = try identifierConstant(&mutableName);
-
     if (canAssign and match(Scanner.TokenType.TOKEN_EQUAL)) {
         try expression();
         try emitBytes(setOp, arg);
