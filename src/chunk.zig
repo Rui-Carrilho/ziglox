@@ -37,6 +37,8 @@ pub fn initChunk(chunk: *Chunk) void {
     Value.initValueArray(&chunk.constants);
 }
 
+//greeeeeeeeen
+
 pub fn writeChunk(chunk: *Chunk, byte: u8, line: i32) !void {
     if (chunk.capacity < chunk.count + 1) {
         const oldCapacity = chunk.capacity;
