@@ -30,6 +30,7 @@ pub fn disassembleInstruction(chunk: *Chunk.Chunk, offset: usize) usize {
         @intFromEnum(Chunk.OpCode.OP_DIVIDE) => return simpleInstruction("OP_DIVIDE", offset),
         @intFromEnum(Chunk.OpCode.OP_FALSE) => return simpleInstruction("OP_FALSE", offset),
         @intFromEnum(Chunk.OpCode.OP_GET_GLOBAL) => return constantInstruction("OP_GET_GLOBAL", chunk, offset),
+        @intFromEnum(Chunk.OpCode.OP_GET_LOCAL) => return byteInstruction("OP_GET_LOCAL", chunk, offset),
         @intFromEnum(Chunk.OpCode.OP_MULTIPLY) => return simpleInstruction("OP_MULTIPLY", offset),
         @intFromEnum(Chunk.OpCode.OP_NEGATE) => return simpleInstruction("OP_NEGATE", offset),
         @intFromEnum(Chunk.OpCode.OP_NIL) => return simpleInstruction("OP_NIL", offset),
@@ -38,6 +39,7 @@ pub fn disassembleInstruction(chunk: *Chunk.Chunk, offset: usize) usize {
         @intFromEnum(Chunk.OpCode.OP_PRINT) => return simpleInstruction("OP_PRINT", offset),
         @intFromEnum(Chunk.OpCode.OP_RETURN) => return simpleInstruction("OP_RETURN", offset),
         @intFromEnum(Chunk.OpCode.OP_SET_GLOBAL) => return simpleInstruction("OP_SET_GLOBAL", offset),
+        @intFromEnum(Chunk.OpCode.OP_SET_LOCAL) => return byteInstruction("OP_SET_LOCAL", offset),
         @intFromEnum(Chunk.OpCode.OP_SUBTRACT) => return simpleInstruction("OP_SUBTRACT", offset),
         @intFromEnum(Chunk.OpCode.OP_TRUE) => return simpleInstruction("OP_TRUE", offset),
         else => {
