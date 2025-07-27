@@ -39,7 +39,7 @@ pub fn disassembleInstruction(chunk: *Chunk.Chunk, offset: usize) usize {
         @intFromEnum(Chunk.OpCode.OP_PRINT) => return simpleInstruction("OP_PRINT", offset),
         @intFromEnum(Chunk.OpCode.OP_RETURN) => return simpleInstruction("OP_RETURN", offset),
         @intFromEnum(Chunk.OpCode.OP_SET_GLOBAL) => return simpleInstruction("OP_SET_GLOBAL", offset),
-        @intFromEnum(Chunk.OpCode.OP_SET_LOCAL) => return byteInstruction("OP_SET_LOCAL", offset),
+        @intFromEnum(Chunk.OpCode.OP_SET_LOCAL) => return byteInstruction("OP_SET_LOCAL", chunk, offset),
         @intFromEnum(Chunk.OpCode.OP_SUBTRACT) => return simpleInstruction("OP_SUBTRACT", offset),
         @intFromEnum(Chunk.OpCode.OP_TRUE) => return simpleInstruction("OP_TRUE", offset),
         else => {
@@ -52,6 +52,12 @@ pub fn disassembleInstruction(chunk: *Chunk.Chunk, offset: usize) usize {
 pub fn simpleInstruction(name: []const u8, offset: usize) usize {
     std.debug.print("{s}\n", .{name});
     return offset + 1;
+}
+
+pub fn byteInstruction(name: []const u8, chunk: *Chunk.Chunk, offset: usize) usize {
+    const slot = chunk.code[offset + 1];
+    std.debug.print("{s:<16} {d:>4} ", .{ name, slot });
+    return offset + 2;
 }
 
 pub fn constantInstruction(name: []const u8, chunk: *Chunk.Chunk, offset: usize) usize {
