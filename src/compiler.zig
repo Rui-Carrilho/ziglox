@@ -480,7 +480,7 @@ pub fn ifStatement() !void {
 
     patchJump(thenJump);
 
-    if (match(Scanner.TokenType.TOKEN_ELSE)) statement();
+    if (match(Scanner.TokenType.TOKEN_ELSE)) try statement();
     patchJump((elseJump));
 }
 
