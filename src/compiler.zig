@@ -485,15 +485,15 @@ pub fn declaration() !void {
 pub fn statement() !void {
     if (match(Scanner.TokenType.TOKEN_PRINT)) {
         try printStatement();
-    } else if (match(Scanner.TokenType.TOKEN_PRINT)) {
+    } else if (match(Scanner.TokenType.TOKEN_IF)) {
+        ifStatement();
+    } else if (match(Scanner.TokenType.TOKEN_LEFT_BRACE)) {
         beginScope();
         try block();
         try endScope();
     } else {
         try expressionStatement();
     }
-
-    // greeeeeen
 }
 
 pub fn beginScope() void {
