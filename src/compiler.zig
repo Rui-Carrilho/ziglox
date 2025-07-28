@@ -476,6 +476,8 @@ pub fn ifStatement() !void {
     const thenJump = try emitJump(@intFromEnum(Chunk.OpCode.OP_JUMP_IF_FALSE));
     try statement();
 
+    const elseJump = try emitJump(@intFromEnum(Chunk.OpCode.OP_JUMP));
+
     patchJump(thenJump);
 }
 
