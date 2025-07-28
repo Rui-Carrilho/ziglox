@@ -33,7 +33,6 @@ pub fn AS_BOOL(value: Value) bool {
     };
 }
 
-//test
 pub fn AS_NUMBER(value: Value) f64 {
     return switch (value) {
         Value.number => |myValue| myValue,
