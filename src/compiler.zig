@@ -508,11 +508,11 @@ pub fn declaration() !void {
     if (parser.panicMode) synchronize();
 }
 
-pub fn statement() !void {
+pub fn statement() anyerror!void {
     if (match(Scanner.TokenType.TOKEN_PRINT)) {
         try printStatement();
     } else if (match(Scanner.TokenType.TOKEN_IF)) {
-        ifStatement();
+        try ifStatement();
     } else if (match(Scanner.TokenType.TOKEN_LEFT_BRACE)) {
         beginScope();
         try block();
