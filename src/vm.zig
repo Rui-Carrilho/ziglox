@@ -212,7 +212,7 @@ fn readConstant() Value.Value {
 }
 
 fn readShort() u16 {
-    const result = (@as(u16, vm.ip[-2]) << 8) | @as(u16, vm.ip[-1]);
+    const result = (@as(u16, vm.ip[0]) << 8) | @as(u16, vm.ip[1]);
 
     vm.ip += 2;
 
