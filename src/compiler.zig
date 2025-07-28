@@ -400,9 +400,14 @@ pub fn parseVariable(errorMessage: []const u8) !u8 {
     return try identifierConstant(&parser.previous);
 }
 
+pub fn markInitialized() void {
+    current.?.locals[current.?.localCount - 1].depth = current.?.scopeDepth;
+}
+
 pub fn defineVariable(global: u8) !void {
     if (current != null) {
         if (current.?.scopeDepth > 0) {
+            markInitialized();
             return;
         }
     }
