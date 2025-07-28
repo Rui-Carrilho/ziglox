@@ -164,8 +164,8 @@ pub fn patchJump(offset: usize) void {
         errorBase("Too much code to jump over.");
     }
 
-    currentChunk().code[offset] = (jump >> 8) & 0xff;
-    currentChunk().code[offset + 1] = jump & 0xff;
+    currentChunk().code[offset] = @intCast((jump >> 8) & 0xff);
+    currentChunk().code[offset + 1] = @intCast((jump) & 0xff);
 }
 
 pub fn initCompiler(compiler: *Compiler) void {
