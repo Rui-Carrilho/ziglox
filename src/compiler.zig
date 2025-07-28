@@ -157,8 +157,16 @@ pub fn emitConstant(value: Value.Value) !void {
     try emitBytes(@intFromEnum(Chunk.OpCode.OP_CONSTANT), newConstant);
 }
 
-//hahahh
-//fgadfsj
+pub fn patchJump(offset: usize) void {
+    const jump = currentChunk().count - offset - 2;
+
+    if (jump > UINT8_COUNT) {
+        errorBase("Too much code to jump over.");
+    }
+
+    currentChunk().code[offset] = (jump >> 8) & 0xff;
+    currentChunk().code[offset + 1] = jump & 0xff;
+}
 
 pub fn initCompiler(compiler: *Compiler) void {
     compiler.localCount = 0;
