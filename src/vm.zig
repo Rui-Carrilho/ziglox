@@ -212,8 +212,11 @@ fn readConstant() Value.Value {
 }
 
 fn readShort() u16 {
+    const result = (@as(u16, vm.ip[-2]) << 8) | @as(u16, vm.ip[-1]);
+
     vm.ip += 2;
-    return (@as(u16, vm.ip[-2]) << 8) | @as(u16, vm.ip[-1]);
+
+    return result;
 }
 
 fn readString() *Object.Obj {
