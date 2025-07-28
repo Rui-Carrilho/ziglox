@@ -359,7 +359,7 @@ pub fn addLocal(name: Scanner.Token) void {
         }
         var local = current.?.locals[current.?.localCount + 1];
         local.name = name;
-        local.depth = current.?.scopeDepth;
+        local.depth = -1;
     }
 }
 
