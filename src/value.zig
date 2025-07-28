@@ -21,7 +21,7 @@ pub fn NUMBER_VAL(value: f64) Value {
 }
 
 pub fn OBJ_VAL(value: *Object.Obj) Value {
-    return .{ .obj = value};
+    return .{ .obj = value };
 }
 
 pub fn AS_BOOL(value: Value) bool {
@@ -33,6 +33,7 @@ pub fn AS_BOOL(value: Value) bool {
     };
 }
 
+//test
 pub fn AS_NUMBER(value: Value) f64 {
     return switch (value) {
         Value.number => |myValue| myValue,
@@ -75,7 +76,7 @@ pub fn IS_NUMBER(value: Value) bool {
 pub fn IS_OBJ(value: Value) bool {
     return switch (value) {
         Value.obj => true,
-        else => false
+        else => false,
     };
 }
 
@@ -102,9 +103,13 @@ pub fn freeValueArray(array: *ValueArray) void {
 }
 
 pub fn printValue(value: Value) void {
-    switch(value) {
-        Value.boolean => |myValue| {std.debug.print("{}", .{myValue});},
-        Value.number => |myValue| {std.debug.print("{d}", .{myValue});},
+    switch (value) {
+        Value.boolean => |myValue| {
+            std.debug.print("{}", .{myValue});
+        },
+        Value.number => |myValue| {
+            std.debug.print("{d}", .{myValue});
+        },
         Value.nil => std.debug.print("nil", .{}),
         Value.obj => |myValue| printObject(myValue),
     }
@@ -113,7 +118,7 @@ pub fn printValue(value: Value) void {
 pub fn printObject(value: *Object.Obj) void {
     switch (value.node) {
         Object.ObjType.string => |myValue| std.debug.print("{s}", .{myValue.chars}),
-        Object.ObjType.uninitialized => std.debug.print("oops, uninitialized", .{})
+        Object.ObjType.uninitialized => std.debug.print("oops, uninitialized", .{}),
     }
 }
 
@@ -123,6 +128,6 @@ pub fn valuesEqual(a: Value, b: Value) bool {
         ValueType.boolean => return AS_BOOL(a) == AS_BOOL(b),
         ValueType.nil => return true,
         ValueType.number => return AS_NUMBER(a) == AS_NUMBER(b),
-        ValueType.obj => return AS_OBJ(a) == AS_OBJ(b)
+        ValueType.obj => return AS_OBJ(a) == AS_OBJ(b),
     }
 }
