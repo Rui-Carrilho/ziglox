@@ -131,6 +131,13 @@ pub fn emitBytes(byte1: u8, byte2: u8) !void {
     try emitByte(byte2);
 }
 
+pub fn emitJump(instruction: u8) u8 {
+    try emitByte(instruction);
+    try emitByte(0xff);
+    try emitByte(0xff);
+    return @intCast(currentChunk().count - 2);
+}
+
 pub fn emitReturn() !void {
     try emitByte(@intFromEnum(Chunk.OpCode.OP_RETURN));
 }
@@ -451,6 +458,17 @@ pub fn expressionStatement() !void {
     try expression();
     try consume(Scanner.TokenType.TOKEN_SEMICOLON, "Expect ';' after expression.");
     try emitByte(@intFromEnum(Chunk.OpCode.OP_POP));
+}
+
+pub fn ifStatement() !void {
+    try consume(Scanner.TokenType.TOKEN_LEFT_PAREN, "Expect '(' after if.");
+    try expression();
+    try consume(Scanner.TokenType.TOKEN_RIGHT_PAREN, "Expect ')' after condition.");
+
+    const thenJump = emitJump(@intFromEnum(Chunk.OpCode.OP_JUMP_IF_FALSE));
+    try statement();
+
+    patchJump(thenJump);
 }
 
 pub fn printStatement() !void {
