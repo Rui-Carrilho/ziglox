@@ -145,6 +145,10 @@ pub fn run() !InterpretResult {
             @intFromEnum(Chunk.OpCode.OP_GREATER) => {
                 binaryOp(greaterThan);
             },
+            @intFromEnum(Chunk.OpCode.OP_JUMP_IF_FALSE) => {
+                const offset = readShort();
+                if (isFalsey(peek(0))) vm.ip += offset;
+            },
             @intFromEnum(Chunk.OpCode.OP_LESS) => {
                 binaryOp(lessThan);
             },
@@ -205,6 +209,11 @@ pub fn run() !InterpretResult {
 
 fn readConstant() Value.Value {
     return vm.chunk.constants.values[readByte()];
+}
+
+fn readShort() u16 {
+    vm.ip += 2;
+    return (@as(u16, vm.ip[-2]) << 8) | vm.ip[-1];
 }
 
 fn readString() *Object.Obj {

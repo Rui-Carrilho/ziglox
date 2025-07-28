@@ -473,7 +473,7 @@ pub fn ifStatement() !void {
     try expression();
     try consume(Scanner.TokenType.TOKEN_RIGHT_PAREN, "Expect ')' after condition.");
 
-    const thenJump = emitJump(@intFromEnum(Chunk.OpCode.OP_JUMP_IF_FALSE));
+    const thenJump = try emitJump(@intFromEnum(Chunk.OpCode.OP_JUMP_IF_FALSE));
     try statement();
 
     patchJump(thenJump);
