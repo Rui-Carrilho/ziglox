@@ -131,7 +131,7 @@ pub fn emitBytes(byte1: u8, byte2: u8) !void {
     try emitByte(byte2);
 }
 
-pub fn emitJump(instruction: u8) u8 {
+pub fn emitJump(instruction: u8) !u8 {
     try emitByte(instruction);
     try emitByte(0xff);
     try emitByte(0xff);
