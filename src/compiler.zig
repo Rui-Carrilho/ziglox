@@ -344,6 +344,9 @@ pub fn resolveLocal(compiler: *Compiler, name: *const Scanner.Token) u8 {
     while (i >= 0) : (i -= 1) {
         const local = &compiler.locals[i];
         if (identifiersEqual(name, &local.name)) {
+            if (local.depth == -1) {
+                errorBase("Can't read local variable in its own initializer.");
+            }
             return @intCast(i);
         }
     }
