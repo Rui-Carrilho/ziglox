@@ -479,6 +479,9 @@ pub fn ifStatement() !void {
     const elseJump = try emitJump(@intFromEnum(Chunk.OpCode.OP_JUMP));
 
     patchJump(thenJump);
+
+    if (match(Scanner.TokenType.TOKEN_ELSE)) statement();
+    patchJump((elseJump));
 }
 
 pub fn printStatement() !void {
