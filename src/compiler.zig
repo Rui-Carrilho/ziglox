@@ -570,6 +570,8 @@ pub fn declaration() !void {
 pub fn statement() anyerror!void {
     if (match(Scanner.TokenType.TOKEN_PRINT)) {
         try printStatement();
+    } else if (match(.TOKEN_FOR)) {
+        try forStatement();
     } else if (match(Scanner.TokenType.TOKEN_IF)) {
         try ifStatement();
     } else if (match(Scanner.TokenType.TOKEN_WHILE)) {
