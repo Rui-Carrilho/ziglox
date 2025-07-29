@@ -517,6 +517,19 @@ pub fn printStatement() !void {
     try emitByte(@intFromEnum(Chunk.OpCode.OP_PRINT));
 }
 
+pub fn whileStatement() !void {
+    try consume(Scanner.TokenType.TOKEN_LEFT_PAREN, "Expect '(' after 'while'.");
+    try expression();
+    try consume(Scanner.TokenType.TOKEN_RIGHT_PAREN, "Expect '(' after condition.");
+
+    const exitJump = try emitJump(@intFromEnum(Chunk.OpCode.OP_JUMP_IF_FALSE));
+    try emitByte(@intFromEnum(Chunk.OpCode.OP_POP));
+    try statement();
+
+    patchJump(exitJump);
+    try emitByte(@intFromEnum(Chunk.OpCode.OP_POP));
+}
+
 pub fn synchronize() void {
     parser.panicMode = false;
 
@@ -545,6 +558,8 @@ pub fn statement() anyerror!void {
         try printStatement();
     } else if (match(Scanner.TokenType.TOKEN_IF)) {
         try ifStatement();
+    } else if (match(Scanner.TokenType.TOKEN_WHILE)) {
+        whileStatement();
     } else if (match(Scanner.TokenType.TOKEN_LEFT_BRACE)) {
         beginScope();
         try block();
