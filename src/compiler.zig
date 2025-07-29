@@ -132,7 +132,13 @@ pub fn emitBytes(byte1: u8, byte2: u8) !void {
 }
 
 pub fn emitLoop(loopStart: u8) !void {
-    try emitByte()
+    try emitByte(Chunk.OpCode.OP_LOOP);
+
+    const offset = currentChunk().count - loopStart + 2;
+    if (offset > UINT8_COUNT) errorBase("Loop body too large.");
+
+    try emitByte((offset >> 8) & 0xff);
+    try emitByte(offset & 0xff);
 }
 
 pub fn emitJump(instruction: u8) !u8 {
