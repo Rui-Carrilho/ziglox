@@ -446,6 +446,8 @@ pub fn defineVariable(global: u8) !void {
 }
 
 pub fn and_(canAssign: bool) !void {
+    _ = canAssign;
+
     const endJump = try emitJump(@intFromEnum(Chunk.OpCode.OP_JUMP_IF_FALSE));
 
     try emitByte(@intFromEnum(Chunk.OpCode.OP_POP));
