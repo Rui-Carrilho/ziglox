@@ -131,6 +131,10 @@ pub fn emitBytes(byte1: u8, byte2: u8) !void {
     try emitByte(byte2);
 }
 
+pub fn emitLoop(loopStart: u8) !void {
+    try emitByte()
+}
+
 pub fn emitJump(instruction: u8) !u8 {
     try emitByte(instruction);
     try emitByte(0xff);
