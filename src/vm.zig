@@ -152,6 +152,10 @@ pub fn run() !InterpretResult {
             @intFromEnum(Chunk.OpCode.OP_LESS) => {
                 binaryOp(lessThan);
             },
+            @intFromEnum(Chunk.OpCode.OP_LOOP) => {
+                const offset = readShort();
+                vm.ip -= offset;
+            }
             @intFromEnum(Chunk.OpCode.OP_MULTIPLY) => {
                 binaryOp(multiply);
             },
