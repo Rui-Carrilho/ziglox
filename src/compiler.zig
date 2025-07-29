@@ -302,7 +302,7 @@ pub const rules = [_]ParseRule{
     .{ .prefix = variable, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_IDENTIFIER
     .{ .prefix = string, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_STRING
     .{ .prefix = number, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_NUMBER
-    .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_AND
+    .{ .prefix = null, .infix = and_, .precedence = Precedence.PREC_AND }, // TOKEN_AND
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_CLASS
     .{ .prefix = null, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_ELSE
     .{ .prefix = literal, .infix = null, .precedence = Precedence.PREC_NONE }, // TOKEN_FALSE
