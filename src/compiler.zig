@@ -518,6 +518,8 @@ pub fn printStatement() !void {
 }
 
 pub fn whileStatement() !void {
+    const loopStart = currentChunk().count;
+
     try consume(Scanner.TokenType.TOKEN_LEFT_PAREN, "Expect '(' after 'while'.");
     try expression();
     try consume(Scanner.TokenType.TOKEN_RIGHT_PAREN, "Expect '(' after condition.");
@@ -525,6 +527,8 @@ pub fn whileStatement() !void {
     const exitJump = try emitJump(@intFromEnum(Chunk.OpCode.OP_JUMP_IF_FALSE));
     try emitByte(@intFromEnum(Chunk.OpCode.OP_POP));
     try statement();
+
+    emitLoop(loopStart);
 
     patchJump(exitJump);
     try emitByte(@intFromEnum(Chunk.OpCode.OP_POP));
