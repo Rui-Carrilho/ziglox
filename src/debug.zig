@@ -31,6 +31,7 @@ pub fn disassembleInstruction(chunk: *Chunk.Chunk, offset: usize) usize {
         @intFromEnum(Chunk.OpCode.OP_FALSE) => return simpleInstruction("OP_FALSE", offset),
         @intFromEnum(Chunk.OpCode.OP_GET_GLOBAL) => return constantInstruction("OP_GET_GLOBAL", chunk, offset),
         @intFromEnum(Chunk.OpCode.OP_GET_LOCAL) => return byteInstruction("OP_GET_LOCAL", chunk, offset),
+        @intFromEnum(Chunk.OpCode.OP_LOOP) => return jumpInstruction("OP_LOOP", )
         @intFromEnum(Chunk.OpCode.OP_MULTIPLY) => return simpleInstruction("OP_MULTIPLY", offset),
         @intFromEnum(Chunk.OpCode.OP_NEGATE) => return simpleInstruction("OP_NEGATE", offset),
         @intFromEnum(Chunk.OpCode.OP_NIL) => return simpleInstruction("OP_NIL", offset),
@@ -58,6 +59,13 @@ pub fn byteInstruction(name: []const u8, chunk: *Chunk.Chunk, offset: usize) usi
     const slot = chunk.code[offset + 1];
     std.debug.print("{s:<16} {d:>4} ", .{ name, slot });
     return offset + 2;
+}
+
+pub fn jumpInstruction(name: []const u8, sign: i32, chunk: *Chunk.Chunk, offset: usize) usize {
+    const jump = @intCast(chunk.code[offset + 1] << 8);
+    jump |= chunk.code[offset + 2];
+    std.debug.print("{s:<16} {d:>4} {d}", .{ name, offset, offset + 3 + sign * jump});
+    return offset + 3;
 }
 
 pub fn constantInstruction(name: []const u8, chunk: *Chunk.Chunk, offset: usize) usize {
