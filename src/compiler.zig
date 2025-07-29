@@ -231,6 +231,19 @@ pub fn number(canAssign: bool) !void {
     try emitConstant(Value.NUMBER_VAL(value));
 }
 
+pub fn or_(canAssign: bool) !void {
+    _ = canAssign;
+
+    const elseJump = try emitJump(@intFromEnum(Chunk.OpCode.OP_JUMP_IF_FALSE));
+    const endJump = try emitJump(@intFromEnum(Chunk.OpCode.OP_JUMP));
+
+    patchJump(elseJump);
+    try emitByte(@intFromEnum(Chunk.OpCode.OP_POP));
+
+    try parsePrecedence(Precedence.PREC_OR);
+    patchJump(endJump);
+}
+
 pub fn string(canAssign: bool) !void {
     _ = canAssign;
     try emitConstant(Value.OBJ_VAL(try Object.copyString(parser.previous.name[1 .. parser.previous.name.len - 1])));
@@ -430,6 +443,16 @@ pub fn defineVariable(global: u8) !void {
         }
     }
     try emitBytes(@intFromEnum(Chunk.OpCode.OP_DEFINE_GLOBAL), global);
+}
+
+pub fn and_(canAssign: bool) !void {
+    const endJump = try emitJump(@intFromEnum(Chunk.OpCode.OP_JUMP_IF_FALSE));
+
+    try emitByte(@intFromEnum(Chunk.OpCode.OP_POP));
+
+    try parsePrecedence(Precedence.PREC_AND);
+
+    patchJump(endJump);
 }
 
 pub fn getRule(ruleType: Scanner.TokenType) *const ParseRule {
