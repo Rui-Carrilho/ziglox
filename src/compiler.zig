@@ -137,8 +137,8 @@ pub fn emitLoop(loopStart: u8) !void {
     const offset = currentChunk().count - loopStart + 2;
     if (offset > UINT8_COUNT) errorBase("Loop body too large.");
 
-    try emitByte((offset >> 8) & 0xff);
-    try emitByte(offset & 0xff);
+    try emitByte(@intCast((offset >> 8) & 0xff));
+    try emitByte(@intCast(offset & 0xff));
 }
 
 pub fn emitJump(instruction: u8) !u8 {
