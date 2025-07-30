@@ -132,7 +132,7 @@ pub fn emitBytes(byte1: u8, byte2: u8) !void {
 }
 
 pub fn emitLoop(loopStart: u8) !void {
-    try emitByte(Chunk.OpCode.OP_LOOP);
+    try emitByte(@intFromEnum(Chunk.OpCode.OP_LOOP));
 
     const offset = currentChunk().count - loopStart + 2;
     if (offset > UINT8_COUNT) errorBase("Loop body too large.");
@@ -512,7 +512,7 @@ pub fn forStatement() !void {
     try consume(.TOKEN_RIGHT_PAREN, "Expect ')' after the final condition.");
 
     try statement();
-    try emitLoop(loopStart);
+    try emitLoop(@intCast(loopStart));
 }
 
 pub fn ifStatement() !void {
