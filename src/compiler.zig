@@ -550,7 +550,7 @@ pub fn whileStatement() !void {
     try emitByte(@intFromEnum(Chunk.OpCode.OP_POP));
     try statement();
 
-    emitLoop(loopStart);
+    try emitLoop(@intCast(loopStart));
 
     patchJump(exitJump);
     try emitByte(@intFromEnum(Chunk.OpCode.OP_POP));
