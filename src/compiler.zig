@@ -503,6 +503,18 @@ pub fn expressionStatement() !void {
     try emitByte(@intFromEnum(Chunk.OpCode.OP_POP));
 }
 
+pub fn forStatement() !void {
+    try consume(.TOKEN_LEFT_PAREN, "Expect '(' after 'for'.");
+    try consume(.TOKEN_RIGHT_PAREN, "Expect ';'.");
+
+    const loopStart = currentChunk().count;
+    try consume(.TOKEN_SEMICOLON, "Expect another ';'.");
+    try consume(.TOKEN_RIGHT_PAREN, "Expect ')' after the final condition.");
+
+    try statement();
+    try emitLoop(loopStart);
+}
+
 pub fn ifStatement() !void {
     try consume(Scanner.TokenType.TOKEN_LEFT_PAREN, "Expect '(' after if.");
     try expression();
