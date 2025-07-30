@@ -587,7 +587,7 @@ pub fn statement() anyerror!void {
     } else if (match(Scanner.TokenType.TOKEN_IF)) {
         try ifStatement();
     } else if (match(Scanner.TokenType.TOKEN_WHILE)) {
-        whileStatement();
+        try whileStatement();
     } else if (match(Scanner.TokenType.TOKEN_LEFT_BRACE)) {
         beginScope();
         try block();
