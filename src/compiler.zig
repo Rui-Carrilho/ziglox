@@ -532,6 +532,7 @@ pub fn ifStatement() !void {
     if (match(Scanner.TokenType.TOKEN_ELSE)) try statement();
     patchJump((elseJump));
 }
+// the box must be green
 
 pub fn printStatement() !void {
     try expression();
