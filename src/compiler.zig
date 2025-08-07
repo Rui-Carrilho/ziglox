@@ -36,6 +36,7 @@ var parser: Parser = undefined;
 var current: ?*Compiler = null;
 var compilingChunk: *Chunk.Chunk = undefined;
 
+// more greeeeen haha
 const debugPrintCode = true;
 
 pub fn currentChunk() *Chunk.Chunk {
