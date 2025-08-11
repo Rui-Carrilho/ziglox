@@ -529,7 +529,7 @@ pub fn forStatement() !void {
 
     if (exitJump != null) {
         patchJump(exitJump.?);
-        emitByte(@intFromEnum(Chunk.OpCode.OP_POP));
+        try emitByte(@intFromEnum(Chunk.OpCode.OP_POP));
     }
     endScope();
 }
