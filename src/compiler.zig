@@ -518,7 +518,7 @@ pub fn forStatement() !void {
     if (!match(.TOKEN_SEMICOLON)) {
         try expression();
         try consume(.TOKEN_SEMICOLON, "Expect ';' after loop condition.");
-        exitJump = try emitJump(@intFromEnum(.OP_JUMP_IF_FALSE));
+        exitJump = try emitJump(@intFromEnum(Chunk.OpCode.OP_JUMP_IF_FALSE));
         try emitByte(@intFromEnum(Chunk.OpCode.OP_POP));
     }
 
