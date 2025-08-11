@@ -514,12 +514,12 @@ pub fn forStatement() !void {
     }
 
     const loopStart = currentChunk().count;
-    var exitJump: ?usize = null;
+    var exitJump: i32 = -1;
     if (!match(.TOKEN_SEMICOLON)) {
-        expression();
-        consume(.TOKEN_SEMICOLON, "Expect ';' after loop condition.");
-        exitJump = emitJump(.OP_JUMP_IF_FALSE);
-        emitByte(.OP_POP);
+        try expression();
+        try consume(.TOKEN_SEMICOLON, "Expect ';' after loop condition.");
+        exitJump = try emitJump(.OP_JUMP_IF_FALSE);
+        try emitByte(.OP_POP);
     }
 
     try consume(.TOKEN_RIGHT_PAREN, "Expect ')' after the final condition.");
@@ -527,7 +527,7 @@ pub fn forStatement() !void {
     try statement();
     try emitLoop(@intCast(loopStart));
 
-    if (exitJump != null) {
+    if (exitJump != -1) {
         patchJump(exitJump);
         emitByte(.OP_POP);
     }
