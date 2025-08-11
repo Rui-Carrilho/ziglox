@@ -531,7 +531,7 @@ pub fn forStatement() !void {
         patchJump(exitJump.?);
         try emitByte(@intFromEnum(Chunk.OpCode.OP_POP));
     }
-    endScope();
+    try endScope();
 }
 
 pub fn ifStatement() !void {
