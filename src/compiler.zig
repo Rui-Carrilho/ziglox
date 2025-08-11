@@ -505,8 +505,13 @@ pub fn expressionStatement() !void {
 }
 
 pub fn forStatement() !void {
+    beginScope();
     try consume(.TOKEN_LEFT_PAREN, "Expect '(' after 'for'.");
-    try consume(.TOKEN_RIGHT_PAREN, "Expect ';'.");
+    if (match(.TOKEN_SEMICOLON)) {} else if (match(.TOKEN_VAR)) {
+        varDeclaration();
+    } else {
+        expressionStatement();
+    }
 
     const loopStart = currentChunk().count;
     try consume(.TOKEN_SEMICOLON, "Expect another ';'.");
@@ -514,6 +519,7 @@ pub fn forStatement() !void {
 
     try statement();
     try emitLoop(@intCast(loopStart));
+    endScope();
 }
 
 pub fn ifStatement() !void {
