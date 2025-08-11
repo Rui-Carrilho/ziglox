@@ -528,7 +528,7 @@ pub fn forStatement() !void {
     try emitLoop(@intCast(loopStart));
 
     if (exitJump != -1) {
-        patchJump(exitJump);
+        patchJump(@as(usize, exitJump));
         emitByte(@intFromEnum(Chunk.OpCode.OP_POP));
     }
     endScope();
