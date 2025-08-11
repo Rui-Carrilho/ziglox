@@ -519,7 +519,7 @@ pub fn forStatement() !void {
         try expression();
         try consume(.TOKEN_SEMICOLON, "Expect ';' after loop condition.");
         exitJump = try emitJump(@intFromEnum(.OP_JUMP_IF_FALSE));
-        try emitByte(@intFromEnum(.OP_POP));
+        try emitByte(@intFromEnum(Chunk.OpCode.OP_POP));
     }
 
     try consume(.TOKEN_RIGHT_PAREN, "Expect ')' after the final condition.");
@@ -529,7 +529,7 @@ pub fn forStatement() !void {
 
     if (exitJump != -1) {
         patchJump(exitJump);
-        emitByte(@intFromEnum(.OP_POP));
+        emitByte(@intFromEnum(Chunk.OpCode.OP_POP));
     }
     endScope();
 }
