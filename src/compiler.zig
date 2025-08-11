@@ -514,7 +514,7 @@ pub fn forStatement() !void {
     }
 
     const loopStart = currentChunk().count;
-    var exitJump = -1;
+    var exitJump: ?usize = null;
     if (!match(.TOKEN_SEMICOLON)) {
         expression();
         consume(.TOKEN_SEMICOLON, "Expect ';' after loop condition.");
@@ -527,7 +527,7 @@ pub fn forStatement() !void {
     try statement();
     try emitLoop(@intCast(loopStart));
 
-    if (exitJump != -1) {
+    if (exitJump != null) {
         patchJump(exitJump);
         emitByte(.OP_POP);
     }
