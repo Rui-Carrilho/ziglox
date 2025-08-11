@@ -508,17 +508,29 @@ pub fn forStatement() !void {
     beginScope();
     try consume(.TOKEN_LEFT_PAREN, "Expect '(' after 'for'.");
     if (match(.TOKEN_SEMICOLON)) {} else if (match(.TOKEN_VAR)) {
-        varDeclaration();
+        try varDeclaration();
     } else {
-        expressionStatement();
+        try expressionStatement();
     }
 
     const loopStart = currentChunk().count;
-    try consume(.TOKEN_SEMICOLON, "Expect another ';'.");
+    var exitJump = -1;
+    if (!match(.TOKEN_SEMICOLON)) {
+        expression();
+        consume(.TOKEN_SEMICOLON, "Expect ';' after loop condition.");
+        exitJump = emitJump(.OP_JUMP_IF_FALSE);
+        emitByte(.OP_POP);
+    }
+
     try consume(.TOKEN_RIGHT_PAREN, "Expect ')' after the final condition.");
 
     try statement();
     try emitLoop(@intCast(loopStart));
+
+    if (exitJump != -1) {
+        patchJump(exitJump);
+        emitByte(.OP_POP);
+    }
     endScope();
 }
 
