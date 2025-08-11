@@ -66,7 +66,7 @@ pub fn byteInstruction(name: []const u8, chunk: *Chunk.Chunk, offset: usize) usi
 pub fn jumpInstruction(name: []const u8, sign: i32, chunk: *Chunk.Chunk, offset: usize) usize {
     var jump: u16 = @intCast(@as(u16, chunk.code[offset + 1]) << 8);
     jump |= chunk.code[offset + 2];
-    const sum = offset + 3 + sign * jump;
+    const sum = @as(usize, @intCast(offset + 3)) + @as(usize, @intCast(sign * jump));
     std.debug.print("{s:<16} {d:>4} {d}", .{ name, offset, sum });
     return offset + 3;
 }
