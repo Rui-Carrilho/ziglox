@@ -522,7 +522,17 @@ pub fn forStatement() !void {
         try emitByte(@intFromEnum(Chunk.OpCode.OP_POP));
     }
 
-    try consume(.TOKEN_RIGHT_PAREN, "Expect ')' after the final condition.");
+    if (match(.TOKEN_RIGHT_PAREN)) {
+        const bodyJump = emitJump(@intFromEnum(.OP_JUMP));
+        const incrementStart = currentChunk().count;
+        try expression();
+        try emitByte(.OP_POP);
+        try consume(.TOKEN_RIGHT_PAREN, "Expect ')' after for clauses.");
+
+        try emitLoop(loopStart);
+        loopStart = incrementStart;
+        patchJump(bodyJump);
+    }
 
     try statement();
     try emitLoop(@intCast(loopStart));
