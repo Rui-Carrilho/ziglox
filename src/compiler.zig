@@ -523,7 +523,7 @@ pub fn forStatement() !void {
     }
 
     if (match(.TOKEN_RIGHT_PAREN)) {
-        const bodyJump = emitJump(@intFromEnum(.OP_JUMP));
+        const bodyJump = emitJump(@intFromEnum(Chunk.OpCode.OP_JUMP));
         const incrementStart = currentChunk().count;
         try expression();
         try emitByte(.OP_POP);
