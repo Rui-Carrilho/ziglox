@@ -526,7 +526,7 @@ pub fn forStatement() !void {
         const bodyJump = emitJump(@intFromEnum(Chunk.OpCode.OP_JUMP));
         const incrementStart = currentChunk().count;
         try expression();
-        try emitByte(.OP_POP);
+        try emitByte(Chunk.OpCode.OP_POP);
         try consume(.TOKEN_RIGHT_PAREN, "Expect ')' after for clauses.");
 
         try emitLoop(loopStart);
