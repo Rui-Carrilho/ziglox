@@ -83,7 +83,6 @@ pub fn allocateString(chars: []u8, hash: u32) !*Obj {
     const string = try allocateObject();
     string.* = .{
         .node = .{ .string = .{ .chars = chars, .hash = hash } },
-        .next = null,
     };
     _ = try Table.tableSet(&VM.vm.strings, string, Value.NIL_VAL);
 
@@ -126,7 +125,6 @@ pub fn newFunction() *ObjFunction {
     var function = try allocateObject();
     function.* = .{
         .node = .{ .function = .{ .arity = 0, .name = null } },
-        .next = null,
     };
 
     Chunk.initChunk(&function.node.function.chunk);
