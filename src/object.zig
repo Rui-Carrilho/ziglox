@@ -7,11 +7,13 @@ const Table = @import("table.zig");
 const Chunk = @import("chunk.zig");
 
 pub const ObjType = enum {
+    function,
     string,
     uninitialized, //this is an erry hack
 };
 
 pub const ObjNode = union(ObjType) {
+    function: ObjFunction,
     string: ObjString,
     uninitialized: void,
 };
@@ -118,4 +120,15 @@ pub fn allocateObject() !*Obj {
     finalfinalObject.next = VM.vm.objects;
     VM.vm.objects = finalfinalObject;
     return finalfinalObject;
+}
+
+pub fn newFunction() *ObjFunction {
+    var function = try allocateObject();
+    function.* = .{
+        .node = .{ .function = .{ .arity = 0, .name = null } },
+        .next = null,
+    };
+
+    Chunk.initChunk(&function.node.function.chunk);
+    return function;
 }
