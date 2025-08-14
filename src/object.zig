@@ -32,6 +32,10 @@ pub fn OBJ_TYPE(value: Value.Value) ObjType {
     return @as(ObjType, Value.AS_OBJ(value));
 }
 
+pub fn IS_FUNCTION(value: Value.Value) bool {
+    return isObjType(value, ObjType.function);
+}
+
 pub fn IS_STRING(value: Value.Value) bool {
     return isObjType(value, ObjType.string);
 }
@@ -45,6 +49,13 @@ pub fn OBJ_AS_STRING(obj: Obj) ObjString {
 
 pub fn OBJ_IS_STRING(obj: Obj) bool {
     return @as(ObjType, obj.node) == ObjType.string;
+}
+
+pub fn AS_FUNCTION(value: Value.Value) ObjFunction {
+    return switch (Value.AS_OBJ(value).node) {
+        ObjType.function => |myValue| myValue,
+        else => std.debug.panic("fuckup in AS_FUNCTION (object.zig)", .{}),
+    };
 }
 
 pub fn AS_STRING(value: Value.Value) ObjString {
