@@ -117,8 +117,13 @@ pub fn printValue(value: Value) void {
 pub fn printObject(value: *Object.Obj) void {
     switch (value.node) {
         Object.ObjType.string => |myValue| std.debug.print("{s}", .{myValue.chars}),
+        Object.ObjType.function => |myValue| printFunction(AS_FUNCTION(myValue)),
         Object.ObjType.uninitialized => std.debug.print("oops, uninitialized", .{}),
     }
+}
+
+pub fn printFunction(function: *Object.ObjFunction) void {
+    std.debug.print("<fn {s}>", function.name.chars);
 }
 
 pub fn valuesEqual(a: Value, b: Value) bool {

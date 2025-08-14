@@ -2,6 +2,7 @@ const std = @import("std");
 const Allocator = @import("allocator.zig");
 const VM = @import("vm.zig");
 const Object = @import("object.zig");
+const Chunk = @import("chunk.zig");
 
 pub fn FREE(comptime T: type, pointer: []T) !void {
     _ = try reallocate(T, pointer, 1, 0);
@@ -75,6 +76,11 @@ pub fn freeObject(object: *Object.Obj) !void {
             objectSlice.ptr = @ptrCast(object);
             objectSlice.len = 1;
             try FREE(Object.Obj, objectSlice);
+        },
+        Object.ObjType.function => {
+            const function = object.node.function;
+            Chunk.freeChunk(&function.chunk);
+            try FREE(Object.ObjFunction, object);
         },
         Object.ObjType.uninitialized => std.debug.panic("lmao we hit an uninitialized in memory.zig", .{}),
     }
