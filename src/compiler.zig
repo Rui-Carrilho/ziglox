@@ -513,7 +513,7 @@ pub fn forStatement() !void {
         try expressionStatement();
     }
 
-    const loopStart = currentChunk().count;
+    var loopStart = currentChunk().count;
     var exitJump: ?usize = null;
     if (!match(.TOKEN_SEMICOLON)) {
         try expression();
@@ -523,13 +523,13 @@ pub fn forStatement() !void {
     }
 
     if (match(.TOKEN_RIGHT_PAREN)) {
-        const bodyJump = emitJump(@intFromEnum(Chunk.OpCode.OP_JUMP));
+        const bodyJump = try emitJump(@intFromEnum(Chunk.OpCode.OP_JUMP));
         const incrementStart = currentChunk().count;
         try expression();
-        try emitByte(Chunk.OpCode.OP_POP);
+        try emitByte(@intFromEnum(Chunk.OpCode.OP_POP));
         try consume(.TOKEN_RIGHT_PAREN, "Expect ')' after for clauses.");
 
-        try emitLoop(loopStart);
+        try emitLoop(@intCast(loopStart));
         loopStart = incrementStart;
         patchJump(bodyJump);
     }

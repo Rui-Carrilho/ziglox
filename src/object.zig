@@ -4,6 +4,7 @@ const memory = @import("memory.zig");
 const Allocator = @import("allocator.zig");
 const VM = @import("vm.zig");
 const Table = @import("table.zig");
+const Chunk = @import("chunk.zig");
 
 pub const ObjType = enum {
     string,
@@ -16,6 +17,8 @@ pub const ObjNode = union(ObjType) {
 };
 
 pub const Obj = struct { node: ObjNode, next: ?*Obj };
+
+pub const ObjFunction = struct { obj: Obj, arity: i32; chunk: Chunk.Chunk, name: ObjString };
 
 pub const ObjString = struct { chars: []u8, hash: u32 };
 
