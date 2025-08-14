@@ -121,7 +121,7 @@ pub fn allocateObject() !*Obj {
     return finalfinalObject;
 }
 
-pub fn newFunction() *ObjFunction {
+pub fn newFunction() *Obj {
     var function = try allocateObject();
     function.* = .{
         .node = .{ .function = .{ .arity = 0, .name = null } },
