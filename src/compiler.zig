@@ -178,9 +178,12 @@ pub fn patchJump(offset: usize) void {
     currentChunk().code[offset + 1] = @intCast((jump) & 0xff);
 }
 
-pub fn initCompiler(compiler: *Compiler) void {
+pub fn initCompiler(compiler: *Compiler, myType: FunctionType) void {
+    compiler.function = null;
+    compiler.type = myType;
     compiler.localCount = 0;
     compiler.scopeDepth = 0;
+    compiler.function = Object.newFunction();
     current = compiler;
 }
 
