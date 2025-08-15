@@ -192,7 +192,7 @@ pub fn endCompiler() !void {
 
     if (debugPrintCode) {
         if (!parser.hadError) {
-            Debug.disassembleChunk(currentChunk(), "code");
+            Debug.disassembleChunk(currentChunk(), if (function.name) |name| name.chars else "<script>");
         }
     }
 }
