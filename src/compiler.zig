@@ -32,15 +32,15 @@ pub const Compiler = struct { function: *Object.ObjFunction, type: FunctionType,
 
 pub const Local = struct { name: Scanner.Token, depth: i32 };
 
+pub const FunctionType = enum { TYPE_FUNCTION, TYPE_SCRIPT };
+
 var parser: Parser = undefined;
 var current: ?*Compiler = null;
-var compilingChunk: *Chunk.Chunk = undefined;
 
-// more greeeeen haha
 const debugPrintCode = true;
 
 pub fn currentChunk() *Chunk.Chunk {
-    return compilingChunk;
+    return &current.?.function.chunk;
 }
 
 pub fn errorAt(token: *Scanner.Token, message: []const u8) void {
