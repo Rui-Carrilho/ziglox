@@ -73,11 +73,10 @@ pub fn errorAtCurrent(message: []const u8) void {
     errorAt(&parser.current, message);
 }
 
-pub fn compile(source: []const u8, chunk: *Chunk.Chunk) !bool {
+pub fn compile(source: []const u8) !bool {
     Scanner.initScanner(source);
     var compiler: Compiler = undefined;
-    initCompiler(&compiler);
-    compilingChunk = chunk;
+    initCompiler(&compiler, FunctionType.TYPE_SCRIPT);
 
     parser.hadError = false;
     parser.panicMode = false;
