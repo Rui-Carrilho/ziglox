@@ -20,7 +20,7 @@ pub const ObjNode = union(ObjType) {
 
 pub const Obj = struct { node: ObjNode, next: ?*Obj };
 
-pub const ObjFunction = struct { obj: *Obj, arity: i32, chunk: Chunk.Chunk, name: ObjString };
+pub const ObjFunction = struct { obj: *Obj, arity: i32, chunk: Chunk.Chunk, name: ?ObjString };
 
 pub const ObjString = struct { chars: []u8, hash: u32 };
 

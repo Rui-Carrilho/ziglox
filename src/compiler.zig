@@ -201,7 +201,7 @@ pub fn endCompiler() !*Object.ObjFunction {
 
     if (debugPrintCode) {
         if (!parser.hadError) {
-            Debug.disassembleChunk(currentChunk(), if (function != null) function.?.name.chars else "<script>");
+            Debug.disassembleChunk(currentChunk(), if (function != null) function.?.name.?.chars else "<script>");
         }
     }
 
