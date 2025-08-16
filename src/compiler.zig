@@ -76,7 +76,7 @@ pub fn errorAtCurrent(message: []const u8) void {
 pub fn compile(source: []const u8) !?*Object.ObjFunction {
     Scanner.initScanner(source);
     var compiler: Compiler = undefined;
-    initCompiler(&compiler, FunctionType.TYPE_SCRIPT);
+    try initCompiler(&compiler, FunctionType.TYPE_SCRIPT);
 
     parser.hadError = false;
     parser.panicMode = false;
@@ -178,7 +178,7 @@ pub fn patchJump(offset: usize) void {
     currentChunk().code[offset + 1] = @intCast((jump) & 0xff);
 }
 
-pub fn initCompiler(compiler: *Compiler, myType: FunctionType) void {
+pub fn initCompiler(compiler: *Compiler, myType: FunctionType) !void {
     compiler.function = null;
     compiler.type = myType;
     compiler.localCount = 0;
