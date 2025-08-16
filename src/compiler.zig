@@ -40,7 +40,7 @@ var current: ?*Compiler = null;
 const debugPrintCode = true;
 
 pub fn currentChunk() *Chunk.Chunk {
-    return &current.?.function.chunk;
+    return &current.?.function.?.chunk;
 }
 
 pub fn errorAt(token: *Scanner.Token, message: []const u8) void {
