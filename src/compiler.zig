@@ -183,7 +183,9 @@ pub fn initCompiler(compiler: *Compiler, myType: FunctionType) void {
     compiler.type = myType;
     compiler.localCount = 0;
     compiler.scopeDepth = 0;
-    compiler.function = &Object.newFunction().node.function;
+
+    const function = try Object.newFunction();
+    compiler.function = &function.node.function;
     current = compiler;
 
     var local = &current.?.locals[current.?.localCount];
@@ -199,11 +201,11 @@ pub fn endCompiler() !*Object.ObjFunction {
 
     if (debugPrintCode) {
         if (!parser.hadError) {
-            Debug.disassembleChunk(currentChunk(), if (function.name) |name| name.chars else "<script>");
+            Debug.disassembleChunk(currentChunk(), if (function != null) function.?.name.chars else "<script>");
         }
     }
 
-    return function;
+    return function.?;
 }
 
 pub fn binary(canAssign: bool) !void {
