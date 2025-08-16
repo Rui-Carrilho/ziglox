@@ -237,7 +237,7 @@ pub fn interpret(source: []const u8) !InterpretResult {
     var chunk: Chunk.Chunk = undefined;
     Chunk.initChunk(&chunk);
 
-    const compilingResult = try Compiler.compile(source, &chunk);
+    const compilingResult = try Compiler.compile(source);
 
     if (!compilingResult) {
         Chunk.freeChunk(&chunk);

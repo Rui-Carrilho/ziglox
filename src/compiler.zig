@@ -28,7 +28,7 @@ const ParseFn = ?*const fn (canAssign: bool) anyerror!void;
 
 pub const ParseRule = struct { prefix: ParseFn, infix: ParseFn, precedence: Precedence };
 
-pub const Compiler = struct { function: *Object.ObjFunction, type: FunctionType, locals: [UINT8_COUNT]Local, localCount: usize, scopeDepth: i32 };
+pub const Compiler = struct { function: ?*Object.ObjFunction, type: FunctionType, locals: [UINT8_COUNT]Local, localCount: usize, scopeDepth: i32 };
 
 pub const Local = struct { name: Scanner.Token, depth: i32 };
 
