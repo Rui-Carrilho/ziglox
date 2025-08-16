@@ -73,7 +73,7 @@ pub fn errorAtCurrent(message: []const u8) void {
     errorAt(&parser.current, message);
 }
 
-pub fn compile(source: []const u8) !bool {
+pub fn compile(source: []const u8) !*Object.ObjFunction {
     Scanner.initScanner(source);
     var compiler: Compiler = undefined;
     initCompiler(&compiler, FunctionType.TYPE_SCRIPT);
@@ -87,8 +87,8 @@ pub fn compile(source: []const u8) !bool {
         try declaration();
     }
 
-    _ = try endCompiler();
-    return !parser.hadError;
+    const function = try endCompiler();
+    return function;
 }
 
 pub fn advance() void {
@@ -185,16 +185,25 @@ pub fn initCompiler(compiler: *Compiler, myType: FunctionType) void {
     compiler.scopeDepth = 0;
     compiler.function = Object.newFunction();
     current = compiler;
+
+    var local = &current.?.locals[current.?.localCount];
+    current.?.localCount += 1;
+    local.depth = 0;
+    local.name.name[0] = "";
+    local.name.name.len = 0;
 }
 
-pub fn endCompiler() !void {
+pub fn endCompiler() !*Object.ObjFunction {
     try emitReturn();
+    const function = current.?.function;
 
     if (debugPrintCode) {
         if (!parser.hadError) {
             Debug.disassembleChunk(currentChunk(), if (function.name) |name| name.chars else "<script>");
         }
     }
+
+    return function;
 }
 
 pub fn binary(canAssign: bool) !void {
