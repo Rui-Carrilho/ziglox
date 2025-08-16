@@ -183,7 +183,7 @@ pub fn initCompiler(compiler: *Compiler, myType: FunctionType) void {
     compiler.type = myType;
     compiler.localCount = 0;
     compiler.scopeDepth = 0;
-    compiler.function = Object.newFunction();
+    compiler.function = &Object.newFunction().node.function;
     current = compiler;
 
     var local = &current.?.locals[current.?.localCount];
