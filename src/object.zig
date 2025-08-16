@@ -135,7 +135,12 @@ pub fn allocateObject() !*Obj {
 
 pub fn newFunction() !*Obj {
     var function = try allocateObject();
-    function.* = .{ .node = .{ .function = .{ .arity = 0, .name = null } }, .next = null };
+    function.* = .{ .node = .{ .function = .{
+        .obj = undefined,
+        .arity = 0,
+        .name = null,
+        .chunk = undefined,
+    } }, .next = null };
 
     Chunk.initChunk(&function.node.function.chunk);
     return function;
