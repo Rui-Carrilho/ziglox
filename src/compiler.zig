@@ -189,7 +189,7 @@ pub fn initCompiler(compiler: *Compiler, myType: FunctionType) void {
     var local = &current.?.locals[current.?.localCount];
     current.?.localCount += 1;
     local.depth = 0;
-    local.name.name[0] = "";
+    local.name.name[0] = 0;
     local.name.name.len = 0;
 }
 
