@@ -28,7 +28,7 @@ const ParseFn = ?*const fn (canAssign: bool) anyerror!void;
 
 pub const ParseRule = struct { prefix: ParseFn, infix: ParseFn, precedence: Precedence };
 
-pub const Compiler = struct { function: ?*Object.ObjFunction, type: FunctionType, locals: [UINT8_COUNT]Local, localCount: usize, scopeDepth: i32 };
+pub const Compiler = struct { function: ?*Object.Obj, type: FunctionType, locals: [UINT8_COUNT]Local, localCount: usize, scopeDepth: i32 };
 
 pub const Local = struct { name: Scanner.Token, depth: i32 };
 
@@ -40,7 +40,7 @@ var current: ?*Compiler = null;
 const debugPrintCode = true;
 
 pub fn currentChunk() *Chunk.Chunk {
-    return &current.?.function.?.chunk;
+    return &current.?.function.?;
 }
 
 pub fn errorAt(token: *Scanner.Token, message: []const u8) void {
@@ -73,7 +73,7 @@ pub fn errorAtCurrent(message: []const u8) void {
     errorAt(&parser.current, message);
 }
 
-pub fn compile(source: []u8) !?*Object.ObjFunction {
+pub fn compile(source: []u8) !?*Object.Obj {
     Scanner.initScanner(source);
     var compiler: Compiler = undefined;
     try initCompiler(&compiler, FunctionType.TYPE_SCRIPT);
@@ -185,7 +185,7 @@ pub fn initCompiler(compiler: *Compiler, myType: FunctionType) !void {
     compiler.scopeDepth = 0;
 
     const function = try Object.newFunction();
-    compiler.function = &function.node.function;
+    compiler.function = function;
     current = compiler;
 
     var local = &current.?.locals[current.?.localCount];
@@ -195,7 +195,7 @@ pub fn initCompiler(compiler: *Compiler, myType: FunctionType) !void {
     local.name.name.len = 0;
 }
 
-pub fn endCompiler() !*Object.ObjFunction {
+pub fn endCompiler() !*Object.Obj {
     try emitReturn();
     const function = current.?.function;
 
