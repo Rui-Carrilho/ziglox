@@ -79,7 +79,7 @@ pub fn freeObject(object: *Object.Obj) !void {
         },
         Object.ObjType.function => {
             const function = object.node.function;
-            Chunk.freeChunk(&function.chunk);
+            Chunk.freeChunk(@constCast(&function.chunk));
             try FREE(Object.ObjFunction, object);
         },
         Object.ObjType.uninitialized => std.debug.panic("lmao we hit an uninitialized in memory.zig", .{}),
