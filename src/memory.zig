@@ -80,8 +80,8 @@ pub fn freeObject(object: *Object.Obj) !void {
         Object.ObjType.function => {
             const function = object.node.function;
             Chunk.freeChunk(@constCast(&function.chunk));
-            var objectSlice: []Object.Obj = undefined;
-            objectSlice.ptr = @ptrCast(object);
+            var objectSlice: []Object.ObjFunction = undefined;
+            objectSlice.ptr = @ptrCast(function);
             objectSlice.len = 1;
             try FREE(Object.ObjFunction, objectSlice);
         },
