@@ -1,6 +1,6 @@
 const std = @import("std");
 
-pub const Scanner = struct { start: [*:0]const u8, current: [*:0]const u8, line: i8 };
+pub const Scanner = struct { start: [*:0]u8, current: [*:0]u8, line: i8 };
 
 pub const TokenType = enum(u8) {
     // Single-character tokens.
