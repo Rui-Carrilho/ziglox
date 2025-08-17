@@ -127,7 +127,7 @@ pub fn printFunction(function: *Object.ObjFunction) void {
         std.debug.print("<script>", .{});
         return;
     }
-    std.debug.print("<fn {s}>", function.name.?.chars);
+    std.debug.print("<fn {d}>", function.name.?.chars);
 }
 
 pub fn valuesEqual(a: Value, b: Value) bool {
