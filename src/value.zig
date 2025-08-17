@@ -128,7 +128,6 @@ pub fn printFunction(function: *Object.ObjFunction) void {
         return;
     }
     std.debug.print("<fn {s}>", .{function.name.?.chars});
-    //hell yeah
 }
 
 pub fn valuesEqual(a: Value, b: Value) bool {
