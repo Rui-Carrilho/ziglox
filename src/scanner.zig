@@ -57,7 +57,7 @@ pub const Token = struct { type: TokenType, name: []u8, line: i32 };
 
 var scanner: Scanner = undefined;
 
-pub fn initScanner(source: []const u8) void {
+pub fn initScanner(source: []u8) void {
     scanner.start = @ptrCast(source.ptr);
     scanner.current = @ptrCast(source.ptr);
     scanner.line = 1;
@@ -105,7 +105,7 @@ pub fn scanToken() Token {
         // other cases would go here
     }
 
-    return errorToken("Unexpected character");
+    return errorToken(@constCast("Unexpected character"));
 }
 
 pub fn string() Token {
@@ -114,7 +114,7 @@ pub fn string() Token {
         _ = advance();
     }
 
-    if (isAtEnd()) return errorToken("Unterminated string.");
+    if (isAtEnd()) return errorToken(@constCast("Unterminated string."));
 
     _ = advance();
     return makeToken(TokenType.TOKEN_STRING);
@@ -157,7 +157,7 @@ pub fn makeToken(tokenType: TokenType) Token {
     return token;
 }
 
-pub fn errorToken(message: []const u8) Token {
+pub fn errorToken(message: []u8) Token {
     var token: Token = undefined;
     token.type = TokenType.TOKEN_EOF;
     token.name = message;

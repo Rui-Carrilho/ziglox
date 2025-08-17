@@ -73,7 +73,7 @@ pub fn errorAtCurrent(message: []const u8) void {
     errorAt(&parser.current, message);
 }
 
-pub fn compile(source: []const u8) !?*Object.ObjFunction {
+pub fn compile(source: []u8) !?*Object.ObjFunction {
     Scanner.initScanner(source);
     var compiler: Compiler = undefined;
     try initCompiler(&compiler, FunctionType.TYPE_SCRIPT);
