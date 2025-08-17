@@ -239,7 +239,7 @@ pub fn interpret(source: []u8) !InterpretResult {
 
     const compilingResult = try Compiler.compile(source);
 
-    if (!compilingResult) {
+    if (compilingResult == null) {
         Chunk.freeChunk(&chunk);
         return InterpretResult.INTERPRET_COMPILE_ERROR;
     }

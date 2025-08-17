@@ -124,10 +124,10 @@ pub fn printObject(value: *Object.Obj) void {
 
 pub fn printFunction(function: *Object.ObjFunction) void {
     if (function.name == null) {
-        std.debug.print("<script>");
+        std.debug.print("<script>", .{});
         return;
     }
-    std.debug.print("<fn {s}>", function.name.chars);
+    std.debug.print("<fn {s}>", function.name.?.chars);
 }
 
 pub fn valuesEqual(a: Value, b: Value) bool {
