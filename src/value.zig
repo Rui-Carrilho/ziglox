@@ -117,7 +117,7 @@ pub fn printValue(value: Value) void {
 pub fn printObject(value: *Object.Obj) void {
     switch (value.node) {
         Object.ObjType.string => |myValue| std.debug.print("{s}", .{myValue.chars}),
-        Object.ObjType.function => |myValue| printFunction(myValue),
+        Object.ObjType.function => |myValue| printFunction(&myValue),
         Object.ObjType.uninitialized => std.debug.print("oops, uninitialized", .{}),
     }
 }
