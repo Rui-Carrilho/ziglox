@@ -40,7 +40,7 @@ var current: ?*Compiler = null;
 const debugPrintCode = true;
 
 pub fn currentChunk() *Chunk.Chunk {
-    return &current.?.function.?;
+    return &Object.OBJ_AS_FUNCTION(current.?.function.?).chunk;
 }
 
 pub fn errorAt(token: *Scanner.Token, message: []const u8) void {
@@ -191,8 +191,8 @@ pub fn initCompiler(compiler: *Compiler, myType: FunctionType) !void {
     var local = &current.?.locals[current.?.localCount];
     current.?.localCount += 1;
     local.depth = 0;
-    local.name.name[0] = 0;
-    local.name.name.len = 0;
+    local.name.name = local.name.name[0..0];
+    //local.name.name.len = 0;
 }
 
 pub fn endCompiler() !*Object.Obj {
@@ -201,7 +201,7 @@ pub fn endCompiler() !*Object.Obj {
 
     if (debugPrintCode) {
         if (!parser.hadError) {
-            Debug.disassembleChunk(currentChunk(), if (function != null) function.?.name.?.chars else "<script>");
+            Debug.disassembleChunk(currentChunk(), if (function != null) function.?.node.function.name.?.chars else "<script>");
         }
     }
 
