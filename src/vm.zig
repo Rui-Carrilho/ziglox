@@ -235,6 +235,7 @@ fn readByte() u8 {
 
 pub fn interpret(source: []u8) !InterpretResult {
     var chunk: Chunk.Chunk = undefined;
+    std.debug.print("in - interpret (vm)\n", .{});
     Chunk.initChunk(&chunk);
 
     const compilingResult = try Compiler.compile(source);

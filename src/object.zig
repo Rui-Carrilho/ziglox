@@ -141,6 +141,7 @@ pub fn allocateObject() !*Obj {
 }
 
 pub fn newFunction() !*Obj {
+    std.debug.print("in - newFunction (object)\n", .{});
     var function = try allocateObject();
     function.* = .{ .node = .{ .function = .{
         .obj = undefined,

@@ -153,16 +153,20 @@ pub fn emitReturn() !void {
 }
 
 pub fn makeConstant(value: Value.Value) !u8 {
+    std.debug.print("doing makeConstant (compiler.zig)\n", .{});
+    std.debug.print("(in makeConstant) - chunk: count - {}\n", .{currentChunk().constants.count});
     const constant = try Chunk.addConstant(currentChunk(), value);
     if (constant > @as(usize, std.math.maxInt(u8))) {
         errorBase("too many constants in one chunk.");
         return 0;
     }
 
+    std.debug.print("out - makeConstant (compiler)\n", .{});
     return @intCast(constant);
 }
 
 pub fn emitConstant(value: Value.Value) !void {
+    std.debug.print("doing emitConstant (compiler.zig)\n", .{});
     const newConstant = try makeConstant(value);
     try emitBytes(@intFromEnum(Chunk.OpCode.OP_CONSTANT), newConstant);
 }
@@ -274,10 +278,12 @@ pub fn string(canAssign: bool) !void {
 }
 
 pub fn variable(canAssign: bool) !void {
+    std.debug.print("doing variable (compiler)\n", .{});
     try namedVariable(parser.previous, canAssign);
 }
 
 pub fn namedVariable(name: Scanner.Token, canAssign: bool) !void {
+    std.debug.print("doing namedVariable (compiler)\n", .{});
     var getOp: u8 = undefined;
     var setOp: u8 = undefined;
 
@@ -382,6 +388,7 @@ pub fn parsePrecedence(precedence: Precedence) !void {
 }
 
 pub fn identifierConstant(name: *const Scanner.Token) !u8 {
+    std.debug.print("doing identifierConstant (compiler)\n", .{});
     const newString = try Object.copyString(name.name);
     return makeConstant(Value.OBJ_VAL(newString));
 }
@@ -444,6 +451,7 @@ pub fn declareVariable() !void {
 }
 
 pub fn parseVariable(errorMessage: []const u8) !u8 {
+    std.debug.print("doing parseVariable (compiler)\n", .{});
     try consume(Scanner.TokenType.TOKEN_IDENTIFIER, errorMessage);
 
     try declareVariable();

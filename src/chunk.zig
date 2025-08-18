@@ -33,14 +33,17 @@ pub const OpCode = enum(u8) {
 pub const Chunk = struct { code: []u8, count: usize, capacity: usize, constants: Value.ValueArray, lines: []i32 };
 
 pub fn initChunk(chunk: *Chunk) void {
+    std.debug.print("in - initChunk (chunk)\n", .{});
     chunk.code = memory.initArray(u8);
     chunk.lines = memory.initArray(i32);
     chunk.count = 0;
     chunk.capacity = 0;
     Value.initValueArray(&chunk.constants);
+    std.debug.print("out - initChunk (chunk)\n", .{});
 }
 
 pub fn writeChunk(chunk: *Chunk, byte: u8, line: i32) !void {
+    std.debug.print("doing writeChunk (chunk)\n", .{});
     if (chunk.capacity < chunk.count + 1) {
         const oldCapacity = chunk.capacity;
         chunk.capacity = memory.GROW_CAPACITY(oldCapacity);
@@ -54,6 +57,8 @@ pub fn writeChunk(chunk: *Chunk, byte: u8, line: i32) !void {
 }
 
 pub fn addConstant(chunk: *Chunk, value: Value.Value) !usize {
+    std.debug.print("doing addConstant (chunk.zig)\n", .{});
+    std.debug.print("chunk: count - {d}\n", .{chunk.constants.count});
     try Value.writeValueArray(&chunk.constants, value);
     return chunk.constants.count - 1;
 }
