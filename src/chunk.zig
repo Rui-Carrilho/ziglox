@@ -57,8 +57,9 @@ pub fn writeChunk(chunk: *Chunk, byte: u8, line: i32) !void {
 }
 
 pub fn addConstant(chunk: *Chunk, value: Value.Value) !usize {
+    std.debug.print("chunk pointer: {*}\n", .{chunk});
     std.debug.print("doing addConstant (chunk.zig)\n", .{});
-    std.debug.print("chunk: count - {d}\n", .{chunk.constants.count});
+    std.debug.print("(in addConstant) chunk: count - {d}\n", .{chunk.constants.count});
     try Value.writeValueArray(&chunk.constants, value);
     return chunk.constants.count - 1;
 }

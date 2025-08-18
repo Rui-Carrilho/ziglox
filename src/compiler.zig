@@ -155,7 +155,10 @@ pub fn emitReturn() !void {
 pub fn makeConstant(value: Value.Value) !u8 {
     std.debug.print("doing makeConstant (compiler.zig)\n", .{});
     std.debug.print("(in makeConstant) - chunk: count - {}\n", .{currentChunk().constants.count});
-    const constant = try Chunk.addConstant(currentChunk(), value);
+
+    const testChunk = currentChunk();
+    std.debug.print("chunk pointer: {*}\n", .{testChunk}); // Add this
+    const constant = try Chunk.addConstant(testChunk, value);
     if (constant > @as(usize, std.math.maxInt(u8))) {
         errorBase("too many constants in one chunk.");
         return 0;
