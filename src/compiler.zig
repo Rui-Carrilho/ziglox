@@ -293,9 +293,9 @@ pub fn namedVariable(name: Scanner.Token, canAssign: bool) !void {
 
     if (canAssign and match(Scanner.TokenType.TOKEN_EQUAL)) {
         try expression();
-        try emitBytes(setOp, arg);
+        try emitBytes(setOp, @intCast(arg));
     } else {
-        try emitBytes(getOp, arg);
+        try emitBytes(getOp, @intCast(arg));
     }
 }
 
@@ -381,7 +381,7 @@ pub fn parsePrecedence(precedence: Precedence) !void {
     }
 }
 
-pub fn identifierConstant(name: *Scanner.Token) !u8 {
+pub fn identifierConstant(name: *const Scanner.Token) !u8 {
     const newString = try Object.copyString(name.name);
     return makeConstant(Value.OBJ_VAL(newString));
 }
@@ -391,7 +391,7 @@ pub fn identifiersEqual(a: *const Scanner.Token, b: *Scanner.Token) bool {
     return std.mem.eql(u8, a.name, b.name);
 }
 
-pub fn resolveLocal(compiler: *Compiler, name: *const Scanner.Token) u8 {
+pub fn resolveLocal(compiler: *Compiler, name: *const Scanner.Token) i32 {
     var i: i32 = @intCast(compiler.localCount - 1);
     while (i >= 0) : (i -= 1) {
         const local = &compiler.locals[@intCast(i)];
