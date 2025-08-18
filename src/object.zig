@@ -53,7 +53,7 @@ pub fn OBJ_IS_STRING(obj: Obj) bool {
 
 pub fn OBJ_AS_FUNCTION(obj: *Obj) *ObjFunction {
     return switch (obj.node) {
-        ObjType.function => |myValue| @constCast(&myValue),
+        ObjType.function => |*myValue| @constCast(myValue),
         else => std.debug.panic("fuckup in OBJ_AS_FUNCTION (object.zig)", .{}),
     };
 }
