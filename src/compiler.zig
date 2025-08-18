@@ -392,14 +392,14 @@ pub fn identifiersEqual(a: *const Scanner.Token, b: *Scanner.Token) bool {
 }
 
 pub fn resolveLocal(compiler: *Compiler, name: *const Scanner.Token) u8 {
-    var i = compiler.localCount - 1;
+    var i: i32 = @intCast(compiler.localCount - 1);
     while (i >= 0) : (i -= 1) {
-        const local = &compiler.locals[i];
+        const local = &compiler.locals[@intCast(i)];
         if (identifiersEqual(name, &local.name)) {
             if (local.depth == -1) {
                 errorBase("Can't read local variable in its own initializer.");
             }
-            return @intCast(i);
+            return i;
         }
     }
 
