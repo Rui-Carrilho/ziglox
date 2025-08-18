@@ -80,11 +80,9 @@ pub fn IS_OBJ(value: Value) bool {
 }
 
 pub fn initValueArray(array: *ValueArray) void {
-    array.* = ValueArray{
-        .values = &[_]Value{},
-        .capacity = 0,
-        .count = 0,
-    };
+    array.values = memory.initArray(Value);
+    array.capacity = 0;
+    array.count = 0;
 }
 
 pub fn writeValueArray(array: *ValueArray, value: Value) !void {
