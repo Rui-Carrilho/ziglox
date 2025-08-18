@@ -80,9 +80,11 @@ pub fn IS_OBJ(value: Value) bool {
 }
 
 pub fn initValueArray(array: *ValueArray) void {
-    array.values = memory.initArray(Value);
-    array.capacity = 0;
-    array.count = 0;
+    array.* = ValueArray{
+        .values = &[_]Value{},
+        .capacity = 0,
+        .count = 0,
+    };
 }
 
 pub fn writeValueArray(array: *ValueArray, value: Value) !void {
@@ -92,6 +94,7 @@ pub fn writeValueArray(array: *ValueArray, value: Value) !void {
         array.values = try memory.growArray(Value, (array.*).values, array.capacity);
     }
 
+    std.debug.print("count is - {d}\n", .{array.count});
     array.values[array.count] = value;
     array.count += 1;
 }
