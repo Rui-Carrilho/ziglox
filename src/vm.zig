@@ -11,7 +11,7 @@ const STACK_MAX = 256;
 
 pub const CallFrame = struct { function: Object.Obj, ip: u8, slots: *Value.Value };
 
-pub const VM = struct { chunk: *Chunk.Chunk, ip: [*]u8, stack: [STACK_MAX]Value.Value, stackTop: [*]Value.Value, globals: Table.Table, objects: ?*Object.Obj, strings: Table.Table };
+pub const VM = struct { frames: [FRAMES_MAX]CallFrame, frameCount: i32, stack: [STACK_MAX]Value.Value, stackTop: [*]Value.Value, globals: Table.Table, objects: ?*Object.Obj, strings: Table.Table };
 
 pub var vm: VM = undefined;
 
