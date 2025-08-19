@@ -8,11 +8,11 @@ const memory = @import("memory.zig");
 const Table = @import("table.zig");
 
 const FRAMES_MAX = 64;
-const STACK_MAX = FRAMES_MAX * ;
+const STACK_MAX = FRAMES_MAX * Compiler.UINT8_COUNT;
 
 pub const CallFrame = struct { function: Object.Obj, ip: u8, slots: *Value.Value };
 
-pub const VM = struct { frames: [FRAMES_MAX]CallFrame, frameCount: i32, stack: [STACK_MAX]Value.Value, stackTop: [*]Value.Value, globals: Table.Table, objects: ?*Object.Obj, strings: Table.Table };
+pub const VM = struct { frames: [FRAMES_MAX]CallFrame, frameCount: usize, stack: [STACK_MAX]Value.Value, stackTop: [*]Value.Value, globals: Table.Table, objects: ?*Object.Obj, strings: Table.Table };
 
 pub var vm: VM = undefined;
 
@@ -80,6 +80,7 @@ pub fn concatenate() !void {
 }
 
 pub fn run() !InterpretResult {
+    const frame = &vm.frames[vm.frameCount - 1];
     while (true) {
         if (Debug.debug_trace_execution) {
             std.debug.print("== stack ==\n", .{});
