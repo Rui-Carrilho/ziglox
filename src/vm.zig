@@ -7,7 +7,8 @@ const Object = @import("object.zig");
 const memory = @import("memory.zig");
 const Table = @import("table.zig");
 
-const STACK_MAX = 256;
+const FRAMES_MAX = 64;
+const STACK_MAX = FRAMES_MAX * ;
 
 pub const CallFrame = struct { function: Object.Obj, ip: u8, slots: *Value.Value };
 

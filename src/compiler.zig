@@ -6,7 +6,7 @@ const Debug = @import("debug.zig");
 const Allocator = @import("allocator.zig");
 const Object = @import("object.zig");
 
-const UINT8_COUNT = std.math.maxInt(u8) + 1;
+pub const UINT8_COUNT = std.math.maxInt(u8) + 1;
 
 pub const Parser = struct { current: Scanner.Token, previous: Scanner.Token, hadError: bool, panicMode: bool };
 
