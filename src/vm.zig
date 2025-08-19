@@ -144,10 +144,14 @@ pub fn run() !InterpretResult {
             },
             @intFromEnum(Chunk.OpCode.OP_GET_LOCAL) => {
                 const slot = readByte();
-                push(vm.stack[slot]);
+                frame.slots[slot] = peek();
             },
             @intFromEnum(Chunk.OpCode.OP_GREATER) => {
                 binaryOp(greaterThan);
+            },
+            @intFromEnum(Chunk.OpCode.OP_JUMP) => {
+                const offset = readShort();
+                frame.ip += offset;
             },
             @intFromEnum(Chunk.OpCode.OP_JUMP_IF_FALSE) => {
                 const offset = readShort();
@@ -198,7 +202,7 @@ pub fn run() !InterpretResult {
             },
             @intFromEnum(Chunk.OpCode.OP_SET_LOCAL) => {
                 const slot = readByte();
-                vm.stack[slot] = peek(0);
+                frame.slots[slot] = peek(0);
             },
             @intFromEnum(Chunk.OpCode.OP_SUBTRACT) => {
                 binaryOp(subtract);
