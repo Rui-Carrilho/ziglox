@@ -92,7 +92,7 @@ pub fn run() !InterpretResult {
             std.debug.print("\n", .{});
             std.debug.print("== globals ==\n", .{});
             Table.debugPrintTable(&vm.globals);
-            _ = Debug.disassembleInstruction(vm.chunk, vm.ip - &vm.chunk.code[0]);
+            _ = Debug.disassembleInstruction(&frame.function.node.function.chunk, frame.ip - frame.function.node.function.chunk.code[0]);
         }
         const instruction = readByte();
         switch (instruction) {
