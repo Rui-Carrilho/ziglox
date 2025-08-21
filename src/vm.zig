@@ -242,19 +242,14 @@ fn readByte() u8 {
 }
 
 pub fn interpret(source: []u8) !InterpretResult {
-    var chunk: Chunk.Chunk = undefined;
-    std.debug.print("in - interpret (vm)\n", .{});
-    Chunk.initChunk(&chunk);
+    const function = try Compiler.compile(source);
+    if (function == null) return InterpretResult.INTERPRET_COMPILE_ERROR;
 
-    const compilingResult = try Compiler.compile(source);
-
-    if (compilingResult == null) {
-        Chunk.freeChunk(&chunk);
-        return InterpretResult.INTERPRET_COMPILE_ERROR;
-    }
-
-    vm.chunk = &chunk;
-    vm.ip = vm.chunk.code.ptr;
+    push(Value.OBJ_VAL(function));
+    var frame: *CallFrame = &vm.frames[vm.frameCount];
+    frame.function = function.?.*;
+    frame.ip = function.?.node.function.chunk.code;
+    frame.slots = vm.stack;
 
     const result = run();
 
