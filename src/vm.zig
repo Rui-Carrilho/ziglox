@@ -251,10 +251,7 @@ pub fn interpret(source: []u8) !InterpretResult {
     frame.ip = function.?.node.function.chunk.code;
     frame.slots = vm.stack;
 
-    const result = run();
-
-    Chunk.freeChunk(&chunk);
-    return result;
+    return run();
 }
 
 pub fn binaryOp(comptime op: fn (f64, f64) Value.Value) void {
