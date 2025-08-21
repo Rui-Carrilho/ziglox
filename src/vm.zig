@@ -247,6 +247,7 @@ pub fn interpret(source: []u8) !InterpretResult {
 
     push(Value.OBJ_VAL(function));
     var frame: *CallFrame = &vm.frames[vm.frameCount];
+    vm.frameCount += 1;
     frame.function = function.?.*;
     frame.ip = function.?.node.function.chunk.code;
     frame.slots = vm.stack;
