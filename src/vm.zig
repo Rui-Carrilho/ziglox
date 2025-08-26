@@ -32,6 +32,8 @@ pub fn runtimeError(comptime format: []const u8, args: anytype) void {
     resetStack();
 }
 
+//eh who am I kidding let's make some green
+
 pub const InterpretResult = enum { INTERPRET_OK, INTERPRET_COMPILE_ERROR, INTERPRET_RUNTIME_ERROR };
 
 pub fn initVM() void {
