@@ -261,8 +261,6 @@ pub fn binaryOp(comptime op: fn (f64, f64) Value.Value) void {
     push(op(a, b));
 }
 
-//back to the fake green days
-
 pub fn add(a: f64, b: f64) Value.Value {
     return Value.NUMBER_VAL(a + b);
 }
