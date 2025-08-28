@@ -20,8 +20,6 @@ pub fn resetStack() void {
     vm.stackTop = @ptrCast(&vm.stack[0]);
 }
 
-//one day I will be more earnest about this
-
 pub fn runtimeError(comptime format: []const u8, args: anytype) void {
     std.debug.print(format ++ "\n", args);
 
