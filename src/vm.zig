@@ -20,6 +20,8 @@ pub fn resetStack() void {
     vm.stackTop = @ptrCast(&vm.stack[0]);
 }
 
+//billions must green
+
 pub fn runtimeError(comptime format: []const u8, args: anytype) void {
     std.debug.print(format ++ "\n", args);
 
