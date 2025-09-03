@@ -26,8 +26,6 @@ pub const Precedence = enum {
 
 const ParseFn = ?*const fn (canAssign: bool) anyerror!void;
 
-//this is such a better use of my time...
-
 pub const ParseRule = struct { prefix: ParseFn, infix: ParseFn, precedence: Precedence };
 
 pub const Compiler = struct { function: ?*Object.Obj, type: FunctionType, locals: [UINT8_COUNT]Local, localCount: usize, scopeDepth: i32 };
