@@ -24,6 +24,8 @@ pub const Precedence = enum {
     PREC_PRIMARY,
 };
 
+//more stupidity
+//
 const ParseFn = ?*const fn (canAssign: bool) anyerror!void;
 
 pub const ParseRule = struct { prefix: ParseFn, infix: ParseFn, precedence: Precedence };
