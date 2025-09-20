@@ -35,7 +35,7 @@ pub const Local = struct { name: Scanner.Token, depth: i32 };
 pub const FunctionType = enum { TYPE_FUNCTION, TYPE_SCRIPT };
 
 var parser: Parser = undefined;
-var current: ?*Compiler = null;
+var current: ?*Compiler = null
 
 const debugPrintCode = true;
 
@@ -624,7 +624,9 @@ pub fn synchronize() void {
 }
 
 pub fn declaration() !void {
-    if (match(Scanner.TokenType.TOKEN_VAR)) {
+    if (match(Scanner.TokenType.TOKEN_FUN)) {
+        funDeclaration();
+    } else if (match(Scanner.TokenType.TOKEN_VAR)) {
         try varDeclaration();
     } else {
         try statement();
