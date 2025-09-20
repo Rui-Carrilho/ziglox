@@ -467,6 +467,7 @@ pub fn parseVariable(errorMessage: []const u8) !u8 {
 }
 
 pub fn markInitialized() void {
+    if (current.?.scopeDepth == 0) return;
     current.?.locals[current.?.localCount - 1].depth = current.?.scopeDepth;
 }
 
@@ -506,6 +507,27 @@ pub fn block() anyerror!void {
     }
 
     try consume(Scanner.TokenType.TOKEN_RIGHT_BRACE, "Expect '}' after block.");
+}
+
+pub fn function(myType: FunctionType) void {
+    const compiler = null;
+    initCompiler(&compiler, myType);
+    beginScope();
+
+    try consume(Scanner.TokenType.TOKEN_LEFT_PAREN, "Expect '(' after function name.");
+    try consume(Scanner.TokenType.TOKEN_RIGHT_PAREN, "Expect ')' after parameters.");
+    try consume(Scanner.TokenType.TOKEN_LEFT_BRACE, "Expect '{' before function body.");
+    block();
+
+    const myFunction = try endCompiler();
+    try emitBytes(Chunk.OpCode.OP_CONSTANT, makeConstant(Value.OBJ_VAL(myFunction)));
+}
+
+pub fn funDeclaration() !void {
+    const global = try parseVariable("Expect function name.");
+    markInitialized();
+    function(.TYPE_FUNCTION);
+    defineVariable(global);
 }
 
 pub fn varDeclaration() !void {
