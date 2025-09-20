@@ -35,7 +35,7 @@ pub const Local = struct { name: Scanner.Token, depth: i32 };
 pub const FunctionType = enum { TYPE_FUNCTION, TYPE_SCRIPT };
 
 var parser: Parser = undefined;
-var current: ?*Compiler = null
+var current: ?*Compiler = null;
 
 const debugPrintCode = true;
 
