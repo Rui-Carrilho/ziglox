@@ -28,7 +28,7 @@ const ParseFn = ?*const fn (canAssign: bool) anyerror!void;
 
 pub const ParseRule = struct { prefix: ParseFn, infix: ParseFn, precedence: Precedence };
 
-pub const Compiler = struct { function: ?*Object.Obj, type: FunctionType, locals: [UINT8_COUNT]Local, localCount: usize, scopeDepth: i32 };
+pub const Compiler = struct { enclosing: *Compiler, function: ?*Object.Obj, type: FunctionType, locals: [UINT8_COUNT]Local, localCount: usize, scopeDepth: i32 };
 
 pub const Local = struct { name: Scanner.Token, depth: i32 };
 
@@ -186,6 +186,7 @@ pub fn patchJump(offset: usize) void {
 }
 
 pub fn initCompiler(compiler: *Compiler, myType: FunctionType) !void {
+    compiler.enclosing = current.?;
     compiler.function = null;
     compiler.type = myType;
     compiler.localCount = 0;
@@ -510,7 +511,7 @@ pub fn block() anyerror!void {
 }
 
 pub fn function(myType: FunctionType) void {
-    const compiler = null;
+    const compiler: Compiler = undefined;
     initCompiler(&compiler, myType);
     beginScope();
 
