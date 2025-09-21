@@ -213,6 +213,7 @@ pub fn endCompiler() !*Object.Obj {
         }
     }
 
+    current = current.?.enclosing;
     return function.?;
 }
 
