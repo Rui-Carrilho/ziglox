@@ -212,7 +212,6 @@ pub fn endCompiler() !*Object.Obj {
             Debug.disassembleChunk(currentChunk(), if (function != null) function.?.node.function.name.?.chars else "<script>");
         }
     }
-    //hate the game
 
     current = current.?.enclosing;
     return function.?;
