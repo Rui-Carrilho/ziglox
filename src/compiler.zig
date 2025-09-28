@@ -511,12 +511,23 @@ pub fn block() anyerror!void {
     try consume(Scanner.TokenType.TOKEN_RIGHT_BRACE, "Expect '}' after block.");
 }
 
-pub fn function(myType: FunctionType) void {
+pub fn function(myType: FunctionType) !void {
     const compiler: Compiler = undefined;
     initCompiler(&compiler, myType);
     beginScope();
 
     try consume(Scanner.TokenType.TOKEN_LEFT_PAREN, "Expect '(' after function name.");
+    if (!check(Scanner.TokenType.TOKEN_RIGHT_PAREN)) {
+        while (true) {
+            current.?.function.?.node.function.arity += 1;
+            if (current.?.function.?.node.function.arity > 255) {
+                errorAtCurrent("Can't have more than 255 parameters.");
+            }
+            const constant = try parseVariable("Expect parameter name.");
+            try defineVariable(constant);
+            if (match(Scanner.TokenType.TOKEN_COMMA)) break;
+        }
+    }
     try consume(Scanner.TokenType.TOKEN_RIGHT_PAREN, "Expect ')' after parameters.");
     try consume(Scanner.TokenType.TOKEN_LEFT_BRACE, "Expect '{' before function body.");
     block();
