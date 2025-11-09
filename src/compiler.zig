@@ -87,8 +87,8 @@ pub fn compile(source: []u8) !?*Object.Obj {
         try declaration();
     }
 
-    const function = try endCompiler();
-    return if (parser.hadError) null else function;
+    const myFunction = try endCompiler();
+    return if (parser.hadError) null else myFunction;
 }
 
 pub fn advance() void {
