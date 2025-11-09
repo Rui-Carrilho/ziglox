@@ -209,16 +209,16 @@ pub fn initCompiler(compiler: *Compiler, myType: FunctionType) !void {
 
 pub fn endCompiler() !*Object.Obj {
     try emitReturn();
-    const function = current.?.function;
+    const myFunction = current.?.function;
 
     if (debugPrintCode) {
         if (!parser.hadError) {
-            Debug.disassembleChunk(currentChunk(), if (function != null) function.?.node.function.name.?.chars else "<script>");
+            Debug.disassembleChunk(currentChunk(), if (myFunction != null) myFunction.?.node.function.name.?.chars else "<script>");
         }
     }
 
     current = current.?.enclosing;
-    return function.?;
+    return myFunction.?;
 }
 
 pub fn binary(canAssign: bool) !void {
