@@ -197,7 +197,7 @@ pub fn initCompiler(compiler: *Compiler, myType: FunctionType) !void {
     current = compiler;
     if (myType != .TYPE_SCRIPT) {
         const parserName = parser.previous.name;
-        current.?.function.?.node.function.name = Object.copyString(parserName);
+        current.?.function.?.node.function.name = try Object.copyString(parserName);
     }
 
     var local = &current.?.locals[current.?.localCount];
