@@ -192,8 +192,8 @@ pub fn initCompiler(compiler: *Compiler, myType: FunctionType) !void {
     compiler.localCount = 0;
     compiler.scopeDepth = 0;
 
-    const function = try Object.newFunction();
-    compiler.function = function;
+    const myFunction = try Object.newFunction();
+    compiler.function = myFunction;
     current = compiler;
 
     var local = &current.?.locals[current.?.localCount];
